@@ -3,14 +3,19 @@ package edu.bupt.ticketextraction
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,6 +39,22 @@ class MainActivity : ComponentActivity() {
                         bottomBar = {
                             BottomNavigationTest(navControllers)
                         },
+                        floatingActionButton = {
+                            FloatingActionButton(
+                                onClick = { /*TODO*/ },
+                                Modifier.size(80.dp),
+                                backgroundColor = Color.Black
+                            ) {
+                                Icon(
+                                    painterResource(id = R.drawable.ic_outline_photo_camera_24),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(50.dp),
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        isFloatingActionButtonDocked = true,
+                        floatingActionButtonPosition = FabPosition.Center,
                         content = {
                             NavHost(navControllers, startDestination = Screen.Receipt.route) {
                                 composable(Screen.Receipt.route) { ReceiptFragment() }
@@ -93,8 +114,8 @@ sealed class Screen(var route: String, var resId: Int) {
 @Composable
 fun BottomNavigationTest(navControllers: NavHostController) {
     var selectedItem by remember { mutableStateOf(0) }
-    val items = listOf(Screen.Receipt, Screen.Email, Screen.Setting)
-    BottomNavigation {
+    val items = listOf(Screen.Receipt, Screen.Setting)
+    BottomAppBar(cutoutShape = RoundedCornerShape(80.dp)) {
         items.forEachIndexed { index, screen ->
             BottomNavigationItem(
                 icon = { Icon(painterResource(screen.resId), contentDescription = null) },
