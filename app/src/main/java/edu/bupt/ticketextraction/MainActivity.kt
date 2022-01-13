@@ -20,6 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import edu.bupt.ticketextraction.ui.theme.Sunset5
 import edu.bupt.ticketextraction.ui.theme.TicketExtractionTheme
 
 
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
                             FloatingActionButton(
                                 onClick = { /*TODO*/ },
                                 Modifier.size(80.dp),
-                                backgroundColor = Color.Black
+                                backgroundColor = Sunset5
                             ) {
                                 Icon(
                                     painterResource(id = R.drawable.ic_outline_photo_camera_24),
@@ -58,7 +59,6 @@ class MainActivity : ComponentActivity() {
                         content = {
                             NavHost(navControllers, startDestination = Screen.Receipt.route) {
                                 composable(Screen.Receipt.route) { ReceiptFragment() }
-                                composable(Screen.Email.route) { EmailFragment() }
                                 composable(Screen.Setting.route) { SettingsUI() }
                             }
                         }
@@ -72,11 +72,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ReceiptFragment() {
     Greeting("1")
-}
-
-@Composable
-fun EmailFragment() {
-    Greeting("2")
 }
 
 @Composable
@@ -107,7 +102,6 @@ fun TopBarTest() {
 
 sealed class Screen(var route: String, var resId: Int) {
     object Receipt : Screen("receipt", R.drawable.ic_baseline_receipt_24)
-    object Email : Screen("email", R.drawable.ic_baseline_email_24)
     object Setting : Screen("setting", R.drawable.ic_baseline_settings_24)
 }
 

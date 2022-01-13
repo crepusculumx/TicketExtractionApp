@@ -5,19 +5,24 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = SunRise5,
-    primaryVariant = SunRise4,
-    secondary = Teal200
+    primary = Gray13,
+    primaryVariant = Gray9,
+    secondary = Gray9,
+    secondaryVariant = Gray9,
+    background = Gray10,
+    onBackground = Gray3
 )
 
 private val LightColorPalette = lightColors(
-    primary = Black,
-    primaryVariant = SunRise4,
-    secondary = Teal200,
-    background = Gray10,
-    onBackground = Gray3
+    primary = Sunset6,
+    primaryVariant = Sunset5,
+    secondary = Sunset5,
+    secondaryVariant = Sunset4,
+    background = Color.White,
+    onBackground = Color.Black
 
     /* Other default colors to override
     background = Color.White,
@@ -32,7 +37,7 @@ private val LightColorPalette = lightColors(
 @Composable
 fun TicketExtractionTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
         DarkColorPalette

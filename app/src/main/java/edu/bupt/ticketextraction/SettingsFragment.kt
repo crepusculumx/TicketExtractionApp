@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 class SettingsFragment(val fatherActivity: MainActivity) {
 
@@ -34,7 +35,8 @@ fun SettingsUI() {
             ListItem(Modifier.clickable { }) {
                 Text(
                     text = it,
-                    Modifier.padding(vertical = 10.dp)
+                    Modifier.padding(vertical = 10.dp),
+                    fontSize = 20.sp
                 )
             }
             Divider()
