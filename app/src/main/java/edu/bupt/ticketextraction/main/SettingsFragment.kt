@@ -1,4 +1,4 @@
-package edu.bupt.ticketextraction
+package edu.bupt.ticketextraction.main
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,11 +20,22 @@ class SettingsFragment(val fatherActivity: MainActivity) {
 
 }
 
+sealed class Settings(var name: String, var onClick: () -> Unit) {
+    object Account : Settings("账号管理", {})
+    object Update : Settings("检查更新", {})
+    object ClearCache : Settings("清空缓存", {})
+    object AboutUs : Settings("关于我们", {})
+    object VisitWeb : Settings("访问网页端", {})
+}
+
 @ExperimentalMaterialApi
 @Preview
 @Composable
 fun SettingsUI() {
-    val items = listOf("账号管理", "检查更新", "清空缓存", "关于我们", "访问网页端")
+    val items = listOf(
+        Settings.Account, Settings.Update, Settings.ClearCache,
+        Settings.AboutUs, Settings.VisitWeb
+    )
     val scrollState = rememberScrollState()
     Column(
         Modifier
@@ -32,9 +43,9 @@ fun SettingsUI() {
             .fillMaxWidth()
     ) {
         items.forEach {
-            ListItem(Modifier.clickable { }) {
+            ListItem(Modifier.clickable { it.onClick }) {
                 Text(
-                    text = it,
+                    text = it.name,
                     Modifier.padding(vertical = 10.dp),
                     fontSize = 20.sp
                 )

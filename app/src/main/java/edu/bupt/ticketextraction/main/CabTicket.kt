@@ -1,4 +1,4 @@
-package edu.bupt.ticketextraction
+package edu.bupt.ticketextraction.main
 
 /**
  * 出租车发票数据类，包含了出租车发票的所有数据
