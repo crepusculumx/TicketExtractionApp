@@ -3,6 +3,7 @@ package edu.bupt.ticketextraction.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,29 +14,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import edu.bupt.ticketextraction.R
-import edu.bupt.ticketextraction.ui.theme.Sunset5
 import edu.bupt.ticketextraction.ui.theme.TicketExtractionTheme
-
 
 class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TicketExtractionTheme {
+            var darkTheme by remember { mutableStateOf(false) }
+            TicketExtractionTheme(darkTheme = darkTheme) {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     val navControllers = rememberNavController()
                     Scaffold(
                         // 顶部栏
                         topBar = {
-                            MainTopBar()
+                            MainTopBar(darkTheme) { darkTheme = darkTheme.not() }
                         },
                         // 底部栏
                         bottomBar = {
@@ -65,10 +67,25 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Preview
 @Composable
-fun MainTopBar() {
+fun MainTopBar(darkTheme: Boolean = false, darkThemeOnClick: () -> Unit = {}) {
     TopAppBar(
-        title = { Text("发票识别") },
+        title = {
+            Text(
+                text = "发票识别",
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 20.dp)
+            )
+        },
+        modifier = Modifier.padding(),
+        navigationIcon = {
+            IconButton(onClick = { }, enabled = false) {
+                Icon(painterResource(R.drawable.ic_baseline_photo_camera_24), contentDescription = null)
+            }
+        },
         actions = {
             var expanded by remember { mutableStateOf(false) }
             IconButton(onClick = { expanded = true }) {
@@ -77,8 +94,40 @@ fun MainTopBar() {
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }) {
-                DropdownMenuItem(onClick = { /*TODO*/ }) {
-                    Text("test")
+                DropdownMenuItem(onClick = {
+                    darkThemeOnClick()
+                }) {
+                    val dayOrNight = if (darkTheme) "日" else "夜"
+                    val resId = if (darkTheme) R.drawable.ic_baseline_wb_sunny_24
+                    else R.drawable.ic_baseline_brightness_3_24
+                    Icon(
+                        painterResource(resId),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(end = 5.dp)
+                    )
+                    Text("${dayOrNight}间模式")
+                }
+                DropdownMenuItem(onClick = { /* TODO: 2022/1/14*/  }) {
+                    Icon(
+                        painterResource(R.drawable.ic_baseline_email_24),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(end = 5.dp)
+                    )
+                    Text("导出")
+                }
+                DropdownMenuItem(onClick = { /* TODO: 2022/1/14*/}) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_baseline_help_24),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(end = 5.dp)
+                    )
+                    Text("使用说明")
                 }
             }
         }
@@ -125,7 +174,6 @@ fun MainFloatingActionButton() {
             // TODO: 2022/1/14 调用相机
         },
         Modifier.size(80.dp),
-        backgroundColor = Sunset5
     ) {
         Icon(
             painterResource(id = R.drawable.ic_outline_photo_camera_24),

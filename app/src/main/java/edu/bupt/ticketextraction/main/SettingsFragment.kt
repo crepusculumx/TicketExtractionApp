@@ -21,11 +21,11 @@ class SettingsFragment(val fatherActivity: MainActivity) {
 }
 
 sealed class Settings(var name: String, var onClick: () -> Unit) {
-    object Account : Settings("账号管理", {})
-    object Update : Settings("检查更新", {})
-    object ClearCache : Settings("清空缓存", {})
-    object AboutUs : Settings("关于我们", {})
-    object VisitWeb : Settings("访问网页端", {})
+    object Account : Settings("账号管理", {/* TODO: 2022/1/14*/})
+    object Update : Settings("检查更新", {/* TODO: 2022/1/14*/})
+    object ClearCache : Settings("清空缓存", {/* TODO: 2022/1/14*/})
+    object AboutUs : Settings("关于我们", {/* TODO: 2022/1/14*/})
+    object VisitWeb : Settings("访问网页端", {/* TODO: 2022/1/14*/})
 }
 
 @ExperimentalMaterialApi
