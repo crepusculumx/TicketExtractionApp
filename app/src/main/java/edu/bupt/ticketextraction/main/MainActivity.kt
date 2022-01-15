@@ -3,7 +3,6 @@ package edu.bupt.ticketextraction.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,14 +13,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import edu.bupt.ticketextraction.R
+import edu.bupt.ticketextraction.compose.TopBarText
+import edu.bupt.ticketextraction.compose.changeTheme
+import edu.bupt.ticketextraction.compose.isInDarkTheme
 import edu.bupt.ticketextraction.ui.theme.TicketExtractionTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var darkTheme by remember { mutableStateOf(false) }
+            val darkTheme = isInDarkTheme()
             TicketExtractionTheme(darkTheme = darkTheme) {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         // 顶部栏
                         topBar = {
-                            MainTopBar(darkTheme) { darkTheme = darkTheme.not() }
+                            MainTopBar(darkTheme) { changeTheme() }
                         },
                         // 底部栏
                         bottomBar = {
@@ -67,67 +67,35 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview
 @Composable
-fun MainTopBar(darkTheme: Boolean = false, darkThemeOnClick: () -> Unit = {}) {
+fun MainTopBar(darkTheme: Boolean = false, darkThemeOnClick: () -> Unit) {
     TopAppBar(
         title = {
-            Text(
-                text = "发票识别",
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 20.dp)
-            )
-        },
-        modifier = Modifier.padding(),
-        navigationIcon = {
-            IconButton(onClick = { }, enabled = false) {
-                Icon(painterResource(R.drawable.ic_baseline_photo_camera_24), contentDescription = null)
-            }
+            TopBarText(isMain = true)
         },
         actions = {
             var expanded by remember { mutableStateOf(false) }
+            // Button再跟DropdownMenu即可创建下拉菜单
             IconButton(onClick = { expanded = true }) {
+                // 三个点竖直排列的图标
                 Icon(Icons.Filled.MoreVert, contentDescription = null)
             }
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }) {
-                DropdownMenuItem(onClick = {
+                onDismissRequest = { expanded = false }
+            ) {
+                // 根据当前主题展示不同的文本和图片
+                val dayOrNight = if (darkTheme) "白天" else "夜间"
+                val resId = if (darkTheme) R.drawable.ic_baseline_wb_sunny_24
+                else R.drawable.ic_baseline_brightness_3_24
+                MainTopMoreDropdownMenuItem(resId = resId, text = "${dayOrNight}模式") {
                     darkThemeOnClick()
-                }) {
-                    val dayOrNight = if (darkTheme) "日" else "夜"
-                    val resId = if (darkTheme) R.drawable.ic_baseline_wb_sunny_24
-                    else R.drawable.ic_baseline_brightness_3_24
-                    Icon(
-                        painterResource(resId),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(20.dp)
-                            .padding(end = 5.dp)
-                    )
-                    Text("${dayOrNight}间模式")
                 }
-                DropdownMenuItem(onClick = { /* TODO: 2022/1/14*/  }) {
-                    Icon(
-                        painterResource(R.drawable.ic_baseline_email_24),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(20.dp)
-                            .padding(end = 5.dp)
-                    )
-                    Text("导出")
+                MainTopMoreDropdownMenuItem(resId = R.drawable.ic_baseline_email_24, text = "导出") {
+                    // TODO: 2022/1/15
                 }
-                DropdownMenuItem(onClick = { /* TODO: 2022/1/14*/}) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_baseline_help_24),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(20.dp)
-                            .padding(end = 5.dp)
-                    )
-                    Text("使用说明")
+                MainTopMoreDropdownMenuItem(resId = R.drawable.ic_baseline_help_24, text = "使用说明") {
+                    // TODO: 2022/1/15
                 }
             }
         }
@@ -139,23 +107,23 @@ fun MainBottomBar(navControllers: NavHostController) {
     var selectedItem by remember { mutableStateOf(0) }
     val items = listOf(MainBottomNavItem.Receipt, MainBottomNavItem.Settings)
     BottomAppBar(cutoutShape = RoundedCornerShape(80.dp)) {
-        items.forEachIndexed { index, screen ->
+        items.forEachIndexed { index, it ->
             BottomNavigationItem(
                 icon = {
                     Icon(
-                        painterResource(screen.resId),
+                        painterResource(it.resId),
                         contentDescription = null
                     )
                 },
                 modifier = Modifier.padding(
-                    start = screen.startPadding,
-                    end = screen.endPadding
+                    start = it.startPadding,
+                    end = it.endPadding
                 ),
-                label = { Text(screen.route) },
+                label = { Text(it.route) },
                 selected = selectedItem == index,
                 onClick = {
                     selectedItem = index
-                    navControllers.navigate(screen.route) {
+                    navControllers.navigate(it.route) {
                         // 跳转到起始页面，即发票页面
                         popUpTo(navControllers.graph.startDestinationId)
                         // 一次只能展示一个页面

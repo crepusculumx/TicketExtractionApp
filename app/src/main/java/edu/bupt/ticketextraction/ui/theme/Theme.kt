@@ -1,11 +1,11 @@
 package edu.bupt.ticketextraction.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import edu.bupt.ticketextraction.compose.isInDarkTheme
 
 private val DarkColorPalette = darkColors(
     primary = Gray13,
@@ -34,9 +34,15 @@ private val LightColorPalette = lightColors(
     */
 )
 
+/**
+ * 根据当前主题(白天/夜间)选择颜色
+ *
+ * @param darkTheme 是否是夜间模式
+ * @param content 内容
+ */
 @Composable
 fun TicketExtractionTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = isInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
