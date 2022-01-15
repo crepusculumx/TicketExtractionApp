@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
                         bottomBar = {
                             MainBottomBar(navControllers = navControllers)
                         },
+
                         // 底部栏的圆形浮动按钮
                         floatingActionButton = {
                             MainFloatingActionButton()
