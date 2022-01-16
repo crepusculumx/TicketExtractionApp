@@ -5,6 +5,14 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.mutableStateOf
 
 /**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
+
+/**
  * 当前是否是夜间模式，默认白天模式：
  * true-夜间模式，false-白天模式
  */

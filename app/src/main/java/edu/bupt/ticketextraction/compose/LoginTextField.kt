@@ -15,6 +15,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import edu.bupt.ticketextraction.R
 
 /**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
+
+/**
  * @param phoneNumber 编辑框修改的文本
  * @param onValueChange 当输入服务更新文本时触发的回调，更新的文本作为回调的参数出现
  * @param modifier 用于让TextField居中，在单独的TextField中没有Modifier.align()

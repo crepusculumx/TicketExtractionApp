@@ -18,6 +18,14 @@ import edu.bupt.ticketextraction.compose.PhoneNumberTextField
 import edu.bupt.ticketextraction.compose.TopBarWithTitleAndBack
 
 /**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
+
+/**
  * 此Activity用于处理用户登录，以及可以跳转到注册和找回密码
  */
 class LoginActivity : ComponentActivity() {

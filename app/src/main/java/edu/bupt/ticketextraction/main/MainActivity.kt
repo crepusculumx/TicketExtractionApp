@@ -25,6 +25,14 @@ import edu.bupt.ticketextraction.compose.TopBarText
 import edu.bupt.ticketextraction.compose.changeTheme
 import edu.bupt.ticketextraction.compose.isInDarkTheme
 
+/**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
+
 class MainActivity : ComponentActivity() {
     fun jumpFromMainToLogin() {
         val intent = Intent(this, LoginActivity::class.java)

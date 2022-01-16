@@ -5,6 +5,14 @@ import androidx.compose.ui.unit.dp
 import edu.bupt.ticketextraction.R
 
 /**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
+
+/**
  * 定义MainActivity底部导航栏每个Item的属性
  *
  * @param route 导航字符串，也是展示的文本

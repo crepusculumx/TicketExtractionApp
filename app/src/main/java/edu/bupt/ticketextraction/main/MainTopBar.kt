@@ -11,6 +11,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 /**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
+
+/**
  * MainActivity的TopBar的更多按钮的DropdownMenu的Item，
  * 具备点击事件，一个图标 + 一个文本
  */
