@@ -1,5 +1,6 @@
 package edu.bupt.ticketextraction.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,50 +20,50 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import edu.bupt.ticketextraction.R
+import edu.bupt.ticketextraction.compose.ActivityBody
 import edu.bupt.ticketextraction.compose.TopBarText
 import edu.bupt.ticketextraction.compose.changeTheme
 import edu.bupt.ticketextraction.compose.isInDarkTheme
-import edu.bupt.ticketextraction.ui.theme.TicketExtractionTheme
 
 class MainActivity : ComponentActivity() {
+    fun jumpFromMainToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+    }
+
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val darkTheme = isInDarkTheme()
-            TicketExtractionTheme(darkTheme = darkTheme) {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    val navControllers = rememberNavController()
-                    Scaffold(
-                        // 顶部栏
-                        topBar = {
-                            MainTopBar(darkTheme) { changeTheme() }
-                        },
-                        // 底部栏
-                        bottomBar = {
-                            MainBottomBar(navControllers = navControllers)
-                        },
-
-                        // 底部栏的圆形浮动按钮
-                        floatingActionButton = {
-                            MainFloatingActionButton()
-                        },
-                        // FAB嵌入到底部导航栏中
-                        isFloatingActionButtonDocked = true,
-                        // FAB位置在底部导航栏中间
-                        floatingActionButtonPosition = FabPosition.Center,
-                        content = {
-                            NavHost(
-                                navControllers,
-                                startDestination = MainBottomNavItem.Receipt.route
-                            ) {
-                                composable(MainBottomNavItem.Receipt.route) { ReceiptUI() }
-                                composable(MainBottomNavItem.Settings.route) { SettingsUI() }
-                            }
+            ActivityBody {
+                val navControllers = rememberNavController()
+                Scaffold(
+                    // 顶部栏
+                    topBar = {
+                        MainTopBar(isInDarkTheme()) { changeTheme() }
+                    },
+                    // 底部栏
+                    bottomBar = {
+                        MainBottomBar(navControllers = navControllers)
+                    },
+                    // 底部栏的圆形浮动按钮
+                    floatingActionButton = {
+                        MainFloatingActionButton()
+                    },
+                    // FAB嵌入到底部导航栏中
+                    isFloatingActionButtonDocked = true,
+                    // FAB位置在底部导航栏中间
+                    floatingActionButtonPosition = FabPosition.Center,
+                    content = {
+                        NavHost(
+                            navControllers,
+                            startDestination = MainBottomNavItem.Receipt.route
+                        ) {
+                            composable(MainBottomNavItem.Receipt.route) { ReceiptUI() }
+                            composable(MainBottomNavItem.Settings.route) { SettingsUI(this@MainActivity) }
                         }
-                    )
-                }
+                    }
+                )
             }
         }
     }

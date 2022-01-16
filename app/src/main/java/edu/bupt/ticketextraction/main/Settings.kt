@@ -12,14 +12,12 @@ import androidx.compose.material.ListItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @ExperimentalMaterialApi
-@Preview
 @Composable
-fun SettingsUI() {
+fun SettingsUI(fatherActivity: MainActivity) {
     // 创建滚动条，虽然对于这个页面应该没啥用
     val scrollState = rememberScrollState()
     Column(
@@ -28,7 +26,7 @@ fun SettingsUI() {
             .fillMaxWidth()
     ) {
         SettingsListItem("账号管理") {
-            // TODO: 2022/1/15
+            fatherActivity.jumpFromMainToLogin()
         }
         SettingsListItem("检查更新") {
             // TODO: 2022/1/15
