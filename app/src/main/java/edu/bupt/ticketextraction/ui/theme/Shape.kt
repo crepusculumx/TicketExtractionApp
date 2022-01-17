@@ -1,9 +1,3 @@
-package edu.bupt.ticketextraction.ui.theme
-
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Shapes
-import androidx.compose.ui.unit.dp
-
 /**
  * 北京邮电大学创新创业训练项目——出租车发票识别
  *
@@ -11,6 +5,11 @@ import androidx.compose.ui.unit.dp
  *
  * e-mail: wulianzeng@bupt.edu.cn
  */
+package edu.bupt.ticketextraction.ui.theme
+
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Shapes
+import androidx.compose.ui.unit.dp
 
 val Shapes = Shapes(
     small = RoundedCornerShape(4.dp),

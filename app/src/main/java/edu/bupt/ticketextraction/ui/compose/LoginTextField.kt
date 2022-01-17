@@ -1,4 +1,11 @@
-package edu.bupt.ticketextraction.compose
+/**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
+package edu.bupt.ticketextraction.ui.compose
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -15,14 +22,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import edu.bupt.ticketextraction.R
 
 /**
- * 北京邮电大学创新创业训练项目——出租车发票识别
+ * 输入账号的TextField
  *
- * author 武连增
- *
- * e-mail: wulianzeng@bupt.edu.cn
- */
-
-/**
  * @param phoneNumber 编辑框修改的文本
  * @param onValueChange 当输入服务更新文本时触发的回调，更新的文本作为回调的参数出现
  * @param modifier 用于让TextField居中，在单独的TextField中没有Modifier.align()
@@ -33,6 +34,7 @@ fun PhoneNumberTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier
 ) {
+    // TODO: 2022/1/17 isError
     TextField(
         value = phoneNumber.value,
         onValueChange = { onValueChange(it) },
@@ -49,11 +51,16 @@ fun PhoneNumberTextField(
         // 输入类型设为数字
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         // 背景色设为白色
-        colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.background)
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = MaterialTheme.colors.background,
+            textColor = MaterialTheme.colors.onBackground
+        )
     )
 }
 
 /**
+ * 输入密码的TextField
+ *
  * @param password 编辑框修改的文本
  * @param onValueChange 当输入服务更新文本时触发的回调，更新的文本作为回调的参数出现
  * @param modifier 用于让TextField居中，在单独的TextField中没有Modifier.align()
@@ -66,6 +73,7 @@ fun PasswordTextField(
 ) {
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
     TextField(
+        // TODO: 2022/1/17 isError
         value = password.value,
         // 为了代码复用，必须把password传进来，又因为函数式编程，还得定义一个回调在外面修改ToT
         onValueChange = { onValueChange(it) },

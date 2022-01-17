@@ -1,4 +1,11 @@
-package edu.bupt.ticketextraction.compose
+/**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
+package edu.bupt.ticketextraction.ui.compose
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,14 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
-/**
- * 北京邮电大学创新创业训练项目——出租车发票识别
- *
- * author 武连增
- *
- * e-mail: wulianzeng@bupt.edu.cn
- */
 
 /**
  * 除了MainActivity之外的TopAppBar，包括一个标题和一个返回键，标题居中

@@ -1,4 +1,11 @@
-package edu.bupt.ticketextraction.main
+/**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
+package edu.bupt.ticketextraction.receipt
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -14,14 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.bupt.ticketextraction.R
-
-/**
- * 北京邮电大学创新创业训练项目——出租车发票识别
- *
- * author 武连增
- *
- * e-mail: wulianzeng@bupt.edu.cn
- */
 
 /**
  * 保存所有发票信息

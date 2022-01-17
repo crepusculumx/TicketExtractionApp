@@ -1,9 +1,3 @@
-package edu.bupt.ticketextraction.main
-
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import edu.bupt.ticketextraction.R
-
 /**
  * 北京邮电大学创新创业训练项目——出租车发票识别
  *
@@ -11,6 +5,11 @@ import edu.bupt.ticketextraction.R
  *
  * e-mail: wulianzeng@bupt.edu.cn
  */
+package edu.bupt.ticketextraction.main
+
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import edu.bupt.ticketextraction.R
 
 /**
  * 定义MainActivity底部导航栏每个Item的属性

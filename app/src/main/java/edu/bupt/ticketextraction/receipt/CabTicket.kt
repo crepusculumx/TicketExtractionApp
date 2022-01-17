@@ -1,5 +1,3 @@
-package edu.bupt.ticketextraction.main
-
 /**
  * 北京邮电大学创新创业训练项目——出租车发票识别
  *
@@ -7,6 +5,7 @@ package edu.bupt.ticketextraction.main
  *
  * e-mail: wulianzeng@bupt.edu.cn
  */
+package edu.bupt.ticketextraction.receipt
 
 /**
  * 出租车发票数据类，包含了出租车发票的所有数据

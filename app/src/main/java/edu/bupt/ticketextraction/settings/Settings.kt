@@ -1,4 +1,11 @@
-package edu.bupt.ticketextraction.main
+/**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
+package edu.bupt.ticketextraction.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -14,15 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import edu.bupt.ticketextraction.main.MainActivity
 
 /**
- * 北京邮电大学创新创业训练项目——出租车发票识别
- *
- * author 武连增
- *
- * e-mail: wulianzeng@bupt.edu.cn
+ * MainActivity中设置页面的UI
  */
-
 @ExperimentalMaterialApi
 @Composable
 fun SettingsUI(fatherActivity: MainActivity) {

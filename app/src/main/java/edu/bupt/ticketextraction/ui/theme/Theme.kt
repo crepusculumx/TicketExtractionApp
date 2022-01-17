@@ -1,12 +1,3 @@
-package edu.bupt.ticketextraction.ui.theme
-
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import edu.bupt.ticketextraction.compose.isInDarkTheme
-
 /**
  * 北京邮电大学创新创业训练项目——出租车发票识别
  *
@@ -14,6 +5,14 @@ import edu.bupt.ticketextraction.compose.isInDarkTheme
  *
  * e-mail: wulianzeng@bupt.edu.cn
  */
+package edu.bupt.ticketextraction.ui.theme
+
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import edu.bupt.ticketextraction.ui.compose.isInDarkTheme
 
 private val DarkColorPalette = darkColors(
     primary = Gray13,

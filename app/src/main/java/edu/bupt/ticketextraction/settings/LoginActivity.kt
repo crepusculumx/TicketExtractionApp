@@ -1,22 +1,3 @@
-package edu.bupt.ticketextraction.main
-
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import edu.bupt.ticketextraction.compose.ActivityBody
-import edu.bupt.ticketextraction.compose.PasswordTextField
-import edu.bupt.ticketextraction.compose.PhoneNumberTextField
-import edu.bupt.ticketextraction.compose.TopBarWithTitleAndBack
-
 /**
  * 北京邮电大学创新创业训练项目——出租车发票识别
  *
@@ -24,6 +5,22 @@ import edu.bupt.ticketextraction.compose.TopBarWithTitleAndBack
  *
  * e-mail: wulianzeng@bupt.edu.cn
  */
+package edu.bupt.ticketextraction.settings
+
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import edu.bupt.ticketextraction.ui.compose.*
 
 /**
  * 此Activity用于处理用户登录，以及可以跳转到注册和找回密码
@@ -34,6 +31,15 @@ class LoginActivity : ComponentActivity() {
      */
     var loginState = false
 
+    /**
+     * 从LoginActivity跳转到RegisterActivity
+     */
+    fun jumpFromLoginToRegister() {
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivity(intent)
+    }
+
+    @SuppressLint("UnrememberedMutableState")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -44,7 +50,7 @@ class LoginActivity : ComponentActivity() {
                     topBar = { TopBarWithTitleAndBack(title = "登录") },
                     // 底栏，注册账号 + 找回密码
                     bottomBar = {
-                        RegisterAndFind()
+                        RegisterAndFind(this@LoginActivity)
                     }) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         // 手机号编辑框
@@ -64,16 +70,11 @@ class LoginActivity : ComponentActivity() {
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                         // 登录按钮
-                        Button(
-                            onClick = { /*TODO 2022/1/16 把phone和password验证一下*/ },
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(top = 40.dp)
-                                .size(width = 100.dp, height = 50.dp),
-                            // 来个圆角按钮
-                            shape = RoundedCornerShape(50)
+                        // 这个大小好看点
+                        RoundedCornerButton(
+                            text = "登录", modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
-                            Text(text = "登录", fontSize = 20.sp)
+                            // TODO: 2022/1/17 登录
                         }
                     }
                 }
@@ -86,7 +87,7 @@ class LoginActivity : ComponentActivity() {
  * 登录底部附加功能，注册新账号 + 找回密码
  */
 @Composable
-fun RegisterAndFind() {
+fun RegisterAndFind(fatherActivity: LoginActivity) {
     Box(
         modifier = Modifier
             .padding(bottom = 30.dp)
@@ -94,7 +95,7 @@ fun RegisterAndFind() {
     ) {
         // 注册新账号按钮
         TextButton(
-            onClick = { /*TODO*/ },
+            onClick = { fatherActivity.jumpFromLoginToRegister() },
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 // 对称分布在左侧

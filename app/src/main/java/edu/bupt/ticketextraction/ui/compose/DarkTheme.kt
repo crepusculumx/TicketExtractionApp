@@ -1,9 +1,3 @@
-package edu.bupt.ticketextraction.compose
-
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.mutableStateOf
-
 /**
  * 北京邮电大学创新创业训练项目——出租车发票识别
  *
@@ -11,6 +5,11 @@ import androidx.compose.runtime.mutableStateOf
  *
  * e-mail: wulianzeng@bupt.edu.cn
  */
+package edu.bupt.ticketextraction.ui.compose
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.mutableStateOf
 
 /**
  * 当前是否是夜间模式，默认白天模式：

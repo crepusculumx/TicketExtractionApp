@@ -1,3 +1,10 @@
+/**
+ * 北京邮电大学创新创业训练项目——出租车发票识别
+ *
+ * author 武连增
+ *
+ * e-mail: wulianzeng@bupt.edu.cn
+ */
 package edu.bupt.ticketextraction.main
 
 import android.content.Intent
@@ -20,19 +27,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import edu.bupt.ticketextraction.R
-import edu.bupt.ticketextraction.compose.ActivityBody
-import edu.bupt.ticketextraction.compose.TopBarText
-import edu.bupt.ticketextraction.compose.changeTheme
-import edu.bupt.ticketextraction.compose.isInDarkTheme
+import edu.bupt.ticketextraction.receipt.ReceiptUI
+import edu.bupt.ticketextraction.settings.LoginActivity
+import edu.bupt.ticketextraction.settings.SettingsUI
+import edu.bupt.ticketextraction.ui.compose.ActivityBody
+import edu.bupt.ticketextraction.ui.compose.TopBarText
+import edu.bupt.ticketextraction.ui.compose.changeTheme
+import edu.bupt.ticketextraction.ui.compose.isInDarkTheme
 
 /**
- * 北京邮电大学创新创业训练项目——出租车发票识别
- *
- * author 武连增
- *
- * e-mail: wulianzeng@bupt.edu.cn
+ * APP根Activity
  */
-
 class MainActivity : ComponentActivity() {
     fun jumpFromMainToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
@@ -160,5 +165,24 @@ fun MainFloatingActionButton() {
             // 图片的颜色设置为白色
             tint = Color.White
         )
+    }
+}
+
+/**
+ * MainActivity的TopBar的更多按钮的DropdownMenu的Item，
+ * 具备点击事件，一个图标 + 一个文本
+ */
+@Composable
+fun MainTopMoreDropdownMenuItem(resId: Int, text: String, onClick: () -> Unit) {
+    DropdownMenuItem(onClick = { onClick() }) {
+        Icon(
+            painterResource(id = resId),
+            contentDescription = null,
+            // 原尺寸(24dp)太大，改为20dp再设置5dp的距离
+            modifier = Modifier
+                .size(20.dp)
+                .padding(end = 5.dp)
+        )
+        Text(text = text)
     }
 }

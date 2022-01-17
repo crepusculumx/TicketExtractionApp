@@ -1,9 +1,3 @@
-@file:Suppress("unused")
-
-package edu.bupt.ticketextraction.ui.theme
-
-import androidx.compose.ui.graphics.Color
-
 /**
  * 北京邮电大学创新创业训练项目——出租车发票识别
  *
@@ -11,7 +5,15 @@ import androidx.compose.ui.graphics.Color
  *
  * e-mail: wulianzeng@bupt.edu.cn
  */
+@file:Suppress("unused")
 
+package edu.bupt.ticketextraction.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+/**
+ * 定义所需颜色
+ */
 val Sunset4 = Color(0xFFFFC069)
 val Sunset5 = Color(0xFFFFa940)
 val Sunset6 = Color(0xFFFA8C16)
