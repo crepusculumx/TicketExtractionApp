@@ -29,10 +29,48 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import edu.bupt.ticketextraction.ui.compose.*
 
 /**
- * 本Activity用于处理用户注册，包括两个页面，
- * 一个页面输入手机号和验证码，另一个输入密码和重复输入密码
+ * 本Activity用于处理用户注册和找回密码，包括两个页面，
+ * 第一页输入手机号和验证码，第二页输入密码和重复输入密码
  */
 class RegisterActivity : ComponentActivity() {
+    companion object {
+        /**
+         * 当前是否是注册
+         * true注册 false找回密码
+         */
+        var isRegister = true
+    }
+
+    /**
+     * TopBar的标题名，由是否是注册决定
+     */
+    private val title: String
+
+    /**
+     * password和rePassword的placeholder字符串中是否含有“新”，
+     * 由是否是注册决定
+     */
+    private val placeholderInsert: String
+
+    /**
+     * 第二页提交账号和密码的按钮的文本
+     */
+    private val buttonText: String
+
+    init {
+        if (isRegister) {
+            // 本Activity作为注册使用时
+            title = "注册"
+            placeholderInsert = ""
+            buttonText = "注册"
+        } else {
+            // 本Activity作为找回密码使用时
+            title = "找回密码"
+            placeholderInsert = "新"
+            buttonText = "修改"
+        }
+    }
+
     /**
      * 注册一共有两个页面，一个是输入手机号和验证码，
      * 另一个是输入密码和重复密码，当为true时在第一个页面，
@@ -65,7 +103,7 @@ class RegisterActivity : ComponentActivity() {
                 var isFirstButton by remember { isFirstButton }
                 val navController = rememberAnimatedNavController()
                 Scaffold(topBar = {
-                    TopBarWithTitleAndBack("注册") {
+                    TopBarWithTitleAndBack(title) {
                         // 当位于第一个页面时，结束Activity
                         if (isFirstButton) {
                             finish()
@@ -132,20 +170,20 @@ class RegisterActivity : ComponentActivity() {
                                     // 输入密码
                                     PasswordTextField(
                                         password = password,
-                                        onValueChange = { password = it },
+                                        placeholder = "请输入${placeholderInsert}密码",
                                         modifier = Modifier
                                             .align(Alignment.CenterHorizontally)
                                             .padding(bottom = 30.dp)
-                                    )
+                                    ) { password = it }
                                     // 重新输入密码
                                     PasswordTextField(
                                         password = rePassword,
-                                        onValueChange = { rePassword = it },
+                                        placeholder = "请重复输入${placeholderInsert}密码",
                                         modifier = Modifier.align(Alignment.CenterHorizontally)
-                                    )
+                                    ) { rePassword = it }
                                     // 注册，把参数传递一下
                                     RoundedCornerButton(
-                                        text = "注册", modifier = Modifier
+                                        text = buttonText, modifier = Modifier
                                             .align(Alignment.CenterHorizontally)
                                             .padding(top = 40.dp)
                                             .size(width = 150.dp, height = 100.dp)

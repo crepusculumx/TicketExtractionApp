@@ -16,7 +16,7 @@ import edu.bupt.ticketextraction.ui.theme.TicketExtractionTheme
  * 根据当前主题设置颜色
  */
 @Composable
-fun ActivityBody(content: @Composable () -> Unit) {
+inline fun ActivityBody(crossinline content: @Composable () -> Unit) {
     // 获取当前主题
     val darkTheme = isInDarkTheme()
     TicketExtractionTheme(darkTheme = darkTheme) {

@@ -8,7 +8,6 @@
 package edu.bupt.ticketextraction.settings
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.bupt.ticketextraction.ui.compose.*
+import org.jetbrains.anko.startActivity
 
 /**
  * 此Activity用于处理用户登录，以及可以跳转到注册和找回密码
@@ -31,11 +31,19 @@ class LoginActivity : ComponentActivity() {
     var loginState = false
 
     /**
-     * 从LoginActivity跳转到RegisterActivity
+     * 从LoginActivity跳转到RegisterActivity，注册账号
      */
     fun jumpFromLoginToRegister() {
-        val intent = Intent(this, RegisterActivity::class.java)
-        startActivity(intent)
+        RegisterActivity.isRegister = true
+        startActivity<RegisterActivity>()
+    }
+
+    /**
+     * 从LoginActivity跳转到RegisterActivity，找回密码
+     */
+    fun jumpFromLoginToFindPassword() {
+        RegisterActivity.isRegister = false
+        startActivity<RegisterActivity>()
     }
 
     @SuppressLint("UnrememberedMutableState")
@@ -56,18 +64,17 @@ class LoginActivity : ComponentActivity() {
                         var phoneNumber by remember { mutableStateOf("") }
                         PhoneNumberTextField(
                             phoneNumber = phoneNumber,
-                            onValueChange = { phoneNumber = it },
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(top = 80.dp, bottom = 10.dp)
-                        )
+                        ) { phoneNumber = it }
                         // 密码编辑框
                         var password by remember { mutableStateOf("") }
                         PasswordTextField(
                             password = password,
-                            onValueChange = { password = it },
+                            placeholder = "请输入密码",
                             modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
+                        ) { password = it }
                         // 登录按钮
                         // 这个大小好看点
                         RoundedCornerButton(
@@ -108,7 +115,7 @@ fun RegisterAndFind(fatherActivity: LoginActivity) {
         )
         // 找回密码按钮
         TextButton(
-            onClick = { /*TODO*/ },
+            onClick = { fatherActivity.jumpFromLoginToFindPassword() },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 // 对称分布在右侧

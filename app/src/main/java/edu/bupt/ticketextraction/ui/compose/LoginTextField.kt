@@ -28,14 +28,14 @@ import edu.bupt.ticketextraction.R
  * 输入账号的TextField
  *
  * @param phoneNumber 编辑框修改的文本
- * @param onValueChange 当输入服务更新文本时触发的回调，更新的文本作为回调的参数出现
  * @param modifier 用于让TextField居中，在单独的TextField中没有Modifier.align()
+ * @param onValueChange 当输入服务更新文本时触发的回调，更新的文本作为回调的参数出现
  */
 @Composable
 fun PhoneNumberTextField(
     phoneNumber: String,
+    modifier: Modifier,
     onValueChange: (String) -> Unit,
-    modifier: Modifier
 ) {
     // TODO: 2022/1/17 isError
     TextField(
@@ -65,14 +65,16 @@ fun PhoneNumberTextField(
  * 输入密码的TextField
  *
  * @param password 编辑框修改的文本
- * @param onValueChange 当输入服务更新文本时触发的回调，更新的文本作为回调的参数出现
+ * @param placeholder 没有文本时显示的提示
  * @param modifier 用于让TextField居中，在单独的TextField中没有Modifier.align()
+ * @param onValueChange 当输入服务更新文本时触发的回调，更新的文本作为回调的参数出现
  */
 @Composable
 fun PasswordTextField(
     password: String,
+    placeholder: String,
+    modifier: Modifier,
     onValueChange: (String) -> Unit,
-    modifier: Modifier
 ) {
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
     TextField(
@@ -106,7 +108,7 @@ fun PasswordTextField(
         // 一行内展示
         singleLine = true,
         // 无输入时的提示文本
-        placeholder = { Text("请输入密码") },
+        placeholder = { Text(placeholder) },
         // 密码是否隐藏
         visualTransformation = if (passwordHidden)
             PasswordVisualTransformation()

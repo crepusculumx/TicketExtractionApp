@@ -7,7 +7,6 @@
  */
 package edu.bupt.ticketextraction.main
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,14 +34,14 @@ import edu.bupt.ticketextraction.ui.compose.ActivityBody
 import edu.bupt.ticketextraction.ui.compose.TopBarText
 import edu.bupt.ticketextraction.ui.compose.changeTheme
 import edu.bupt.ticketextraction.ui.compose.isInDarkTheme
+import org.jetbrains.anko.startActivity
 
 /**
  * APP根Activity
  */
 class MainActivity : ComponentActivity() {
     fun jumpFromMainToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
+        startActivity<LoginActivity>()
     }
 
     @ExperimentalFoundationApi
