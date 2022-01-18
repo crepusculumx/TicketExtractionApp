@@ -18,23 +18,22 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /**
  * 除了MainActivity之外的TopAppBar，包括一个标题和一个返回键，标题居中
  *
  * @param title TopAppBar的标题名
+ * @param onClick 返回键点击回调
  */
-@Preview
 @Composable
-fun TopBarWithTitleAndBack(title: String = "发票识别") {
+fun TopBarWithTitleAndBack(title: String = "发票识别", onClick: () -> Unit) {
     TopAppBar(
         title = {
             TopBarText(title = title)
         },
         navigationIcon = {
-            IconButton(onClick = { /* TODO: 2022/1/15 返回上一Activity */  }) {
+            IconButton(onClick = { onClick() }) {
                 Icon(
                     // 图标样式为向左指的箭头 ←
                     Icons.Filled.ArrowBack,

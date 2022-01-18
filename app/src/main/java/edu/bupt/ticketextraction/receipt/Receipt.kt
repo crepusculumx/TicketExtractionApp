@@ -7,7 +7,8 @@
  */
 package edu.bupt.ticketextraction.receipt
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import edu.bupt.ticketextraction.R
  */
 val tickets = mutableListOf<CabTicket>()
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Preview
 @Composable
@@ -40,7 +42,7 @@ fun ReceiptUI() {
     ) {
         // 测试用例
         ListItem(
-            modifier = Modifier.clickable { /* TODO 2022/1/15 */ },
+            modifier = Modifier.combinedClickable(onLongClick = {/* TODO 2022/1/15 */ }) { /* TODO 2022/1/15 */ },
             icon = {
                 Icon(
                     painterResource(id = R.drawable.ic_baseline_receipt_24),
@@ -76,11 +78,12 @@ fun ReceiptUI() {
  *
  * @param ticket 出租车发票
  */
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
 fun ReceiptListItem(ticket: CabTicket) {
     ListItem(
-        modifier = Modifier.clickable { /* TODO 2022/1/15 跳转到发票详细信息 */ },
+        modifier = Modifier.combinedClickable(onLongClick = {/* TODO 2022/1/15 */ }) { /* TODO 2022/1/15 跳转到发票详细信息 */ },
         icon = {
             // TODO: 2022/1/15 把发票缩略图放在这里
             Icon(

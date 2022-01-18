@@ -14,8 +14,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -47,26 +46,26 @@ class LoginActivity : ComponentActivity() {
             ActivityBody {
                 Scaffold(
                     // 顶栏，返回键 + 登录标题
-                    topBar = { TopBarWithTitleAndBack(title = "登录") },
+                    topBar = { TopBarWithTitleAndBack(title = "登录") { finish() } },
                     // 底栏，注册账号 + 找回密码
                     bottomBar = {
                         RegisterAndFind(this@LoginActivity)
                     }) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         // 手机号编辑框
-                        val phoneNumber = mutableStateOf("")
+                        var phoneNumber by remember { mutableStateOf("") }
                         PhoneNumberTextField(
                             phoneNumber = phoneNumber,
-                            onValueChange = { phoneNumber.value = it },
+                            onValueChange = { phoneNumber = it },
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(top = 80.dp, bottom = 10.dp)
                         )
                         // 密码编辑框
-                        val password = mutableStateOf("")
+                        var password by remember { mutableStateOf("") }
                         PasswordTextField(
                             password = password,
-                            onValueChange = { password.value = it },
+                            onValueChange = { password = it },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                         // 登录按钮

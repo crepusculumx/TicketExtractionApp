@@ -12,8 +12,11 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,13 +33,13 @@ import edu.bupt.ticketextraction.R
  */
 @Composable
 fun PhoneNumberTextField(
-    phoneNumber: MutableState<String>,
+    phoneNumber: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier
 ) {
     // TODO: 2022/1/17 isError
     TextField(
-        value = phoneNumber.value,
+        value = phoneNumber,
         onValueChange = { onValueChange(it) },
         // TextField设置居中
         modifier = modifier,
@@ -67,14 +70,14 @@ fun PhoneNumberTextField(
  */
 @Composable
 fun PasswordTextField(
-    password: MutableState<String>,
+    password: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier
 ) {
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
     TextField(
         // TODO: 2022/1/17 isError
-        value = password.value,
+        value = password,
         // 为了代码复用，必须把password传进来，又因为函数式编程，还得定义一个回调在外面修改ToT
         onValueChange = { onValueChange(it) },
         // TextField设置居中，必须得从Column或Row或者其他能设置的地方传进来，TextField Modifier没这个属性

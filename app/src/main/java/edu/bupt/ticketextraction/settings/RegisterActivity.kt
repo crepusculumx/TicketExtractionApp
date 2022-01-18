@@ -9,6 +9,7 @@ package edu.bupt.ticketextraction.settings
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -32,25 +33,58 @@ import edu.bupt.ticketextraction.ui.compose.*
  * 一个页面输入手机号和验证码，另一个输入密码和重复输入密码
  */
 class RegisterActivity : ComponentActivity() {
-    // TODO: 2022/1/17 这里活动的返回键需要自定义一下，主要是在第二个页面返回应该到第一个页面
+    /**
+     * 注册一共有两个页面，一个是输入手机号和验证码，
+     * 另一个是输入密码和重复密码，当为true时在第一个页面，
+     * false时在第二个页面
+     */
+    private var isFirstButton = mutableStateOf(true)
+
+    /**
+     * 为了处理点击底部返回键覆写一下
+     */
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        // 当用户点击底部返回按钮时
+        // 如果在第二个页面，即isFirstButton.value为false时
+        // 修改为true，剩下的交给super
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (!isFirstButton.value) {
+                isFirstButton.value = true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
     @SuppressLint("UnrememberedMutableState")
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ActivityBody {
-                Scaffold(topBar = { TopBarWithTitleAndBack("注册") }) {
-                    // 当前是否位于第一个页面
-                    var isFirstButton by remember { mutableStateOf(true) }
+                // 当前是否位于第一个页面
+                var isFirstButton by remember { isFirstButton }
+                val navController = rememberAnimatedNavController()
+                Scaffold(topBar = {
+                    TopBarWithTitleAndBack("注册") {
+                        // 当位于第一个页面时，结束Activity
+                        if (isFirstButton) {
+                            finish()
+                        } else {
+                            // 当位于第二个页面时，跳转到第一个页面
+                            isFirstButton = true
+                            navController.popBackStack()
+                        }
+                    }
+                }) {
                     // 注册的手机号
-                    val phoneNumber = mutableStateOf("")
+                    var phoneNumber by remember { mutableStateOf("") }
                     // 注册的密码
-                    val password = mutableStateOf("")
+                    var password by remember { mutableStateOf("") }
                     // 重复密码
-                    val rePassword = mutableStateOf("")
-                    val navController = rememberAnimatedNavController()
+                    var rePassword by remember { mutableStateOf("") }
                     Box(modifier = Modifier.fillMaxHeight()) {
-                        AnimatedNavHost(navController = navController,
+                        AnimatedNavHost(
+                            navController = navController,
                             startDestination = "1",
                             modifier = Modifier.align(Alignment.TopCenter),
                             // 进入动画，从屏幕右边加载到中间
@@ -68,10 +102,11 @@ class RegisterActivity : ComponentActivity() {
                                         .fillMaxWidth()
                                         .padding(top = 80.dp)
                                 ) {
+                                    var phoneNumberCopy by remember { mutableStateOf("") }
                                     // 输入手机号的编辑框
                                     PhoneNumberTextField(
-                                        phoneNumber = phoneNumber,
-                                        onValueChange = { phoneNumber.value = it },
+                                        phoneNumber = phoneNumberCopy,
+                                        onValueChange = { phoneNumberCopy = it },
                                         modifier = Modifier.align(Alignment.CenterHorizontally)
                                     )
                                     // 到下一步输入密码和重复密码的按钮
@@ -84,6 +119,7 @@ class RegisterActivity : ComponentActivity() {
                                         // 导航到2页面去，即输入密码和重复密码
                                         navController.navigate("2")
                                         isFirstButton = false
+                                        phoneNumber = phoneNumberCopy
                                     }
                                 }
                             }
@@ -96,7 +132,7 @@ class RegisterActivity : ComponentActivity() {
                                     // 输入密码
                                     PasswordTextField(
                                         password = password,
-                                        onValueChange = { password.value = it },
+                                        onValueChange = { password = it },
                                         modifier = Modifier
                                             .align(Alignment.CenterHorizontally)
                                             .padding(bottom = 30.dp)
@@ -104,7 +140,7 @@ class RegisterActivity : ComponentActivity() {
                                     // 重新输入密码
                                     PasswordTextField(
                                         password = rePassword,
-                                        onValueChange = { rePassword.value = it },
+                                        onValueChange = { rePassword = it },
                                         modifier = Modifier.align(Alignment.CenterHorizontally)
                                     )
                                     // 注册，把参数传递一下

@@ -22,7 +22,7 @@ class ReceiptActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ActivityBody {
-                Scaffold(topBar = { TopBarWithTitleAndBack("发票信息") }) {
+                Scaffold(topBar = { TopBarWithTitleAndBack("发票信息") { finish() } }) {
 
                 }
             }
