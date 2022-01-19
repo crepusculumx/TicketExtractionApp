@@ -32,6 +32,8 @@
         <activity android:name=".receipt.ReceiptActivity" />
         <activity android:name=".settings.LoginActivity" />
         <activity android:name=".settings.RegisterActivity" />
+        <activity android:name=".settings.PersonInfoActivity" />
+        <activity android:name=".settings.AboutUsActivity" />
         <activity android:name=".email.EmailActivity" />
     </application>
 

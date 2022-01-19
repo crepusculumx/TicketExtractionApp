@@ -130,7 +130,7 @@ fun RegisterAndFind(fatherActivity: LoginActivity) {
  * @param text 文本内容
  */
 @Composable
-fun BottomTextButtonText(text: String) {
+private fun BottomTextButtonText(text: String) {
     Text(
         text = text,
         fontSize = 16.sp,

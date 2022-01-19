@@ -205,41 +205,68 @@ class RegisterActivity : ComponentActivity() {
     }
 }
 
+/**
+ * 底部两个导航按钮
+ *
+ * @param isFirstButton 当前是否是第一个按钮被选中
+ * @param modifier 让按钮在底部居中的位置
+ */
 @Composable
-fun NavigationButtons(isFirstButton: Boolean, modifier: Modifier) {
-    val materialColor = MaterialTheme.colors
-    val pressedColors = ButtonDefaults.buttonColors(disabledBackgroundColor = materialColor.primary)
-    val notPressedColors = ButtonDefaults.buttonColors()
+private fun NavigationButtons(isFirstButton: Boolean, modifier: Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 150.dp)
     ) {
-        Button(
-            onClick = { },
-            enabled = false,
+        // 按钮1，表明正处于第一步
+        NavigationButton(
+            isFirstButton = isFirstButton,
+            // 写个1上去
+            text = "1",
+            // 分布在左侧
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 80.dp),
-            shape = RoundedCornerShape(100),
-            colors = if (isFirstButton)
-                pressedColors
-            else notPressedColors
-        ) {
-            Text(text = "1", fontSize = 22.sp)
-        }
-        Button(
-            onClick = { },
-            enabled = false,
+                .padding(start = 80.dp)
+        )
+        // 按钮2，表明正处于第二步
+        NavigationButton(
+            isFirstButton = !isFirstButton,
+            // 写个2上去
+            text = "2",
+            // 分布在右侧
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 80.dp),
-            shape = RoundedCornerShape(100),
-            colors = if (isFirstButton)
-                notPressedColors
-            else pressedColors
-        ) {
-            Text(text = "2", fontSize = 22.sp)
-        }
+                .padding(end = 80.dp)
+        )
+    }
+}
+
+/**
+ * 单个导航按钮
+ *
+ * @param isFirstButton 当前是否是第一个按钮被选中
+ * @param text 按钮文本
+ * @param modifier 把按钮放在合适的位置上
+ */
+@Composable
+fun NavigationButton(isFirstButton: Boolean, text: String, modifier: Modifier) {
+    val pressedColors =
+        ButtonDefaults.buttonColors(disabledBackgroundColor = MaterialTheme.colors.primary)
+    val notPressedColors = ButtonDefaults.buttonColors()
+    Button(
+        // 由于按钮不可点击所以回调为空
+        onClick = { },
+        // 按钮不可点击
+        enabled = false,
+        // 分布好看点
+        modifier = modifier,
+        // 圆形按钮
+        shape = RoundedCornerShape(100),
+        // 根据是否被选择来选择颜色
+        colors = if (isFirstButton)
+            pressedColors
+        else notPressedColors
+    ) {
+        Text(text = text, fontSize = 22.sp)
     }
 }

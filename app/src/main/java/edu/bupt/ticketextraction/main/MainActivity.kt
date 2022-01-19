@@ -27,7 +27,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import edu.bupt.ticketextraction.R
+import edu.bupt.ticketextraction.receipt.CabTicket
+import edu.bupt.ticketextraction.receipt.ReceiptActivity
 import edu.bupt.ticketextraction.receipt.ReceiptUI
+import edu.bupt.ticketextraction.settings.AboutUsActivity
 import edu.bupt.ticketextraction.settings.LoginActivity
 import edu.bupt.ticketextraction.settings.SettingsUI
 import edu.bupt.ticketextraction.ui.compose.ActivityBody
@@ -40,8 +43,25 @@ import org.jetbrains.anko.startActivity
  * APP根Activity
  */
 class MainActivity : ComponentActivity() {
+    /**
+     * 从MainActivity跳转到LoginActivity
+     */
     fun jumpFromMainToLogin() {
         startActivity<LoginActivity>()
+    }
+
+    /**
+     * 从MainActivity跳转到ReceiptActivity
+     */
+    fun jumpFromMainToReceipt(ticket: CabTicket) {
+        startActivity<ReceiptActivity>(Pair(ReceiptActivity.TICKET_INTENT, ticket))
+    }
+
+    /**
+     * 从MainActivity跳转到LoginActivity
+     */
+    fun jumpFromMainToAboutUs() {
+        startActivity<AboutUsActivity>()
     }
 
     @ExperimentalFoundationApi
@@ -73,7 +93,7 @@ class MainActivity : ComponentActivity() {
                             navControllers,
                             startDestination = MainBottomNavItem.Receipt.route
                         ) {
-                            composable(MainBottomNavItem.Receipt.route) { ReceiptUI() }
+                            composable(MainBottomNavItem.Receipt.route) { ReceiptUI(this@MainActivity) }
                             composable(MainBottomNavItem.Settings.route) { SettingsUI(this@MainActivity) }
                         }
                     }
@@ -84,7 +104,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainTopBar(darkTheme: Boolean = false, darkThemeOnClick: () -> Unit) {
+private fun MainTopBar(darkTheme: Boolean = false, darkThemeOnClick: () -> Unit) {
     TopAppBar(
         title = {
             TopBarText(isMain = true)
@@ -119,7 +139,7 @@ fun MainTopBar(darkTheme: Boolean = false, darkThemeOnClick: () -> Unit) {
 }
 
 @Composable
-fun MainBottomBar(navControllers: NavHostController) {
+private fun MainBottomBar(navControllers: NavHostController) {
     var selectedItem by remember { mutableStateOf(0) }
     val items = listOf(MainBottomNavItem.Receipt, MainBottomNavItem.Settings)
     BottomAppBar(cutoutShape = RoundedCornerShape(80.dp)) {
@@ -152,7 +172,7 @@ fun MainBottomBar(navControllers: NavHostController) {
 }
 
 @Composable
-fun MainFloatingActionButton() {
+private fun MainFloatingActionButton() {
     FloatingActionButton(
         onClick = {
             // TODO: 2022/1/14 调用相机
@@ -174,7 +194,7 @@ fun MainFloatingActionButton() {
  * 具备点击事件，一个图标 + 一个文本
  */
 @Composable
-fun MainTopMoreDropdownMenuItem(resId: Int, text: String, onClick: () -> Unit) {
+private fun MainTopMoreDropdownMenuItem(resId: Int, text: String, onClick: () -> Unit) {
     DropdownMenuItem(onClick = { onClick() }) {
         Icon(
             painterResource(id = resId),

@@ -46,7 +46,7 @@ fun SettingsUI(fatherActivity: MainActivity) {
             // TODO: 2022/1/15
         }
         SettingsListItem("关于我们") {
-            // TODO: 2022/1/15
+            fatherActivity.jumpFromMainToAboutUs()
         }
         SettingsListItem("访问网页端") {
             // TODO: 2022/1/15
@@ -62,7 +62,7 @@ fun SettingsUI(fatherActivity: MainActivity) {
  */
 @Composable
 @ExperimentalMaterialApi
-fun SettingsListItem(text: String, onClick: () -> Unit) {
+private fun SettingsListItem(text: String, onClick: () -> Unit) {
     ListItem(Modifier.clickable {
         onClick()
     }) {
