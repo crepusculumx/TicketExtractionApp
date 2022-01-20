@@ -37,7 +37,13 @@ fun SettingsUI(fatherActivity: MainActivity) {
             .fillMaxWidth()
     ) {
         SettingsListItem("账号管理") {
-            fatherActivity.jumpFromMainToLogin()
+            // 登录成功跳转到个人信息
+            // 未登录跳转到登录界面
+            if (LoginActivity.loginState) {
+                fatherActivity.jumpFromMainToPersonInfo()
+            } else {
+                fatherActivity.jumpFromMainToLogin()
+            }
         }
         SettingsListItem("检查更新") {
             // TODO: 2022/1/15
@@ -63,9 +69,7 @@ fun SettingsUI(fatherActivity: MainActivity) {
 @Composable
 @ExperimentalMaterialApi
 private fun SettingsListItem(text: String, onClick: () -> Unit) {
-    ListItem(Modifier.clickable {
-        onClick()
-    }) {
+    ListItem(Modifier.clickable { onClick() }) {
         Text(
             text = text,
             Modifier.padding(vertical = 10.dp),

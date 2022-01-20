@@ -27,11 +27,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import edu.bupt.ticketextraction.R
+import edu.bupt.ticketextraction.email.EmailActivity
 import edu.bupt.ticketextraction.receipt.CabTicket
 import edu.bupt.ticketextraction.receipt.ReceiptActivity
 import edu.bupt.ticketextraction.receipt.ReceiptUI
 import edu.bupt.ticketextraction.settings.AboutUsActivity
 import edu.bupt.ticketextraction.settings.LoginActivity
+import edu.bupt.ticketextraction.settings.PersonInfoActivity
 import edu.bupt.ticketextraction.settings.SettingsUI
 import edu.bupt.ticketextraction.ui.compose.ActivityBody
 import edu.bupt.ticketextraction.ui.compose.TopBarText
@@ -64,6 +66,20 @@ class MainActivity : ComponentActivity() {
         startActivity<AboutUsActivity>()
     }
 
+    /**
+     * 从MainActivity跳转到EmailActivity
+     */
+    fun jumpFromMainToEmail() {
+        startActivity<EmailActivity>()
+    }
+
+    /**
+     * 从MainActivity跳转到PersonInfoActivity
+     */
+    fun jumpFromMainToPersonInfo() {
+        startActivity<PersonInfoActivity>()
+    }
+
     @ExperimentalFoundationApi
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,7 +90,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     // 顶部栏
                     topBar = {
-                        MainTopBar(isInDarkTheme()) { changeTheme() }
+                        MainTopBar(this, isInDarkTheme()) { changeTheme() }
                     },
                     // 底部栏
                     bottomBar = {
@@ -103,8 +119,19 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * MainActivity的TopBar
+ *
+ * @param fatherActivity 父Activity
+ * @param darkTheme 当前是否是夜间模式
+ * @param darkThemeOnClick 模式切换点击回调
+ */
 @Composable
-private fun MainTopBar(darkTheme: Boolean = false, darkThemeOnClick: () -> Unit) {
+private fun MainTopBar(
+    fatherActivity: MainActivity,
+    darkTheme: Boolean = false,
+    darkThemeOnClick: () -> Unit
+) {
     TopAppBar(
         title = {
             TopBarText(isMain = true)
@@ -128,7 +155,7 @@ private fun MainTopBar(darkTheme: Boolean = false, darkThemeOnClick: () -> Unit)
                     darkThemeOnClick()
                 }
                 MainTopMoreDropdownMenuItem(resId = R.drawable.ic_baseline_email_24, text = "导出") {
-                    // TODO: 2022/1/15
+                    fatherActivity.jumpFromMainToEmail()
                 }
                 MainTopMoreDropdownMenuItem(resId = R.drawable.ic_baseline_help_24, text = "使用说明") {
                     // TODO: 2022/1/15
@@ -138,6 +165,11 @@ private fun MainTopBar(darkTheme: Boolean = false, darkThemeOnClick: () -> Unit)
     )
 }
 
+/**
+ * MainActivity的BottomBar
+ *
+ * @param navControllers 导航Controller
+ */
 @Composable
 private fun MainBottomBar(navControllers: NavHostController) {
     var selectedItem by remember { mutableStateOf(0) }
@@ -171,6 +203,9 @@ private fun MainBottomBar(navControllers: NavHostController) {
     }
 }
 
+/**
+ * MainActivity的悬浮按钮，用于拍照
+ */
 @Composable
 private fun MainFloatingActionButton() {
     FloatingActionButton(

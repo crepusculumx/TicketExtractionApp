@@ -9,6 +9,7 @@ package edu.bupt.ticketextraction.settings
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import edu.bupt.ticketextraction.network.login
 import edu.bupt.ticketextraction.ui.compose.*
 import org.jetbrains.anko.startActivity
 
@@ -25,10 +27,17 @@ import org.jetbrains.anko.startActivity
  * 此Activity用于处理用户登录，以及可以跳转到注册和找回密码
  */
 class LoginActivity : ComponentActivity() {
-    /**
-     * 登录状态，true为已登录
-     */
-    var loginState = false
+    companion object {
+        /**
+         * 登录状态，true为已登录
+         */
+        var loginState = false
+
+        /**
+         * 当前登录的手机号
+         */
+        var curPhoneNumber = ""
+    }
 
     /**
      * 从LoginActivity跳转到RegisterActivity，注册账号
@@ -81,6 +90,17 @@ class LoginActivity : ComponentActivity() {
                             text = "登录", modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
                             // TODO: 2022/1/17 登录
+                            if (login(phoneNumber, password)) {
+                                loginState = true
+                                curPhoneNumber = phoneNumber
+                                Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT)
+                                    .show()
+                                // 登录成功结束本Activity
+                                finish()
+                            } else {
+                                Toast.makeText(this@LoginActivity, "登录失败", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
                         }
                     }
                 }

@@ -26,7 +26,16 @@ import edu.bupt.ticketextraction.main.MainActivity
 /**
  * 保存所有发票信息
  */
-val tickets = mutableListOf<CabTicket>()
+val tickets = mutableListOf<CabTicket>(
+    // 测试用例
+    CabTicket(
+        invoiceCode = "123",
+        invoiceNumber = "456",
+        totalFare = "114514",
+        distance = "66.0",
+        date = "2022.1.19"
+    )
+)
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
@@ -34,15 +43,6 @@ val tickets = mutableListOf<CabTicket>()
 fun ReceiptUI(fatherActivity: MainActivity) {
     // 为此页面加入滚动条，票据肯定会很多，需要上下拉页面
     val scrollState = rememberScrollState()
-    // 测试用例
-    val ticket = CabTicket(
-        invoiceCode = "123",
-        invoiceNumber = "456",
-        totalFare = "114514",
-        distance = "66.0",
-        date = "2022.1.19"
-    )
-    tickets.add(ticket)
     Column(
         Modifier
             .verticalScroll(scrollState)
