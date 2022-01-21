@@ -39,6 +39,7 @@ import edu.bupt.ticketextraction.ui.compose.ActivityBody
 import edu.bupt.ticketextraction.ui.compose.TopBarText
 import edu.bupt.ticketextraction.ui.compose.changeTheme
 import edu.bupt.ticketextraction.ui.compose.isInDarkTheme
+import edu.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
 import org.jetbrains.anko.startActivity
 
 /**
@@ -116,6 +117,14 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+        initVars()
+    }
+
+    /**
+     * 初始化一些共享变量
+     */
+    private fun initVars() {
+        EXTERNAL_FILE_DIR = getExternalFilesDir(null)!!.absolutePath
     }
 }
 

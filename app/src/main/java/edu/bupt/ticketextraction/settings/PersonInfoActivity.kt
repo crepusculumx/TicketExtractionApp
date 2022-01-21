@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import edu.bupt.ticketextraction.R
 import edu.bupt.ticketextraction.ui.compose.ActivityBody
 import edu.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
+import org.jetbrains.anko.startActivity
 
 /**
  * 展示个人信息的Activity
@@ -41,17 +42,21 @@ class PersonInfoActivity : ComponentActivity() {
                         // 用一个空的文本框占一下位
                         Text("", modifier = Modifier.size(5.dp))
                         Divider()
+
                         PersonInfoListItem("联系人管理", Modifier.align(ch)) {
                             // TODO: 2022/1/20 跳转到联系人
                         }
                         PersonInfoListItem("导出模板管理", Modifier.align(ch)) {
                             // TODO: 2022/1/20 跳转到模板
                         }
+
                         // 用一个空的文本框占一下位
                         Text("", modifier = Modifier.size(30.dp))
                         Divider()
+
                         PersonInfoListItem("修改密码", Modifier.align(ch)) {
-                            // TODO: 2022/1/20 修改密码
+                            // 跳转到ChangePassword
+                            startActivity<ChangePasswordActivity>()
                         }
                         PersonInfoListItem(text = "注销", Modifier.align(ch)) {
                             // 登录状态设为否，登录手机号设为空

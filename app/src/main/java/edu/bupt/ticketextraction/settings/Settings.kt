@@ -7,6 +7,8 @@
  */
 package edu.bupt.ticketextraction.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.bupt.ticketextraction.main.MainActivity
+
+/**
+ * web端网址
+ */
+private const val webAddress = "https://www.baidu.com"
 
 /**
  * MainActivity中设置页面的UI
@@ -55,7 +62,10 @@ fun SettingsUI(fatherActivity: MainActivity) {
             fatherActivity.jumpFromMainToAboutUs()
         }
         SettingsListItem("访问网页端") {
-            // TODO: 2022/1/15
+            val intent = Intent(Intent.ACTION_VIEW)
+            val uri = Uri.parse(webAddress)
+            intent.data = uri
+            fatherActivity.startActivity(intent)
         }
     }
 }
