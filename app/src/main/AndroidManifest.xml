@@ -36,6 +36,16 @@
         <activity android:name=".settings.AboutUsActivity" />
         <activity android:name=".settings.ChangePasswordActivity" />
         <activity android:name=".email.EmailActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="edu.bupt.ticketextraction.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-files-path
+        name="my_sources"
+        path="Android/data/edu.bupt.ticketextraction/files" />
+    <!--suppress AndroidElementNotAllowed -->
+    <root-path
+        name="root_path"
+        path="." />
+</paths>

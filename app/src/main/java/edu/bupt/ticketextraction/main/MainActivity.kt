@@ -28,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import edu.bupt.ticketextraction.R
 import edu.bupt.ticketextraction.email.EmailActivity
+import edu.bupt.ticketextraction.network.ocr.setAccessToken
 import edu.bupt.ticketextraction.receipt.CabTicket
 import edu.bupt.ticketextraction.receipt.ReceiptActivity
 import edu.bupt.ticketextraction.receipt.ReceiptUI
@@ -40,12 +41,21 @@ import edu.bupt.ticketextraction.ui.compose.TopBarText
 import edu.bupt.ticketextraction.ui.compose.changeTheme
 import edu.bupt.ticketextraction.ui.compose.isInDarkTheme
 import edu.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
+
 
 /**
  * APP根Activity
  */
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
+    /**
+     * 相机，用于拍照录视频
+     */
+    private val camera = Camera(this)
+
     /**
      * 从MainActivity跳转到LoginActivity
      */
@@ -85,6 +95,10 @@ class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 启动协程获取assess_token
+        launch {
+            setAccessToken()
+        }
         setContent {
             ActivityBody {
                 val navControllers = rememberNavController()
@@ -99,7 +113,7 @@ class MainActivity : ComponentActivity() {
                     },
                     // 底部栏的圆形浮动按钮
                     floatingActionButton = {
-                        MainFloatingActionButton()
+                        MainFloatingActionButton(camera)
                     },
                     // FAB嵌入到底部导航栏中
                     isFloatingActionButtonDocked = true,
@@ -216,10 +230,10 @@ private fun MainBottomBar(navControllers: NavHostController) {
  * MainActivity的悬浮按钮，用于拍照
  */
 @Composable
-private fun MainFloatingActionButton() {
+private fun MainFloatingActionButton(camera: Camera) {
     FloatingActionButton(
         onClick = {
-            // TODO: 2022/1/14 调用相机
+            camera.captureImage()
         },
         Modifier.size(80.dp),
     ) {
