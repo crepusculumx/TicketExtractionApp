@@ -5,6 +5,7 @@
  *
  * e-mail: wulianzeng@bupt.edu.cn
  */
+
 package edu.bupt.ticketextraction.main
 
 import android.os.Bundle
@@ -43,6 +44,7 @@ import edu.bupt.ticketextraction.ui.compose.isInDarkTheme
 import edu.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 
@@ -50,6 +52,7 @@ import org.jetbrains.anko.startActivity
 /**
  * APP根Activity
  */
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
     /**
      * 相机，用于拍照录视频
@@ -91,8 +94,6 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
         startActivity<PersonInfoActivity>()
     }
 
-    @ExperimentalFoundationApi
-    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 启动协程获取assess_token
@@ -132,6 +133,12 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
             }
         }
         initVars()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 在MainActivity生命周期结束时销毁所有协程
+        cancel()
     }
 
     /**

@@ -16,7 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import edu.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
-import edu.bupt.ticketextraction.utils.createFileIfNotExsits
+import edu.bupt.ticketextraction.utils.createFileIfNotExists
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -69,7 +69,7 @@ class Camera(private val fatherActivity: MainActivity) {
         fatherActivity.packageManager?.let {
             // 创建文件
             val imageFile =
-                createFileIfNotExsits("${EXTERNAL_FILE_DIR}/images/IMG_${createTimeStamp()}.jpg")
+                createFileIfNotExists("${EXTERNAL_FILE_DIR}/images/IMG_${createTimeStamp()}.jpg")
             val uri: Uri = FileProvider.getUriForFile(
                 fatherActivity,
                 "edu.bupt.ticketextraction.FileProvider",
@@ -94,7 +94,7 @@ class Camera(private val fatherActivity: MainActivity) {
         fatherActivity.packageManager?.let {
             // 创建文件
             val videoFile =
-                createFileIfNotExsits("${EXTERNAL_FILE_DIR}/videos/VIDEO_${createTimeStamp()}.mp4")
+                createFileIfNotExists("${EXTERNAL_FILE_DIR}/videos/VIDEO_${createTimeStamp()}.mp4")
             val uri: Uri = FileProvider.getUriForFile(
                 fatherActivity,
                 "edu.bupt.ticketextraction.FileProvider",
