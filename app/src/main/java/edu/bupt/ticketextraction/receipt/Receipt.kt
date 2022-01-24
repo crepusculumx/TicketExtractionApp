@@ -7,6 +7,7 @@
  */
 package edu.bupt.ticketextraction.receipt
 
+import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
@@ -26,7 +27,7 @@ import edu.bupt.ticketextraction.main.MainActivity
 /**
  * 保存所有发票信息
  */
-val tickets = mutableListOf<CabTicket>(
+val tickets = mutableListOf(
     // 测试用例
     CabTicket(
         invoiceCode = "123",
@@ -56,6 +57,18 @@ fun ReceiptUI(fatherActivity: MainActivity) {
 }
 
 /**
+ * 从MainActivity跳转到ReceiptActivity
+ *
+ * @param ticket 跳转到的票据
+ * @receiver MainActivity
+ */
+fun MainActivity.jumpToReceipt(ticket: CabTicket) {
+    val intent = Intent(this, ReceiptActivity::class.java)
+    intent.putExtra(ReceiptActivity.TICKET_INTENT, ticket)
+    startActivity(intent)
+}
+
+/**
  * 出租车发票缩略信息展示，包括缩略图、里程、日期和总费用
  *
  * @param ticket 出租车发票
@@ -68,7 +81,7 @@ private fun ReceiptListItem(ticket: CabTicket, fatherActivity: MainActivity) {
     ListItem(
         // 长按可以删除、验真，点击则跳转到详细信息
         modifier = Modifier.combinedClickable(onLongClick = {/* TODO 2022/1/15 删除 验真 */ }) {
-            fatherActivity.jumpFromMainToReceipt(ticket)
+            fatherActivity.jumpToReceipt(ticket)
         },
         icon = {
             // TODO: 2022/1/15 把发票缩略图放在这里

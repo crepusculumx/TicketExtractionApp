@@ -8,6 +8,7 @@
 
 package edu.bupt.ticketextraction.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,12 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import edu.bupt.ticketextraction.R
 import edu.bupt.ticketextraction.email.EmailActivity
 import edu.bupt.ticketextraction.network.ocr.setAccessToken
-import edu.bupt.ticketextraction.receipt.CabTicket
-import edu.bupt.ticketextraction.receipt.ReceiptActivity
 import edu.bupt.ticketextraction.receipt.ReceiptUI
-import edu.bupt.ticketextraction.settings.AboutUsActivity
-import edu.bupt.ticketextraction.settings.LoginActivity
-import edu.bupt.ticketextraction.settings.PersonInfoActivity
 import edu.bupt.ticketextraction.settings.SettingsUI
 import edu.bupt.ticketextraction.ui.compose.ActivityBody
 import edu.bupt.ticketextraction.ui.compose.TopBarText
@@ -46,7 +42,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.startActivity
 
 
 /**
@@ -60,38 +55,11 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
     private val camera = Camera(this)
 
     /**
-     * 从MainActivity跳转到LoginActivity
-     */
-    fun jumpFromMainToLogin() {
-        startActivity<LoginActivity>()
-    }
-
-    /**
-     * 从MainActivity跳转到ReceiptActivity
-     */
-    fun jumpFromMainToReceipt(ticket: CabTicket) {
-        startActivity<ReceiptActivity>(Pair(ReceiptActivity.TICKET_INTENT, ticket))
-    }
-
-    /**
-     * 从MainActivity跳转到LoginActivity
-     */
-    fun jumpFromMainToAboutUs() {
-        startActivity<AboutUsActivity>()
-    }
-
-    /**
      * 从MainActivity跳转到EmailActivity
      */
     fun jumpFromMainToEmail() {
-        startActivity<EmailActivity>()
-    }
-
-    /**
-     * 从MainActivity跳转到PersonInfoActivity
-     */
-    fun jumpFromMainToPersonInfo() {
-        startActivity<PersonInfoActivity>()
+        val intent = Intent(this, EmailActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

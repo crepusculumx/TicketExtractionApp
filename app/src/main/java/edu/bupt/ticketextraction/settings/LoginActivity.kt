@@ -8,25 +8,32 @@
 package edu.bupt.ticketextraction.settings
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import edu.bupt.ticketextraction.network.login
 import edu.bupt.ticketextraction.ui.compose.*
-import org.jetbrains.anko.startActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 
 /**
  * 此Activity用于处理用户登录，以及可以跳转到注册和找回密码
  */
-class LoginActivity : ComponentActivity() {
+class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
     companion object {
         /**
          * 登录状态，true为已登录
@@ -44,7 +51,8 @@ class LoginActivity : ComponentActivity() {
      */
     fun jumpFromLoginToRegister() {
         RegisterActivity.isRegister = true
-        startActivity<RegisterActivity>()
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivity(intent)
     }
 
     /**
@@ -52,7 +60,8 @@ class LoginActivity : ComponentActivity() {
      */
     fun jumpFromLoginToFindPassword() {
         RegisterActivity.isRegister = false
-        startActivity<RegisterActivity>()
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivity(intent)
     }
 
     @SuppressLint("UnrememberedMutableState")
@@ -69,6 +78,7 @@ class LoginActivity : ComponentActivity() {
                         RegisterAndFind(this@LoginActivity)
                     }) {
                     Column(modifier = Modifier.fillMaxWidth()) {
+                        var dialogIsShow by remember { mutableStateOf(false) }
                         // 手机号编辑框
                         var phoneNumber by remember { mutableStateOf("") }
                         PhoneNumberTextField(
@@ -90,22 +100,41 @@ class LoginActivity : ComponentActivity() {
                             text = "登录", modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
                             // TODO: 2022/1/17 登录
-                            if (login(phoneNumber, password)) {
-                                loginState = true
-                                curPhoneNumber = phoneNumber
-                                Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT)
-                                    .show()
-                                // 登录成功结束本Activity
-                                finish()
-                            } else {
-                                Toast.makeText(this@LoginActivity, "登录失败", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
+//                            launch {
+//                                val deferred = async { return@async login(phoneNumber, password) }
+//                                when (deferred.await()) {
+//                                    1 -> {
+//                                        loginState = true
+//                                        curPhoneNumber = phoneNumber
+//                                        Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT)
+//                                            .show()
+//                                        // 登录成功结束本Activity
+//                                        finish()
+//                                    }
+//                                    0 -> {
+//                                        Toast.makeText(this@LoginActivity, "密码错误！", Toast.LENGTH_SHORT).show()
+//                                    }
+//                                    -1 -> {
+//                                        Toast.makeText(this@LoginActivity, "手机号不存在！", Toast.LENGTH_SHORT).show()
+//                                    }
+//                                    else -> assert(false)
+//                                }
+//                            }
+                            dialogIsShow = true
+                        }
+                        if (dialogIsShow) {
+                            ProgressDialog("正在登录中···") { dialogIsShow = false }
                         }
                     }
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 在LoginActivity生命周期结束时销毁所有协程
+        cancel()
     }
 }
 

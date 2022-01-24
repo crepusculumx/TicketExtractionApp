@@ -15,8 +15,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import edu.bupt.ticketextraction.network.ocr.extract
 import edu.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
 import edu.bupt.ticketextraction.utils.createFileIfNotExists
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,6 +31,29 @@ private const val START_CAMERA = 1
  * 相机类，可以拍照录视频
  */
 class Camera(private val fatherActivity: MainActivity) {
+    /**
+     * 启动器必须先注册
+     */
+    private val pictureLauncher = fatherActivity.registerForActivityResult(ActivityResultContracts.TakePicture()) {
+        if (it) {
+            // TODO: 2022/1/22 识别图片
+            Log.e("camera", "picture")
+            fatherActivity.launch {
+                withContext(Dispatchers.IO) {
+                    extract(curImageFile!!)
+                }
+            }
+        } else {
+            // 失败的话就删除图片文件
+            curImageFile!!.delete()
+        }
+    }
+
+    /**
+     * 当前图片文件
+     */
+    private var curImageFile: File? = null
+
     /**
      * 启动相机捕获照片
      */
@@ -75,15 +103,8 @@ class Camera(private val fatherActivity: MainActivity) {
                 "edu.bupt.ticketextraction.FileProvider",
                 imageFile
             )
-            fatherActivity.registerForActivityResult(ActivityResultContracts.TakePicture()) {
-                if (it) {
-                    // TODO: 2022/1/22 识别图片
-                    Log.e("camera", "picture")
-                } else {
-                    // 失败的话就删除图片文件
-                    imageFile.delete()
-                }
-            }.launch(uri)
+            curImageFile = imageFile
+            pictureLauncher.launch(uri)
         }
     }
 

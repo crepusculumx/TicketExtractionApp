@@ -29,9 +29,11 @@ fun createFileIfNotExists(path: String, init: String? = null): File {
     // 不存在则创建，存在则直接返回对象
     if (!file.exists()) {
         file.createNewFile()
-        FileOutputStream(file).use { fos ->
-            fos.write(init?.let { init.toByteArray() })
-            fos.flush()
+        init?.let {
+            FileOutputStream(file).use { fos ->
+                fos.write(init.toByteArray())
+                fos.flush()
+            }
         }
     }
     return file

@@ -31,7 +31,39 @@ import edu.bupt.ticketextraction.main.MainActivity
 private const val webAddress = "https://www.baidu.com"
 
 /**
+ * 从MainActivity跳转到LoginActivity
+ *
+ * @receiver MainActivity
+ */
+fun MainActivity.jumpToLogin() {
+    val intent = Intent(this, LoginActivity::class.java)
+    startActivity(intent)
+}
+
+/**
+ * 从MainActivity跳转到PersonInfoActivity
+ *
+ * @receiver MainActivity
+ */
+fun MainActivity.jumpToPersonInfo() {
+    val intent = Intent(this, PersonInfoActivity::class.java)
+    startActivity(intent)
+}
+
+/**
+ * 从MainActivity跳转到AboutUsActivity
+ *
+ * @receiver MainActivity
+ */
+fun MainActivity.jumpToAboutUs() {
+    val intent = Intent(this, AboutUsActivity::class.java)
+    startActivity(intent)
+}
+
+/**
  * MainActivity中设置页面的UI
+ *
+ * @param fatherActivity 父活动
  */
 @ExperimentalMaterialApi
 @Composable
@@ -47,9 +79,9 @@ fun SettingsUI(fatherActivity: MainActivity) {
             // 登录成功跳转到个人信息
             // 未登录跳转到登录界面
             if (LoginActivity.loginState) {
-                fatherActivity.jumpFromMainToPersonInfo()
+                fatherActivity.jumpToPersonInfo()
             } else {
-                fatherActivity.jumpFromMainToLogin()
+                fatherActivity.jumpToLogin()
             }
         }
         SettingsListItem("检查更新") {
@@ -59,7 +91,7 @@ fun SettingsUI(fatherActivity: MainActivity) {
             // TODO: 2022/1/15
         }
         SettingsListItem("关于我们") {
-            fatherActivity.jumpFromMainToAboutUs()
+            fatherActivity.jumpToAboutUs()
         }
         SettingsListItem("访问网页端") {
             val intent = Intent(Intent.ACTION_VIEW)

@@ -26,6 +26,7 @@ import edu.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
 /**
  * 展示发票信息的Activity
  */
+@OptIn(ExperimentalMaterialApi::class)
 class ReceiptActivity : ComponentActivity() {
     companion object {
         /**
@@ -34,7 +35,6 @@ class ReceiptActivity : ComponentActivity() {
         const val TICKET_INTENT = "ticket"
     }
 
-    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 断言不为空

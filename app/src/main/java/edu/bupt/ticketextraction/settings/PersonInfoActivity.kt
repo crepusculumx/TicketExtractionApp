@@ -7,6 +7,7 @@
  */
 package edu.bupt.ticketextraction.settings
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,13 +26,12 @@ import androidx.compose.ui.unit.sp
 import edu.bupt.ticketextraction.R
 import edu.bupt.ticketextraction.ui.compose.ActivityBody
 import edu.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
-import org.jetbrains.anko.startActivity
 
 /**
  * 展示个人信息的Activity
  */
+@OptIn(ExperimentalMaterialApi::class)
 class PersonInfoActivity : ComponentActivity() {
-    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -56,7 +56,8 @@ class PersonInfoActivity : ComponentActivity() {
 
                         PersonInfoListItem("修改密码", Modifier.align(ch)) {
                             // 跳转到ChangePassword
-                            startActivity<ChangePasswordActivity>()
+                            val intent = Intent(this@PersonInfoActivity, ChangePasswordActivity::class.java)
+                            startActivity(intent)
                         }
                         PersonInfoListItem(text = "注销", Modifier.align(ch)) {
                             // 登录状态设为否，登录手机号设为空
