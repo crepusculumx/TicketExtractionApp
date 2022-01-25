@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 /**
  * Json工具类.
  */
+@SuppressWarnings("unused")
 public class GsonUtils {
     private static final Gson gson = new GsonBuilder().create();
 
@@ -23,8 +24,7 @@ public class GsonUtils {
         return gson.fromJson(json, classOfT);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T fromJson(String json, Type typeOfT) throws JsonParseException {
-        return (T) gson.fromJson(json, typeOfT);
+        return gson.fromJson(json, typeOfT);
     }
 }

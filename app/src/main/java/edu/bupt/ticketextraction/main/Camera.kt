@@ -147,7 +147,8 @@ class Camera(private val fatherActivity: MainActivity) {
      *
      * @return 时间戳
      */
-    private fun createTimeStamp(): String {
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun createTimeStamp(): String {
         return SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(Date())
     }
 

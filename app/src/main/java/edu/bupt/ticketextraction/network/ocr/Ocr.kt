@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 private val directory: File = File(EXTERNAL_FILE_DIR)
-private val assessTokenFile = File("$directory/assess_token.dat")
+private val assessTokenFile = File("$directory/access_token.dat")
 private var accessToken = ""
 
 /**
@@ -35,24 +35,25 @@ suspend fun extract(sourceFile: File): CabTicket {
     val result = JSONObject(res)
     val jsonObject = JSONObject(result.getJSONObject("words_result").toString())
     // 根据解析结果返回票据实例
+    // 当识别异常时得到的结果是空字符串，处理成识别异常字符串
     return CabTicket(
         sourceFile.absolutePath,
-        jsonObject.getString("InvoiceCode"),
-        jsonObject.getString("InvoiceNum"),
-        jsonObject.getString("TaxiNum"),
-        jsonObject.getString("Date"),
-        jsonObject.getString("Time"),
-        jsonObject.getString("PickupTime"),
-        jsonObject.getString("DropoffTime"),
-        jsonObject.getString("Fare"),
-        jsonObject.getString("FuelOilSurcharge"),
-        jsonObject.getString("CallServiceSurcharge"),
-        jsonObject.getString("TotalFare"),
-        jsonObject.getString("Location"),
-        jsonObject.getString("Province"),
-        jsonObject.getString("City"),
-        jsonObject.getString("PricePerkm"),
-        jsonObject.getString("Distance")
+        requiresNotEmpty(jsonObject.getString("InvoiceCode")),
+        requiresNotEmpty(jsonObject.getString("InvoiceNum")),
+        requiresNotEmpty(jsonObject.getString("TaxiNum")),
+        requiresNotEmpty(jsonObject.getString("Date")),
+        requiresNotEmpty(jsonObject.getString("Time")),
+        requiresNotEmpty(jsonObject.getString("PickupTime")),
+        requiresNotEmpty(jsonObject.getString("DropoffTime")),
+        requiresNotEmpty(jsonObject.getString("Fare")),
+        requiresNotEmpty(jsonObject.getString("FuelOilSurcharge")),
+        requiresNotEmpty(jsonObject.getString("CallServiceSurcharge")),
+        requiresNotEmpty(jsonObject.getString("TotalFare")),
+        requiresNotEmpty(jsonObject.getString("Location")),
+        requiresNotEmpty(jsonObject.getString("Province")),
+        requiresNotEmpty(jsonObject.getString("City")),
+        requiresNotEmpty(jsonObject.getString("PricePerkm")),
+        requiresNotEmpty(jsonObject.getString("Distance"))
     )
 }
 
@@ -162,7 +163,8 @@ private suspend fun getAuthFromBaidu(): String {
  * @param str 要检查的字符串
  * @return 当字符串为空串""时，返回识别异常;否则返回字符串本身
  */
-private fun requiresNotEmpty(str: String, defaultVal: String): String {
+@Suppress("NOTHING_TO_INLINE")
+private inline fun requiresNotEmpty(str: String, defaultVal: String = "识别异常"): String {
     return if (str == "") defaultVal else str
 }
 

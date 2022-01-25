@@ -1,15 +1,11 @@
 package edu.bupt.ticketextraction.network.ocr;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * 文件读取工具类
  */
+@SuppressWarnings("unused")
 public class FileUtil {
 
     /**

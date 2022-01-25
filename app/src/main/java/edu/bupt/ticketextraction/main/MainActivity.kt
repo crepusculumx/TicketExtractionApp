@@ -38,6 +38,7 @@ import edu.bupt.ticketextraction.ui.compose.TopBarText
 import edu.bupt.ticketextraction.ui.compose.changeTheme
 import edu.bupt.ticketextraction.ui.compose.isInDarkTheme
 import edu.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
+import edu.bupt.ticketextraction.utils.TICKET_DATA
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -114,6 +115,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
      */
     private fun initVars() {
         EXTERNAL_FILE_DIR = getExternalFilesDir(null)!!.absolutePath
+        TICKET_DATA = "$EXTERNAL_FILE_DIR/tickets.dat"
     }
 }
 

@@ -15,3 +15,5 @@ package edu.bupt.ticketextraction.utils
  * 外部存储目录
  */
 var EXTERNAL_FILE_DIR = ""
+
+var TICKET_DATA = ""

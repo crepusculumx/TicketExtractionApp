@@ -230,6 +230,12 @@ class RegisterActivity : ComponentActivity(), CoroutineScope by MainScope() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 在RegisterActivity生命周期结束时销毁所有协程
+        cancel()
+    }
 }
 
 /**

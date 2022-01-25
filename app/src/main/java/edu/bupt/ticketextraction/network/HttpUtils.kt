@@ -93,7 +93,7 @@ private suspend fun post(urlStr: String, params: Map<String, String>): String {
             conn.doOutput = true
             val sb = StringBuilder()
             params.forEach { (key, value) ->
-                sb.append("${key}=${value}&")
+                sb.append(key).append("=").append(value).append("&")
             }
             // 删掉最后一个&
             sb.deleteCharAt(sb.lastIndex)

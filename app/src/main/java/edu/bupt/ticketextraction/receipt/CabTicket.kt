@@ -9,10 +9,14 @@ package edu.bupt.ticketextraction.receipt
 
 import android.os.Parcel
 import android.os.Parcelable
+import edu.bupt.ticketextraction.utils.TICKET_DATA
+import edu.bupt.ticketextraction.utils.createFileIfNotExists
+import java.io.FileOutputStream
 
 /**
  * 出租车发票数据类，包含了出租车发票的所有数据
  */
+@Suppress("DuplicatedCode")
 data class CabTicket(
     val filePath: String? = "", // 对应发票图片存储路径
     var invoiceCode: String? = "", // 发票代码
@@ -30,8 +34,40 @@ data class CabTicket(
     var province: String? = "", // 省
     var city: String? = "", // 市
     var pricePerKm: String? = "", // 单价
-    var distance: String? = "" // 里程
+    var distance: String? = "", // 里程
 ) : Parcelable {
+    companion object CREATOR : Parcelable.Creator<CabTicket> {
+        override fun createFromParcel(parcel: Parcel): CabTicket {
+            return CabTicket(parcel)
+        }
+
+        override fun newArray(size: Int): Array<CabTicket?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+    private val fields = ArrayList<String>(17)
+
+    init {
+        fields.add(filePath!!)
+        fields.add(invoiceCode!!)
+        fields.add(invoiceNumber!!)
+        fields.add(taxiNum!!)
+        fields.add(date!!)
+        fields.add(time!!)
+        fields.add(pickUpTime!!)
+        fields.add(dropOffTime!!)
+        fields.add(fare!!)
+        fields.add(fuelOilSurcharge!!)
+        fields.add(callServiceSurcharge!!)
+        fields.add(totalFare!!)
+        fields.add(location!!)
+        fields.add(province!!)
+        fields.add(city!!)
+        fields.add(pricePerKm!!)
+        fields.add(distance!!)
+    }
+
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
@@ -53,36 +89,27 @@ data class CabTicket(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(filePath)
-        parcel.writeString(invoiceCode)
-        parcel.writeString(invoiceNumber)
-        parcel.writeString(taxiNum)
-        parcel.writeString(date)
-        parcel.writeString(time)
-        parcel.writeString(pickUpTime)
-        parcel.writeString(dropOffTime)
-        parcel.writeString(fare)
-        parcel.writeString(fuelOilSurcharge)
-        parcel.writeString(callServiceSurcharge)
-        parcel.writeString(totalFare)
-        parcel.writeString(location)
-        parcel.writeString(province)
-        parcel.writeString(city)
-        parcel.writeString(pricePerKm)
-        parcel.writeString(distance)
+        fields.forEach {
+            parcel.writeString(it)
+        }
     }
 
     override fun describeContents(): Int {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<CabTicket> {
-        override fun createFromParcel(parcel: Parcel): CabTicket {
-            return CabTicket(parcel)
+    /**
+     * 把发票数据写入文件中
+     */
+    fun writeToFile() {
+        val data = createFileIfNotExists(TICKET_DATA)
+        val sb = StringBuilder()
+        fields.forEach {
+            sb.append(it).append(" ")
         }
-
-        override fun newArray(size: Int): Array<CabTicket?> {
-            return arrayOfNulls(size)
+        sb.deleteCharAt(sb.lastIndex).append("\n")
+        FileOutputStream(data, true).use {
+            it.write(sb.toString().toByteArray())
         }
     }
 }

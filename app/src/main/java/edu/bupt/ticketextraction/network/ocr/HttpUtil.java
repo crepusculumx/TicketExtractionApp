@@ -13,6 +13,7 @@ import java.util.Map;
 /**
  * http 工具类
  */
+@SuppressWarnings("unused")
 public class HttpUtil {
 
     public static String post(String requestUrl, String accessToken, String params)
