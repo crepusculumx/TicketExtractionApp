@@ -9,7 +9,10 @@ package edu.bupt.ticketextraction.main
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -21,7 +24,10 @@ import edu.bupt.ticketextraction.utils.createFileIfNotExists
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -38,8 +44,11 @@ class Camera(private val fatherActivity: MainActivity) {
         if (it) {
             // TODO: 2022/1/22 识别图片
             Log.e("camera", "picture")
+
             fatherActivity.launch {
                 withContext(Dispatchers.IO) {
+                    // 压缩图片，也是IO操作，一起放进来
+                    bitmapCompress(curImageFile!!)
                     extract(curImageFile!!)
                 }
             }
@@ -133,7 +142,82 @@ class Camera(private val fatherActivity: MainActivity) {
         }
     }
 
+    /**
+     * 生成时间戳
+     *
+     * @return 时间戳
+     */
     private fun createTimeStamp(): String {
         return SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(Date())
+    }
+
+    /**
+     * 压缩图片
+     *
+     * @param file 被压缩图片文件
+     */
+    private fun bitmapCompress(file: File) {
+        // 用文件获取uri
+        val uri = Uri.fromFile(file)
+        //用uri获取Bitmap
+        @Suppress("DEPRECATION")
+        var photoBitMap = MediaStore.Images.Media.getBitmap(fatherActivity.contentResolver, uri)
+
+        // 压缩质量
+        var quality = 100
+        val maxFileSize = 2000 // 2MB
+
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        // 先质量压缩
+        // 图片大小大于2M就循环压缩直到小于2M
+        do {
+            byteArrayOutputStream.reset()
+            // 压缩图片
+            photoBitMap!!.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream)
+            try {
+                FileOutputStream(file).use { fileOutputStream ->
+                    // 覆盖之前的图片
+                    fileOutputStream.write(byteArrayOutputStream.toByteArray())
+                    fileOutputStream.flush()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            quality -= 10
+        } while (byteArrayOutputStream.toByteArray().size / 1024 > maxFileSize && quality > 0)
+        Log.e("image size", (byteArrayOutputStream.toByteArray().size / 1024).toString())
+
+        // 再尺寸压缩
+        val options = BitmapFactory.Options()
+        // 只读长度进内存
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(file.absolutePath, options)
+        options.inJustDecodeBounds = false
+        val width = options.outWidth
+        val height = options.outHeight
+        val maxWidth = 2048
+        val maxHeight = 2048
+        var scale = 1 // 1表示不缩放
+
+        if (width > height && width > maxWidth) {
+            scale = width / maxWidth
+        } else if (width <= height && height > maxHeight) {
+            scale = height / maxHeight
+        }
+        options.inSampleSize = scale
+        // 根据options进行尺寸缩放
+        photoBitMap = BitmapFactory.decodeFile(file.absolutePath, options)
+        Log.e("image scale", scale.toString())
+        byteArrayOutputStream.reset()
+        photoBitMap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+        try {
+            FileOutputStream(file).use { fileOutputStream ->
+                // 覆盖之前的图片
+                fileOutputStream.write(byteArrayOutputStream.toByteArray())
+                fileOutputStream.flush()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 }

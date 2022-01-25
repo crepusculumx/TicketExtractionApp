@@ -2,6 +2,7 @@
 
 package edu.bupt.ticketextraction.network.ocr
 
+import edu.bupt.ticketextraction.receipt.CabTicket
 import edu.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
 import edu.bupt.ticketextraction.utils.createFileIfNotExists
 import kotlinx.coroutines.Dispatchers
@@ -27,13 +28,32 @@ private var accessToken = ""
  * @param sourceFile 资源文件，图片或视频
  * @return 识别得到的发票信息
  */
-suspend fun extract(sourceFile: File) {
+suspend fun extract(sourceFile: File): CabTicket {
     val res = taxiReceipt(sourceFile)
 
     // 解析识别结果
     val result = JSONObject(res)
-    var jsonObject = JSONObject(result.getJSONObject("words_result").toString())
-
+    val jsonObject = JSONObject(result.getJSONObject("words_result").toString())
+    // 根据解析结果返回票据实例
+    return CabTicket(
+        sourceFile.absolutePath,
+        jsonObject.getString("InvoiceCode"),
+        jsonObject.getString("InvoiceNum"),
+        jsonObject.getString("TaxiNum"),
+        jsonObject.getString("Date"),
+        jsonObject.getString("Time"),
+        jsonObject.getString("PickupTime"),
+        jsonObject.getString("DropoffTime"),
+        jsonObject.getString("Fare"),
+        jsonObject.getString("FuelOilSurcharge"),
+        jsonObject.getString("CallServiceSurcharge"),
+        jsonObject.getString("TotalFare"),
+        jsonObject.getString("Location"),
+        jsonObject.getString("Province"),
+        jsonObject.getString("City"),
+        jsonObject.getString("PricePerkm"),
+        jsonObject.getString("Distance")
+    )
 }
 
 private suspend fun taxiReceipt(file: File): String {

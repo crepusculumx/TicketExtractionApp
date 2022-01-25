@@ -10,6 +10,7 @@ package edu.bupt.ticketextraction.settings
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -25,10 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import edu.bupt.ticketextraction.network.login
 import edu.bupt.ticketextraction.ui.compose.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 
 /**
  * 此Activity用于处理用户登录，以及可以跳转到注册和找回密码
@@ -78,6 +78,7 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
                         RegisterAndFind(this@LoginActivity)
                     }) {
                     Column(modifier = Modifier.fillMaxWidth()) {
+                        // 是否展示圆形进度条
                         var dialogIsShow by remember { mutableStateOf(false) }
                         // 手机号编辑框
                         var phoneNumber by remember { mutableStateOf("") }
@@ -100,26 +101,26 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
                             text = "登录", modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
                             // TODO: 2022/1/17 登录
-//                            launch {
-//                                val deferred = async { return@async login(phoneNumber, password) }
-//                                when (deferred.await()) {
-//                                    1 -> {
-//                                        loginState = true
-//                                        curPhoneNumber = phoneNumber
-//                                        Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT)
-//                                            .show()
-//                                        // 登录成功结束本Activity
-//                                        finish()
-//                                    }
-//                                    0 -> {
-//                                        Toast.makeText(this@LoginActivity, "密码错误！", Toast.LENGTH_SHORT).show()
-//                                    }
-//                                    -1 -> {
-//                                        Toast.makeText(this@LoginActivity, "手机号不存在！", Toast.LENGTH_SHORT).show()
-//                                    }
-//                                    else -> assert(false)
-//                                }
-//                            }
+                            launch {
+                                val deferred = async { return@async login(phoneNumber, password) }
+                                when (deferred.await()) {
+                                    1 -> {
+                                        loginState = true
+                                        curPhoneNumber = phoneNumber
+                                        Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
+                                        // 登录成功结束本Activity
+                                        finish()
+                                    }
+                                    0 -> {
+                                        Toast.makeText(this@LoginActivity, "密码错误！", Toast.LENGTH_SHORT).show()
+                                    }
+                                    -1 -> {
+                                        Toast.makeText(this@LoginActivity, "手机号不存在！", Toast.LENGTH_SHORT).show()
+                                    }
+                                    else -> assert(false)
+                                }
+                                dialogIsShow = false
+                            }
                             dialogIsShow = true
                         }
                         if (dialogIsShow) {

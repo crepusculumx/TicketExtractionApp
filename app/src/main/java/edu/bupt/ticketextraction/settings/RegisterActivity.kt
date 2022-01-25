@@ -7,9 +7,9 @@
  */
 package edu.bupt.ticketextraction.settings
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -26,13 +26,16 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import edu.bupt.ticketextraction.network.register
 import edu.bupt.ticketextraction.ui.compose.*
+import kotlinx.coroutines.*
 
 /**
  * 本Activity用于处理用户注册和找回密码，包括两个页面，
  * 第一页输入手机号和验证码，第二页输入密码和重复输入密码
  */
-class RegisterActivity : ComponentActivity() {
+@OptIn(ExperimentalAnimationApi::class)
+class RegisterActivity : ComponentActivity(), CoroutineScope by MainScope() {
     companion object {
         /**
          * 当前是否是注册
@@ -93,8 +96,6 @@ class RegisterActivity : ComponentActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
-    @SuppressLint("UnrememberedMutableState")
-    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -114,6 +115,8 @@ class RegisterActivity : ComponentActivity() {
                         }
                     }
                 }) {
+                    // 是否展示圆形进度条
+                    var dialogIsShow by remember { mutableStateOf(false) }
                     // 注册的手机号
                     var phoneNumber by remember { mutableStateOf("") }
                     // 注册的密码
@@ -189,6 +192,27 @@ class RegisterActivity : ComponentActivity() {
                                             .size(width = 150.dp, height = 100.dp)
                                     ) {
                                         // TODO: 2022/1/17 注册
+                                        launch {
+                                            val deferred = async { return@async register(phoneNumber, password) }
+                                            // 等待获取结果
+                                            when (deferred.await()) {
+                                                1 -> Toast.makeText(this@RegisterActivity, "注册成功", Toast.LENGTH_SHORT)
+                                                    .show()
+
+                                                -1 -> Toast
+                                                    .makeText(this@RegisterActivity, "手机号已存在！", Toast.LENGTH_SHORT)
+                                                    .show()
+
+                                                -2 -> Toast.makeText(this@RegisterActivity, "未知错误", Toast.LENGTH_SHORT)
+                                                    .show()
+                                                // 不可达
+                                                else -> assert(false)
+                                            }
+                                            dialogIsShow = false
+                                            delay(200)
+                                            finish()
+                                        }
+                                        dialogIsShow = true
                                     }
                                 }
                             }
@@ -198,6 +222,9 @@ class RegisterActivity : ComponentActivity() {
                             isFirstButton = isFirstButton,
                             modifier = Modifier.align(Alignment.BottomCenter)
                         )
+                        if (dialogIsShow) {
+                            ProgressDialog("正在注册中···") { dialogIsShow = false }
+                        }
                     }
                 }
             }
