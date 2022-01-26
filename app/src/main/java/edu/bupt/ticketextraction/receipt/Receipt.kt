@@ -16,26 +16,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.bupt.ticketextraction.R
 import edu.bupt.ticketextraction.main.MainActivity
+import java.io.File
+import java.io.IOException
 
 /**
  * 保存所有发票信息
  */
-val tickets = mutableListOf(
-    // 测试用例
-    CabTicket(
-        invoiceCode = "123",
-        invoiceNumber = "456",
-        totalFare = "114514",
-        distance = "66.0",
-        date = "2022.1.19"
-    )
+val tickets = mutableListOf<CabTicket>(
+//    // 测试用例
+//    CabTicket(
+//        invoiceCode = "123",
+//        invoiceNumber = "456",
+//        totalFare = "114514",
+//        distance = "66.0",
+//        date = "2022.1.19"
+//    )
 )
 
 @ExperimentalFoundationApi
@@ -78,9 +80,13 @@ fun MainActivity.jumpToReceipt(ticket: CabTicket) {
 @ExperimentalMaterialApi
 @Composable
 private fun ReceiptListItem(ticket: CabTicket, fatherActivity: MainActivity) {
+    var expanded by remember { mutableStateOf(false) }
     ListItem(
         // 长按可以删除、验真，点击则跳转到详细信息
-        modifier = Modifier.combinedClickable(onLongClick = {/* TODO 2022/1/15 删除 验真 */ }) {
+        modifier = Modifier.combinedClickable(onLongClick = {
+            /* TODO 2022/1/15 删除 验真 */
+            expanded = true
+        }) {
             fatherActivity.jumpToReceipt(ticket)
         },
         icon = {
@@ -100,12 +106,32 @@ private fun ReceiptListItem(ticket: CabTicket, fatherActivity: MainActivity) {
         }
     ) {
         // 主文本放里程和总费用
-        Text(
-            text = "里程   ${ticket.distance}       总费用   ${ticket.totalFare}",
-            fontSize = 19.sp,
-            modifier = Modifier.padding(top = 10.dp)
-        )
+        Column {
+            Text(
+                text = "里程   ${ticket.distance}       总费用   ${ticket.totalFare}",
+                fontSize = 19.sp,
+                modifier = Modifier.padding(top = 10.dp)
+            )
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                ReceiptDropDownMenuItem("删除") {
+                    try {
+                        File(ticket.filePath!!).delete()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                    tickets.remove(ticket)
+                }
+                ReceiptDropDownMenuItem("验真") {}
+            }
+        }
     }
     // 来一条分隔线
     Divider()
+}
+
+@Composable
+private inline fun ReceiptDropDownMenuItem(text: String, crossinline onClick: () -> Unit) {
+    DropdownMenuItem(onClick = { onClick() }) {
+        Text(text)
+    }
 }

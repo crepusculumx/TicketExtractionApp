@@ -9,14 +9,36 @@ package edu.bupt.ticketextraction.receipt
 
 import android.os.Parcel
 import android.os.Parcelable
-import edu.bupt.ticketextraction.utils.TICKET_DATA
-import edu.bupt.ticketextraction.utils.createFileIfNotExists
-import java.io.FileOutputStream
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+
+/**
+ * 把发票数据写入文件中
+ */
+fun ObjectOutputStream.writeTicket(ticket: CabTicket) {
+    val sb = StringBuilder()
+    ticket.fields.forEach {
+        sb.append(it).append(" ")
+    }
+    sb.deleteCharAt(sb.lastIndex).append("\n")
+    this.write(sb.toString().toByteArray())
+}
+
+fun ObjectInputStream.readTicket(): CabTicket? {
+    val line = BufferedReader(InputStreamReader(this)).readLine() ?: return null
+    val fields = line.split(" ")
+    val res = CabTicket(fields[0])
+    for (i in 1 until fields.size) {
+        res.fields = fields as ArrayList<String>
+    }
+    return res
+}
 
 /**
  * 出租车发票数据类，包含了出租车发票的所有数据
  */
-@Suppress("DuplicatedCode")
 data class CabTicket(
     val filePath: String? = "", // 对应发票图片存储路径
     var invoiceCode: String? = "", // 发票代码
@@ -46,7 +68,7 @@ data class CabTicket(
         }
     }
 
-    private val fields = ArrayList<String>(17)
+    var fields = ArrayList<String>(17)
 
     init {
         fields.add(filePath!!)
@@ -96,20 +118,5 @@ data class CabTicket(
 
     override fun describeContents(): Int {
         return 0
-    }
-
-    /**
-     * 把发票数据写入文件中
-     */
-    fun writeToFile() {
-        val data = createFileIfNotExists(TICKET_DATA)
-        val sb = StringBuilder()
-        fields.forEach {
-            sb.append(it).append(" ")
-        }
-        sb.deleteCharAt(sb.lastIndex).append("\n")
-        FileOutputStream(data, true).use {
-            it.write(sb.toString().toByteArray())
-        }
     }
 }

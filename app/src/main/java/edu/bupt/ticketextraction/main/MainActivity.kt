@@ -10,6 +10,7 @@ package edu.bupt.ticketextraction.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -31,7 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import edu.bupt.ticketextraction.R
 import edu.bupt.ticketextraction.email.EmailActivity
 import edu.bupt.ticketextraction.network.ocr.setAccessToken
-import edu.bupt.ticketextraction.receipt.ReceiptUI
+import edu.bupt.ticketextraction.receipt.*
 import edu.bupt.ticketextraction.settings.SettingsUI
 import edu.bupt.ticketextraction.ui.compose.ActivityBody
 import edu.bupt.ticketextraction.ui.compose.TopBarText
@@ -39,10 +40,9 @@ import edu.bupt.ticketextraction.ui.compose.changeTheme
 import edu.bupt.ticketextraction.ui.compose.isInDarkTheme
 import edu.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
 import edu.bupt.ticketextraction.utils.TICKET_DATA
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import edu.bupt.ticketextraction.utils.createFileIfNotExists
+import kotlinx.coroutines.*
+import java.io.*
 
 
 /**
@@ -65,9 +65,13 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 启动协程获取assess_token
+        // 启动协程获取access_token
         launch {
             setAccessToken()
+        }
+        // 启动协程读取票据信息
+        launch {
+            readTickets()
         }
         setContent {
             ActivityBody {
@@ -106,6 +110,12 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
 
     override fun onDestroy() {
         super.onDestroy()
+        // 把票据信息保存到文件里
+        ObjectOutputStream(FileOutputStream(TICKET_DATA)).use {
+            tickets.forEach { cabTicket ->
+                it.writeTicket(cabTicket)
+            }
+        }
         // 在MainActivity生命周期结束时销毁所有协程
         cancel()
     }
@@ -116,6 +126,26 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
     private fun initVars() {
         EXTERNAL_FILE_DIR = getExternalFilesDir(null)!!.absolutePath
         TICKET_DATA = "$EXTERNAL_FILE_DIR/tickets.dat"
+    }
+
+    /**
+     * 读取所有票据信息
+     */
+    private suspend fun readTickets() {
+        createFileIfNotExists(TICKET_DATA)
+        // 读取文件的IO操作
+        withContext(Dispatchers.IO) {
+            try {
+                val oos = ObjectInputStream(FileInputStream(TICKET_DATA))
+                var ticket: CabTicket?
+                while (oos.readTicket().also { ticket = it } != null) {
+                    tickets.add(ticket!!)
+                }
+            } catch (e: EOFException) {
+                // 第一次创建时，必定会遇到EOF问题
+                Log.e("main resume", "ticket data eof")
+            }
+        }
     }
 }
 
@@ -143,10 +173,7 @@ private fun MainTopBar(
                 // 三个点竖直排列的图标
                 Icon(Icons.Filled.MoreVert, contentDescription = null)
             }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 // 根据当前主题展示不同的文本和图片
                 val dayOrNight = if (darkTheme) "白天" else "夜间"
                 val resId = if (darkTheme) R.drawable.ic_baseline_wb_sunny_24
