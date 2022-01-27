@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.bupt.ticketextraction">
+          package="com.bupt.ticketextraction"
+          android:versionCode="1"
+          android:versionName="1.0.0">
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28"
-        />
+    />
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -33,22 +35,22 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".receipt.ReceiptActivity" />
-        <activity android:name=".settings.LoginActivity" />
-        <activity android:name=".settings.RegisterActivity" />
-        <activity android:name=".settings.PersonInfoActivity" />
-        <activity android:name=".settings.AboutUsActivity" />
-        <activity android:name=".settings.ChangePasswordActivity" />
-        <activity android:name=".email.EmailActivity" />
+        <activity android:name=".receipt.ReceiptActivity"/>
+        <activity android:name=".settings.LoginActivity"/>
+        <activity android:name=".settings.RegisterActivity"/>
+        <activity android:name=".settings.PersonInfoActivity"/>
+        <activity android:name=".settings.AboutUsActivity"/>
+        <activity android:name=".settings.ChangePasswordActivity"/>
+        <activity android:name=".email.EmailActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="edu.bupt.ticketextraction.FileProvider"
+            android:authorities="com.bupt.ticketextraction.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/file_paths"/>
         </provider>
     </application>
 

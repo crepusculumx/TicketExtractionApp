@@ -2,7 +2,7 @@
 <paths>
     <external-files-path
         name="my_sources"
-        path="Android/data/edu.bupt.ticketextraction/files" />
+        path="Android/data/com.bupt.ticketextraction/files"/>
     <!--suppress AndroidElementNotAllowed -->
     <root-path
         name="root_path"
