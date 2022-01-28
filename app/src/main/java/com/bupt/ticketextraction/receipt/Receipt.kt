@@ -8,6 +8,7 @@
 package com.bupt.ticketextraction.receipt
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
@@ -144,6 +145,7 @@ private fun ReceiptListItem(ticket: CabTicket, fatherActivity: MainActivity) {
                     }
                     // 删除UI内的票据
                     tickets.remove(ticket)
+                    Toast.makeText(fatherActivity, "删除成功", Toast.LENGTH_SHORT).show()
                 }
                 ReceiptDropDownMenuItem("验真") {}
             }

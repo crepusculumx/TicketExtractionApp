@@ -77,29 +77,35 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
                     bottomBar = {
                         RegisterAndFind(this@LoginActivity)
                     }) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(top = 80.dp)) {
                         // 是否展示圆形进度条
                         var dialogIsShow by remember { mutableStateOf(false) }
                         // 手机号编辑框
                         var phoneNumber by remember { mutableStateOf("") }
                         PhoneNumberTextField(
                             phoneNumber = phoneNumber,
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(top = 80.dp, bottom = 10.dp)
                         ) { phoneNumber = it }
                         // 密码编辑框
                         var password by remember { mutableStateOf("") }
                         PasswordTextField(
                             password = password,
                             placeholder = "请输入密码",
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) { password = it }
                         // 登录按钮
                         // 这个大小好看点
                         RoundedCornerButton(
                             text = "登录", modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
+                            if (phoneNumber == "") {
+                                Toast.makeText(this@LoginActivity, "手机号不能为空！", Toast.LENGTH_SHORT)
+                                    .show()
+                                return@RoundedCornerButton
+                            }
+                            if (password == "") {
+                                Toast.makeText(this@LoginActivity, "密码不能为空！", Toast.LENGTH_SHORT)
+                                    .show()
+                                return@RoundedCornerButton
+                            }
                             // TODO: 2022/1/17 登录
                             launch {
                                 val deferred = async { return@async login(phoneNumber, password) }

@@ -48,21 +48,18 @@ class ChangePasswordActivity : ComponentActivity() {
                         PasswordTextField(
                             password = oldPassword,
                             placeholder = "请输入旧密码",
-                            modifier = Modifier.align(ch),
                             onValueChange = { oldPassword = it }
                         )
                         // 新密码
                         PasswordTextField(
                             password = newPassword,
                             placeholder = "请输入新密码",
-                            modifier = Modifier.align(ch),
                             onValueChange = { newPassword = it }
                         )
                         // 重复新密码
                         PasswordTextField(
                             password = newRePassword,
                             placeholder = "请重复输入新密码",
-                            modifier = Modifier.align(ch),
                             onValueChange = { newRePassword = it }
                         )
                         // 提交按钮

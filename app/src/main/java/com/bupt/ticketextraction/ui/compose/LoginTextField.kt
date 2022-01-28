@@ -7,6 +7,8 @@
  */
 package com.bupt.ticketextraction.ui.compose
 
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,24 +19,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import com.bupt.ticketextraction.R
 
 /**
  * 输入账号的TextField
  *
  * @param phoneNumber 编辑框修改的文本
- * @param modifier 用于让TextField居中，在单独的TextField中没有Modifier.align()
  * @param onValueChange 当输入服务更新文本时触发的回调，更新的文本作为回调的参数出现
  */
 @Composable
-fun PhoneNumberTextField(
+fun ColumnScope.PhoneNumberTextField(
     phoneNumber: String,
-    modifier: Modifier,
     onValueChange: (String) -> Unit,
 ) {
     // TODO: 2022/1/17 isError
@@ -42,7 +44,7 @@ fun PhoneNumberTextField(
         value = phoneNumber,
         onValueChange = { onValueChange(it) },
         // TextField设置居中
-        modifier = modifier,
+        modifier = Modifier.align(Alignment.CenterHorizontally),
         // 方形账户图案
         leadingIcon = {
             Icon(Icons.Filled.AccountBox, contentDescription = null)
@@ -66,14 +68,12 @@ fun PhoneNumberTextField(
  *
  * @param password 编辑框修改的文本
  * @param placeholder 没有文本时显示的提示
- * @param modifier 用于让TextField居中，在单独的TextField中没有Modifier.align()
  * @param onValueChange 当输入服务更新文本时触发的回调，更新的文本作为回调的参数出现
  */
 @Composable
-fun PasswordTextField(
+fun ColumnScope.PasswordTextField(
     password: String,
     placeholder: String,
-    modifier: Modifier,
     onValueChange: (String) -> Unit,
 ) {
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
@@ -83,7 +83,7 @@ fun PasswordTextField(
         // 为了代码复用，必须把password传进来，又因为函数式编程，还得定义一个回调在外面修改ToT
         onValueChange = { onValueChange(it) },
         // TextField设置居中，必须得从Column或Row或者其他能设置的地方传进来，TextField Modifier没这个属性
-        modifier = modifier,
+        modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 15.dp),
         // 锁的图案，表示密码
         leadingIcon = {
             Icon(Icons.Filled.Lock, contentDescription = null)

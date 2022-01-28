@@ -8,6 +8,7 @@
 package com.bupt.ticketextraction.email
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,6 +30,8 @@ import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
 import com.bupt.ticketextraction.receipt.CabTicket
 import com.bupt.ticketextraction.receipt.tickets
+import com.bupt.ticketextraction.settings.LoginActivity
+import com.bupt.ticketextraction.settings.LoginActivity.Companion.loginState
 import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
 
@@ -69,11 +72,21 @@ class EmailActivity : ComponentActivity() {
                             }
                         }
                         Row(modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()) {
-                            BottomButton(R.drawable.ic_baseline_delete_24, "删除") {
+                            val colors = MaterialTheme.colors
+                            val colors1 = ButtonDefaults.buttonColors(
+                                backgroundColor = colors.secondary,
+                                contentColor = colors.onBackground
+                            )
+                            val colors2 = ButtonDefaults.buttonColors(
+                                backgroundColor = colors.secondaryVariant,
+                                contentColor = colors.onBackground
+                            )
+                            BottomButton(R.drawable.ic_baseline_delete_24, "删除", colors1) {
 
                             }
-                            BottomButton(R.drawable.ic_baseline_email_24, "导出") {
-
+                            BottomButton(R.drawable.ic_baseline_email_24, "导出", colors2) {
+                                val cls = if (!loginState) SendEmailActivity::class.java else LoginActivity::class.java
+                                startActivity(Intent(this@EmailActivity, cls))
                             }
                         }
                     }
@@ -143,11 +156,12 @@ private fun CheckBoxListItem(ticket: CabTicket, checked: Boolean, onCheckChange:
  * @receiver RowScope
  */
 @Composable
-private fun RowScope.BottomButton(resId: Int, text: String, onClick: () -> Unit) {
+private fun RowScope.BottomButton(resId: Int, text: String, colors: ButtonColors, onClick: () -> Unit) {
     Button(
         onClick = { onClick() },
         // 按钮1:1，高50dp
-        modifier = Modifier.weight(1F, true).height(50.dp)
+        modifier = Modifier.weight(1F, true).height(50.dp),
+        colors = colors
     ) {
         // 图片+文本
         Icon(painterResource(resId), contentDescription = null)

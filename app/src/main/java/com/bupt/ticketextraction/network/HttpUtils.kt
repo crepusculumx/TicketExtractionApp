@@ -68,7 +68,8 @@ suspend fun register(phoneNumber: String, password: String): Int {
  * @return 最新版本码
  */
 suspend fun getVersionCode(): Int {
-    return get(GET_VERSION_CODE).toInt()
+    return 1
+//    return get(GET_VERSION_CODE).toInt()
 }
 
 /**

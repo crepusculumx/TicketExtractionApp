@@ -18,7 +18,7 @@ private val DarkColorPalette = darkColors(
     primary = Gray13,
     primaryVariant = Gray9,
     secondary = Gray9,
-    secondaryVariant = Gray9,
+    secondaryVariant = Gray8,
     background = Gray10,
     onBackground = Gray3
 )

@@ -7,27 +7,19 @@
  */
 package com.bupt.ticketextraction.settings
 
-import android.os.Bundle
-import android.view.KeyEvent
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.network.register
 import com.bupt.ticketextraction.ui.compose.*
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.*
 
 /**
@@ -35,7 +27,7 @@ import kotlinx.coroutines.*
  * 第一页输入手机号和验证码，第二页输入密码和重复输入密码
  */
 @OptIn(ExperimentalAnimationApi::class)
-class RegisterActivity : ComponentActivity(), CoroutineScope by MainScope() {
+class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
     companion object {
         /**
          * 当前是否是注册
@@ -45,9 +37,16 @@ class RegisterActivity : ComponentActivity(), CoroutineScope by MainScope() {
     }
 
     /**
-     * TopBar的标题名，由是否是注册决定
+     * 以下三个字段用于记录用户输入结果
      */
-    private val title: String
+    private var phoneNumber = mutableStateOf("")
+    private var password = mutableStateOf("")
+    private var rePassword = mutableStateOf("")
+
+    /**
+     * 是否展示正在注册中的Dialog
+     */
+    private var dialogIsShow = mutableStateOf(false)
 
     /**
      * password和rePassword的placeholder字符串中是否含有“新”，
@@ -74,239 +73,94 @@ class RegisterActivity : ComponentActivity(), CoroutineScope by MainScope() {
         }
     }
 
-    /**
-     * 注册一共有两个页面，一个是输入手机号和验证码，
-     * 另一个是输入密码和重复密码，当为true时在第一个页面，
-     * false时在第二个页面
-     */
-    private var isFirstButton = mutableStateOf(true)
-
-    /**
-     * 为了处理点击底部返回键覆写一下
-     */
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        // 当用户点击底部返回按钮时
-        // 如果在第二个页面，即isFirstButton.value为false时
-        // 修改为true，剩下的交给super
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (!isFirstButton.value) {
-                isFirstButton.value = true
-            }
-        }
-        return super.onKeyDown(keyCode, event)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ActivityBody {
-                // 当前是否位于第一个页面
-                var isFirstButton by remember { isFirstButton }
-                val navController = rememberAnimatedNavController()
-                Scaffold(topBar = {
-                    TopBarWithTitleAndBack(title) {
-                        // 当位于第一个页面时，结束Activity
-                        if (isFirstButton) {
-                            finish()
-                        } else {
-                            // 当位于第二个页面时，跳转到第一个页面
-                            isFirstButton = true
-                            navController.popBackStack()
-                        }
-                    }
-                }) {
-                    // 是否展示圆形进度条
-                    var dialogIsShow by remember { mutableStateOf(false) }
-                    // 注册的手机号
-                    var phoneNumber by remember { mutableStateOf("") }
-                    // 注册的密码
-                    var password by remember { mutableStateOf("") }
-                    // 重复密码
-                    var rePassword by remember { mutableStateOf("") }
-                    Box(modifier = Modifier.fillMaxHeight()) {
-                        AnimatedNavHost(
-                            navController = navController,
-                            startDestination = "1",
-                            modifier = Modifier.align(Alignment.TopCenter),
-                            // 进入动画，从屏幕右边加载到中间
-                            enterTransition = { slideInHorizontally { it } },
-                            // 弹出时上一个页面的进入动画，从屏幕左边加载到中间
-                            popEnterTransition = { slideInHorizontally { -it } },
-                            // 离开动画，从中间移动到屏幕左边
-                            exitTransition = { slideOutHorizontally { -it } },
-                            // 弹出时本页面离开动画，从中间移动到屏幕右边
-                            popExitTransition = { slideOutHorizontally { it } }
-                        ) {
-                            composable("1") {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 80.dp)
-                                ) {
-                                    var phoneNumberCopy by remember { mutableStateOf("") }
-                                    // 输入手机号的编辑框
-                                    PhoneNumberTextField(
-                                        phoneNumber = phoneNumberCopy,
-                                        onValueChange = { phoneNumberCopy = it },
-                                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                                    )
-                                    // 到下一步输入密码和重复密码的按钮
-                                    RoundedCornerButton(
-                                        text = "下一步", modifier = Modifier
-                                            .align(Alignment.CenterHorizontally)
-                                            .padding(top = 40.dp)
-                                            .size(width = 150.dp, height = 100.dp)
-                                    ) {
-                                        // 导航到2页面去，即输入密码和重复密码
-                                        navController.navigate("2")
-                                        isFirstButton = false
-                                        phoneNumber = phoneNumberCopy
-                                    }
-                                }
-                            }
-                            composable("2") {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 80.dp)
-                                ) {
-                                    // 输入密码
-                                    PasswordTextField(
-                                        password = password,
-                                        placeholder = "请输入${placeholderInsert}密码",
-                                        modifier = Modifier
-                                            .align(Alignment.CenterHorizontally)
-                                            .padding(bottom = 30.dp)
-                                    ) { password = it }
-                                    // 重新输入密码
-                                    PasswordTextField(
-                                        password = rePassword,
-                                        placeholder = "请重复输入${placeholderInsert}密码",
-                                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                                    ) { rePassword = it }
-                                    // 注册，把参数传递一下
-                                    RoundedCornerButton(
-                                        text = buttonText, modifier = Modifier
-                                            .align(Alignment.CenterHorizontally)
-                                            .padding(top = 40.dp)
-                                            .size(width = 150.dp, height = 100.dp)
-                                    ) {
-                                        // TODO: 2022/1/17 注册
-                                        launch {
-                                            val deferred = async { return@async register(phoneNumber, password) }
-                                            // 等待获取结果
-                                            when (deferred.await()) {
-                                                1 -> Toast.makeText(this@RegisterActivity, "注册成功", Toast.LENGTH_SHORT)
-                                                    .show()
-
-                                                -1 -> Toast
-                                                    .makeText(this@RegisterActivity, "手机号已存在！", Toast.LENGTH_SHORT)
-                                                    .show()
-
-                                                -2 -> Toast.makeText(this@RegisterActivity, "未知错误", Toast.LENGTH_SHORT)
-                                                    .show()
-
-                                                369 -> Toast.makeText(
-                                                    this@RegisterActivity,
-                                                    "网络连接失败！",
-                                                    Toast.LENGTH_SHORT
-                                                )
-                                                    .show()
-                                                // 不可达
-                                                else -> assert(false)
-                                            }
-                                            dialogIsShow = false
-                                            delay(200)
-                                            finish()
-                                        }
-                                        dialogIsShow = true
-                                    }
-                                }
-                            }
-                        }
-                        // 底部导航按钮，只是表明现在在第几步
-                        NavigationButtons(
-                            isFirstButton = isFirstButton,
-                            modifier = Modifier.align(Alignment.BottomCenter)
-                        )
-                        if (dialogIsShow) {
-                            ProgressDialog("正在注册中···") { dialogIsShow = false }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         // 在RegisterActivity生命周期结束时销毁所有协程
         cancel()
     }
-}
 
-/**
- * 底部两个导航按钮
- *
- * @param isFirstButton 当前是否是第一个按钮被选中
- * @param modifier 让按钮在底部居中的位置
- */
-@Composable
-private fun NavigationButtons(isFirstButton: Boolean, modifier: Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = 150.dp)
-    ) {
-        // 按钮1，表明正处于第一步
-        NavigationButton(
-            isFirstButton = isFirstButton,
-            // 写个1上去
-            text = "1",
-            // 分布在左侧
+    @Composable
+    override fun naviItem1() {
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 80.dp)
-        )
-        // 按钮2，表明正处于第二步
-        NavigationButton(
-            isFirstButton = !isFirstButton,
-            // 写个2上去
-            text = "2",
-            // 分布在右侧
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 80.dp)
-        )
+                .fillMaxWidth()
+                .padding(top = 80.dp)
+        ) {
+            // 输入手机号的编辑框
+            PhoneNumberTextField(
+                phoneNumber = phoneNumber.value,
+                onValueChange = { phoneNumber.value = it },
+            )
+            // 到下一步输入密码和重复密码的按钮
+            RoundedCornerButton(
+                text = "下一步", modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 40.dp)
+                    .size(width = 150.dp, height = 100.dp)
+            ) {
+                // 导航到2页面去，即输入密码和重复密码
+                navController.navigate("2")
+                isFirstButton.value = false
+            }
+        }
     }
-}
 
-/**
- * 单个导航按钮
- *
- * @param isFirstButton 当前是否是第一个按钮被选中
- * @param text 按钮文本
- * @param modifier 把按钮放在合适的位置上
- */
-@Composable
-fun NavigationButton(isFirstButton: Boolean, text: String, modifier: Modifier) {
-    val pressedColors =
-        ButtonDefaults.buttonColors(disabledBackgroundColor = MaterialTheme.colors.primary)
-    val notPressedColors = ButtonDefaults.buttonColors()
-    Button(
-        // 由于按钮不可点击所以回调为空
-        onClick = { },
-        // 按钮不可点击
-        enabled = false,
-        // 分布好看点
-        modifier = modifier,
-        // 圆形按钮
-        shape = RoundedCornerShape(100),
-        // 根据是否被选择来选择颜色
-        colors = if (isFirstButton)
-            pressedColors
-        else notPressedColors
-    ) {
-        Text(text = text, fontSize = 22.sp)
+    @Composable
+    override fun naviItem2() {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 80.dp)
+        ) {
+            // 输入密码
+            PasswordTextField(
+                password = password.value,
+                placeholder = "请输入${placeholderInsert}密码",
+            ) { password.value = it }
+            // 重新输入密码
+            PasswordTextField(
+                password = rePassword.value,
+                placeholder = "请重复输入${placeholderInsert}密码",
+            ) { rePassword.value = it }
+            // 注册，把参数传递一下
+            RoundedCornerButton(
+                text = buttonText, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 40.dp)
+                    .size(width = 150.dp, height = 100.dp)
+            ) {
+                launch {
+                    val deferred = async { return@async register(phoneNumber.value, password.value) }
+                    // 等待获取结果
+                    when (deferred.await()) {
+                        1 -> Toast.makeText(this@RegisterActivity, "注册成功", Toast.LENGTH_SHORT)
+                            .show()
+
+                        -1 -> Toast
+                            .makeText(this@RegisterActivity, "手机号已存在！", Toast.LENGTH_SHORT)
+                            .show()
+
+                        -2 -> Toast.makeText(this@RegisterActivity, "未知错误", Toast.LENGTH_SHORT)
+                            .show()
+
+                        369 -> Toast.makeText(this@RegisterActivity, "网络连接失败！", Toast.LENGTH_SHORT)
+                            .show()
+                        // 不可达
+                        else -> assert(false)
+                    }
+                    dialogIsShow.value = false
+                    delay(200)
+                    finish()
+                }
+                dialogIsShow.value = true
+            }
+        }
+    }
+
+    @Composable
+    override fun content() {
+        if (dialogIsShow.value) {
+            ProgressDialog("正在注册中···") { dialogIsShow.value = false }
+        }
     }
 }
