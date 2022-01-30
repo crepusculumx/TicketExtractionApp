@@ -10,11 +10,10 @@ package com.bupt.ticketextraction.settings
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ListItem
@@ -69,12 +68,7 @@ fun MainActivity.jumpToAboutUs() {
 @Composable
 fun SettingsUI(fatherActivity: MainActivity) {
     // 创建滚动条，虽然对于这个页面应该没啥用
-    val scrollState = rememberScrollState()
-    Column(
-        Modifier
-            .verticalScroll(scrollState)
-            .fillMaxWidth()
-    ) {
+    LazyColumn(Modifier.fillMaxWidth()) {
         SettingsListItem("账号管理") {
             // 登录成功跳转到个人信息
             // 未登录跳转到登录界面
@@ -108,15 +102,16 @@ fun SettingsUI(fatherActivity: MainActivity) {
  * @param text ListItem展示的文本
  * @param onClick 点击事件回调
  */
-@Composable
 @ExperimentalMaterialApi
-private fun SettingsListItem(text: String, onClick: () -> Unit) {
-    ListItem(Modifier.clickable { onClick() }) {
-        Text(
-            text = text,
-            Modifier.padding(vertical = 10.dp),
-            fontSize = 20.sp
-        )
+private fun LazyListScope.SettingsListItem(text: String, onClick: () -> Unit) {
+    item {
+        ListItem(Modifier.clickable { onClick() }) {
+            Text(
+                text = text,
+                Modifier.padding(vertical = 10.dp),
+                fontSize = 20.sp
+            )
+        }
+        Divider()
     }
-    Divider()
 }

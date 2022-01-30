@@ -12,10 +12,10 @@ package com.bupt.ticketextraction.email
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -23,15 +23,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
 import com.bupt.ticketextraction.ui.compose.RoundedCornerButton
 import com.bupt.ticketextraction.ui.compose.TwoStepsActivity
 import com.bupt.ticketextraction.ui.compose.isInDarkTheme
 import com.bupt.ticketextraction.ui.theme.Gray3
 import com.bupt.ticketextraction.ui.theme.Gray9
+import com.bupt.ticketextraction.utils.DebugCode
+import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -44,13 +48,29 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
 
     init {
         title = "发送邮件"
+        naviButtonBottomPadding = 100.dp
     }
+
+    /**
+     * 保存模板文件
+     */
+    @DebugCode
+    private var templates = if (IS_DEBUG_VERSION) {
+        mutableListOf(
+            EmailTemplate("Test"),
+            EmailTemplate("Test1"),
+            EmailTemplate("Test2"),
+            EmailTemplate("Test3"),
+            EmailTemplate("Test4"),
+            EmailTemplate("Test5")
+        )
+    } else mutableListOf<EmailTemplate>()
 
     @Preview
     @Composable
     override fun naviItem1() {
         val ch = Alignment.CenterHorizontally
-        Column(Modifier.fillMaxWidth().height(500.dp).padding(top = 50.dp)) {
+        Column(Modifier.fillMaxWidth().padding(top = 20.dp)) {
             TextField(
                 value = emailAddress.value,
                 onValueChange = { emailAddress.value = it },
@@ -72,20 +92,22 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                     textColor = MaterialTheme.colors.onBackground
                 )
             )
-            val scrollState = rememberScrollState()
             // 这里放联系人
             val bkgColor = if (isInDarkTheme()) Gray9 else Gray3
-            Column(
-                Modifier.width(276.dp).verticalScroll(scrollState).align(ch)
-                    .background(color = bkgColor)
-            ) {
-                ContactListItem("武连增", "1228393790@qq.com")
+            LazyColumn(Modifier.size(width = 276.dp, height = 224.dp).align(ch).background(color = bkgColor)) {
+                @DebugCode
+                if (IS_DEBUG_VERSION) {
+                    item { ContactListItem("武连增", "1228393790@qq.com") }
+                    item { ContactListItem("武连增", "1228393790@qq.com") }
+                    item { ContactListItem("武连增", "1228393790@qq.com") }
+                    item { ContactListItem("武连增", "1228393790@qq.com") }
+                    item { ContactListItem("武连增", "1228393790@qq.com") }
+                }
             }
             RoundedCornerButton(
                 text = "下一步", modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 40.dp)
-                    .size(width = 150.dp, height = 100.dp)
+                    .size(width = 150.dp, height = 90.dp)
             ) {
                 // 导航到2页面去，即选择模板
                 navController.navigate("2")
@@ -96,9 +118,40 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
 
     @Composable
     override fun naviItem2() {
-        val (selectedOption, onOptionSelected) = remember { mutableStateOf("") }
-        Column(Modifier.selectableGroup()) {
-
+        val ch = Alignment.CenterHorizontally
+        val (selectedOption, onOptionSelected) = remember { mutableStateOf(templates[0].name) }
+        val bkgColor = if (isInDarkTheme()) Gray9 else Gray3
+        Column(
+            Modifier.selectableGroup().width(276.dp)
+                .padding(top = 50.dp)
+        ) {
+            Text("请选择导出模板", modifier = Modifier.align(ch), fontSize = 21.sp)
+            LazyColumn(Modifier.height(224.dp)) {
+                templates.forEach { t ->
+                    item {
+                        Row(
+                            Modifier.fillMaxWidth().height(56.dp).align(ch).background(bkgColor)
+                                .selectable(
+                                    role = Role.RadioButton,
+                                    selected = (t.name == selectedOption),
+                                    onClick = { onOptionSelected(t.name) })
+                        ) {
+                            ListItem(trailing = {
+                                RadioButton(
+                                    selected = (t.name == selectedOption),
+                                    onClick = null
+                                )
+                            }) {
+                                Text(t.name, fontSize = 22.sp)
+                            }
+                        }
+                        Divider()
+                    }
+                }
+            }
+            RoundedCornerButton("发送", Modifier.align(ch)) {
+                // TODO: 2022/1/29
+            }
         }
     }
 
@@ -115,7 +168,8 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
     @Composable
     private fun ColumnScope.ContactListItem(name: String, email: String) {
         ListItem(
-            modifier = Modifier.align(Alignment.CenterHorizontally).clickable { emailAddress.value = email },
+            modifier = Modifier.align(Alignment.CenterHorizontally).height(56.dp)
+                .clickable { emailAddress.value = email },
             secondaryText = { Text(email) }) {
             Text(name)
         }

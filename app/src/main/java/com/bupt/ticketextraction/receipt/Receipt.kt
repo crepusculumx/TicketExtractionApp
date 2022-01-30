@@ -14,8 +14,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -26,22 +25,27 @@ import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
 import com.bupt.ticketextraction.main.MainActivity
 import com.bupt.ticketextraction.ui.compose.ProgressDialog
+import com.bupt.ticketextraction.utils.DebugCode
+import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
 import java.io.File
 import java.io.IOException
 
 /**
  * 保存所有发票信息
  */
-val tickets = mutableStateListOf<CabTicket>(
-    // 测试用例
-    CabTicket(
-        invoiceCode = "123",
-        invoiceNumber = "456",
-        totalFare = "114514",
-        distance = "66.0",
-        date = "2022-01-19"
+@DebugCode
+val tickets = if (IS_DEBUG_VERSION) {
+    mutableStateListOf(
+        // 测试用例
+        CabTicket(
+            invoiceCode = "123",
+            invoiceNumber = "456",
+            totalFare = "114514",
+            distance = "66.0",
+            date = "2022-01-19"
+        )
     )
-)
+} else mutableStateListOf<CabTicket>()
 
 var dialogIsShow = mutableStateOf(false)
 
@@ -67,15 +71,10 @@ fun <E : Comparable<E>> SnapshotStateList<E>.addDescendingOrder(e: E) {
 @Composable
 fun ReceiptUI(fatherActivity: MainActivity) {
     // 为此页面加入滚动条，票据肯定会很多，需要上下拉页面
-    val scrollState = rememberScrollState()
-    Column(
-        Modifier
-            .verticalScroll(scrollState)
-            .fillMaxWidth()
-    ) {
+    LazyColumn(Modifier.fillMaxWidth()) {
         // 创建每一个发票对应的缩略展示
         tickets.forEach {
-            ReceiptListItem(it, fatherActivity)
+            item { ReceiptListItem(it, fatherActivity) }
         }
     }
     if (dialogIsShow.value) ProgressDialog("正在识别中...") { dialogIsShow.value = false }

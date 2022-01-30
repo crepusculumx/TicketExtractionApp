@@ -23,6 +23,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -45,6 +46,8 @@ abstract class TwoStepsActivity : ComponentActivity() {
     protected lateinit var navController: NavHostController
 
     open var title = ""
+
+    open var naviButtonBottomPadding = 150.dp
 
     /**
      * 第一步操作的界面
@@ -124,7 +127,8 @@ abstract class TwoStepsActivity : ComponentActivity() {
                         // 底部导航按钮，只是表明现在在第几步
                         NavigationButtons(
                             isFirstButton = isFirstButton,
-                            modifier = Modifier.align(Alignment.BottomCenter)
+                            modifier = Modifier.align(Alignment.BottomCenter),
+                            bottomPadding = naviButtonBottomPadding
                         )
                         content()
                     }
@@ -141,11 +145,11 @@ abstract class TwoStepsActivity : ComponentActivity() {
  * @param modifier 让按钮在底部居中的位置
  */
 @Composable
-private fun NavigationButtons(isFirstButton: Boolean, modifier: Modifier) {
+private fun NavigationButtons(isFirstButton: Boolean, modifier: Modifier, bottomPadding: Dp) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 150.dp)
+            .padding(bottom = bottomPadding)
     ) {
         // 按钮1，表明正处于第一步
         NavigationButton(

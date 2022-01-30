@@ -14,7 +14,7 @@ import com.bupt.ticketextraction.receipt.CabTicket
 /**
  * 导出模板类
  */
-class EmailTemplate {
+class EmailTemplate(val name: String) {
     private val items = ArrayList<EmailTemplateItem>()
 
     fun addItem(item: EmailTemplateItem) {

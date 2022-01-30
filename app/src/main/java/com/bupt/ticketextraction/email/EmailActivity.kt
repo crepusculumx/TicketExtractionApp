@@ -13,9 +13,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -57,18 +56,19 @@ class EmailActivity : ComponentActivity() {
                         }
                     }
                 ) {
-                    val scrollState = rememberScrollState()
                     Box(modifier = Modifier.fillMaxHeight()) {
-                        Column(modifier = Modifier.fillMaxWidth().verticalScroll(scrollState)) {
+                        LazyColumn(modifier = Modifier.fillMaxWidth()) {
                             for (index in tickets.indices) {
                                 // 为CheckBox的checked赋值
                                 checked.add(mutableStateOf(false))
-                                // 导出用户选中的EmailListItem对应的发票
-                                CheckBoxListItem(
-                                    ticket = tickets[index],
-                                    checked = checked[index].value,
-                                    onCheckChange = { checked[index].value = it }
-                                )
+                                item {
+                                    // 导出用户选中的EmailListItem对应的发票
+                                    CheckBoxListItem(
+                                        ticket = tickets[index],
+                                        checked = checked[index].value,
+                                        onCheckChange = { checked[index].value = it }
+                                    )
+                                }
                             }
                         }
                         Row(modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()) {

@@ -10,11 +10,9 @@ package com.bupt.ticketextraction.receipt
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -54,9 +52,9 @@ class ReceiptActivity : ComponentActivity() {
         setContent {
             ActivityBody {
                 Scaffold(topBar = { TopBarWithTitleAndBack("发票信息") { finish() } }) {
-                    Column(Modifier.fillMaxWidth()) {
+                    LazyColumn(Modifier.fillMaxWidth()) {
                         infoStr.forEach {
-                            ReceiptInfoListItem(name = it.first, value = it.second)
+                            item { ReceiptInfoListItem(name = it.first, value = it.second) }
                         }
                     }
                 }
@@ -71,12 +69,8 @@ class ReceiptActivity : ComponentActivity() {
 @ExperimentalMaterialApi
 @Composable
 private fun ReceiptInfoListItem(name: String, value: String?) {
-    // 添加滚动条
-    val scrollState = rememberScrollState()
     ListItem(
-        modifier = Modifier
-            .padding(top = 10.dp, bottom = 10.dp)
-            .verticalScroll(scrollState),
+        modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
         trailing = {
             // 发票属性值
             // value不可能也不应该为空

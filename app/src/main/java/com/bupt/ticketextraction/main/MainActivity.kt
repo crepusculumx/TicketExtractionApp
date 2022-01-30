@@ -31,7 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bupt.ticketextraction.R
 import com.bupt.ticketextraction.email.EmailActivity
-import com.bupt.ticketextraction.network.getVersionCode
+import com.bupt.ticketextraction.network.getLatestVersionCode
 import com.bupt.ticketextraction.network.ocr.setAccessToken
 import com.bupt.ticketextraction.receipt.*
 import com.bupt.ticketextraction.settings.SettingsUI
@@ -39,9 +39,10 @@ import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarText
 import com.bupt.ticketextraction.ui.compose.changeTheme
 import com.bupt.ticketextraction.ui.compose.isInDarkTheme
-import com.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
+import com.bupt.ticketextraction.utils.CUR_VERSION_CODE
 import com.bupt.ticketextraction.utils.TICKET_DATA
 import com.bupt.ticketextraction.utils.createFileIfNotExists
+import com.bupt.ticketextraction.utils.initConst
 import kotlinx.coroutines.*
 import java.io.*
 
@@ -65,6 +66,8 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 必须先初始化常量
+        initConst(this@MainActivity)
         // 启动协程获取access_token
         launch {
             setAccessToken()
@@ -109,7 +112,6 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 )
             }
         }
-        initVars()
     }
 
     override fun onDestroy() {
@@ -124,14 +126,6 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
         tickets.clear()
         // 在MainActivity生命周期结束时销毁所有协程
         cancel()
-    }
-
-    /**
-     * 初始化一些共享变量
-     */
-    private fun initVars() {
-        EXTERNAL_FILE_DIR = getExternalFilesDir(null)!!.absolutePath
-        TICKET_DATA = "$EXTERNAL_FILE_DIR/tickets.dat"
     }
 
     /**
@@ -156,10 +150,8 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
 
     private suspend fun checkUpdate() {
         withContext(Dispatchers.IO) {
-            val num = packageManager.getPackageInfo(packageName, 0).longVersionCode
-            val versionCode = (num and 0x00000000FFFFFFFF).toInt()
-            val latest = getVersionCode()
-            if (versionCode < latest) {
+            val latest = getLatestVersionCode()
+            if (CUR_VERSION_CODE < latest) {
                 // TODO: 2022/1/27
                 Log.i("update", "$latest")
             }

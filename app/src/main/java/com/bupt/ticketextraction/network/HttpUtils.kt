@@ -10,6 +10,8 @@
 package com.bupt.ticketextraction.network
 
 import android.util.Log
+import com.bupt.ticketextraction.utils.DebugCode
+import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
@@ -44,7 +46,8 @@ suspend fun login(phoneNumber: String, password: String): Int {
     val map = HashMap<String, String>()
     map["phone"] = phoneNumber
     map["key"] = cipherText
-    return post(LOGIN_URL, map).toInt()
+    @DebugCode
+    return if (IS_DEBUG_VERSION) 1 else post(LOGIN_URL, map).toInt()
 }
 
 /**
@@ -59,7 +62,8 @@ suspend fun register(phoneNumber: String, password: String): Int {
     val map = HashMap<String, String>()
     map["phone"] = phoneNumber
     map["key"] = cipherText
-    return post(REGISTER_URL, map).toInt()
+    @DebugCode
+    return if (IS_DEBUG_VERSION) 1 else post(REGISTER_URL, map).toInt()
 }
 
 /**
@@ -67,9 +71,9 @@ suspend fun register(phoneNumber: String, password: String): Int {
  *
  * @return 最新版本码
  */
-suspend fun getVersionCode(): Int {
-    return 1
-//    return get(GET_VERSION_CODE).toInt()
+suspend fun getLatestVersionCode(): Int {
+    @DebugCode
+    return if (IS_DEBUG_VERSION) 1 else get(GET_VERSION_CODE).toInt()
 }
 
 /**
@@ -131,7 +135,7 @@ private suspend fun post(urlStr: String, params: Map<String, String>): String {
     }
 
     // null因为猪头把服务器给关了
-    if (s == null) {
+    if (s == null || s.toString() == "") {
         Log.e("server", "no connection")
         return NO_CONNECTION
     }
@@ -163,7 +167,7 @@ private suspend fun get(urlStr: String): String {
         e.printStackTrace()
     }
 
-    if (s == null) {
+    if (s == null || s.toString() == "") {
         // null因为猪头把服务器给关了
         Log.e("server", "no connection")
         return NO_CONNECTION
