@@ -21,8 +21,41 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
+import com.bupt.ticketextraction.email.EmailTemplate
 import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
+import com.bupt.ticketextraction.utils.DebugCode
+import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
+
+/**
+ * 保存联系人
+ * key-name value-email
+ */
+@DebugCode
+var contacts = if (IS_DEBUG_VERSION) {
+    mutableMapOf(
+        Pair("武连增1", "1228393790@qq.com"),
+        Pair("武连增2", "1228393790@qq.com"),
+        Pair("武连增3", "1228393790@qq.com"),
+        Pair("武连增4", "1228393790@qq.com"),
+        Pair("武连增5", "1228393790@qq.com")
+    )
+} else mutableMapOf<String, String>()
+
+/**
+ * 保存模板
+ */
+@DebugCode
+var templates = if (IS_DEBUG_VERSION) {
+    mutableListOf(
+        EmailTemplate("Test"),
+        EmailTemplate("Test1"),
+        EmailTemplate("Test2"),
+        EmailTemplate("Test3"),
+        EmailTemplate("Test4"),
+        EmailTemplate("Test5")
+    )
+} else mutableListOf<EmailTemplate>()
 
 /**
  * 展示个人信息的Activity
@@ -40,7 +73,7 @@ class PersonInfoActivity : ComponentActivity() {
                         Divider()
 
                         PersonInfoListItem("联系人管理") {
-                            // TODO: 2022/1/20 跳转到联系人
+                            startActivity(Intent(this@PersonInfoActivity, ContactActivity::class.java))
                         }
                         PersonInfoListItem("导出模板管理") {
                             // TODO: 2022/1/20 跳转到模板

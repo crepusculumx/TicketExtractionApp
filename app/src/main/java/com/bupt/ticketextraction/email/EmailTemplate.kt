@@ -9,13 +9,18 @@
 
 package com.bupt.ticketextraction.email
 
+import android.os.Parcelable
 import com.bupt.ticketextraction.receipt.CabTicket
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 
 /**
  * 导出模板类
  */
-class EmailTemplate(val name: String) {
-    private val items = ArrayList<EmailTemplateItem>()
+@Parcelize
+class EmailTemplate(val name: String) : Parcelable {
+    @IgnoredOnParcel
+    val items = ArrayList<EmailTemplateItem>()
 
     fun addItem(item: EmailTemplateItem) {
         if (!items.contains(item)) {

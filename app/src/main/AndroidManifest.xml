@@ -41,8 +41,10 @@
         <activity android:name=".settings.PersonInfoActivity"/>
         <activity android:name=".settings.AboutUsActivity"/>
         <activity android:name=".settings.ChangePasswordActivity"/>
+        <activity android:name=".settings.ContactActivity"/>
         <activity android:name=".email.EmailActivity"/>
         <activity android:name=".email.SendEmailActivity"/>
+        <activity android:name=".email.EmailTemplateActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

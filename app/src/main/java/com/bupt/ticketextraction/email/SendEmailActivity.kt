@@ -29,6 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
+import com.bupt.ticketextraction.settings.contacts
+import com.bupt.ticketextraction.settings.templates
 import com.bupt.ticketextraction.ui.compose.RoundedCornerButton
 import com.bupt.ticketextraction.ui.compose.TwoStepsActivity
 import com.bupt.ticketextraction.ui.compose.isInDarkTheme
@@ -50,21 +52,6 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
         title = "发送邮件"
         naviButtonBottomPadding = 100.dp
     }
-
-    /**
-     * 保存模板文件
-     */
-    @DebugCode
-    private var templates = if (IS_DEBUG_VERSION) {
-        mutableListOf(
-            EmailTemplate("Test"),
-            EmailTemplate("Test1"),
-            EmailTemplate("Test2"),
-            EmailTemplate("Test3"),
-            EmailTemplate("Test4"),
-            EmailTemplate("Test5")
-        )
-    } else mutableListOf<EmailTemplate>()
 
     @Preview
     @Composable
@@ -97,11 +84,7 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
             LazyColumn(Modifier.size(width = 276.dp, height = 224.dp).align(ch).background(color = bkgColor)) {
                 @DebugCode
                 if (IS_DEBUG_VERSION) {
-                    item { ContactListItem("武连增", "1228393790@qq.com") }
-                    item { ContactListItem("武连增", "1228393790@qq.com") }
-                    item { ContactListItem("武连增", "1228393790@qq.com") }
-                    item { ContactListItem("武连增", "1228393790@qq.com") }
-                    item { ContactListItem("武连增", "1228393790@qq.com") }
+                    contacts.forEach { item { ContactListItem(it.key, it.value) } }
                 }
             }
             RoundedCornerButton(

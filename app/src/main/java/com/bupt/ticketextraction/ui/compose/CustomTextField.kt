@@ -82,7 +82,7 @@ fun ColumnScope.PasswordTextField(
         value = password,
         // 为了代码复用，必须把password传进来，又因为函数式编程，还得定义一个回调在外面修改ToT
         onValueChange = { onValueChange(it) },
-        // TextField设置居中，必须得从Column或Row或者其他能设置的地方传进来，TextField Modifier没这个属性
+        // TextField设置居中
         modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 15.dp),
         // 锁的图案，表示密码
         leadingIcon = {
@@ -115,6 +115,46 @@ fun ColumnScope.PasswordTextField(
         else VisualTransformation.None,
         // 输入类型设为密码
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        // 背景色设为白色
+        colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.background)
+    )
+}
+
+@Composable
+fun ColumnScope.NameTextField(name: String, onValueChange: (String) -> Unit) {
+    TextField(
+        value = name,
+        onValueChange = { onValueChange(name) },
+        modifier = Modifier.align(Alignment.CenterHorizontally),
+        leadingIcon = {
+            Icon(
+                painterResource(R.drawable.ic_baseline_person_24),
+                contentDescription = null
+            )
+        },
+        placeholder = { Text("请输入名字") },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        // 背景色设为白色
+        colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.background)
+    )
+}
+
+@Composable
+fun ColumnScope.EmailTextField(email: String, onValueChange: (String) -> Unit) {
+    TextField(
+        value = email,
+        onValueChange = { onValueChange(email) },
+        modifier = Modifier.align(Alignment.CenterHorizontally),
+        leadingIcon = {
+            Icon(
+                painterResource(R.drawable.ic_baseline_email_24),
+                contentDescription = null
+            )
+        },
+        singleLine = true,
+        placeholder = { Text("请输入邮箱") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         // 背景色设为白色
         colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.background)
     )
