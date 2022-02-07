@@ -8,6 +8,7 @@
 package com.bupt.ticketextraction.settings
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -40,12 +41,34 @@ class ContactActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ActivityBody {
-                var isDialogShow by remember { mutableStateOf(false) }
+                var isChangeDialogShow by remember { mutableStateOf(false) }
+                var isDeleteDialogShow by remember { mutableStateOf(false) }
+                // TextField中展示的name
                 var name by remember { mutableStateOf("") }
+                // TextField中展示的email
                 var email by remember { mutableStateOf("") }
-                Scaffold(topBar = { TopBarWithTitleAndBack("联系人") { finish() } },
+                // 根据新建或修改展示confirm button的文本
+                var confirmText = "修改"
+                // 被修改的联系人
+                var curContact: Contact? = null
+                // 当前联系人要放入的数组索引
+                var curIndex = -1
+                Scaffold(
+                    topBar = { TopBarWithTitleAndBack("联系人") { finish() } },
+                    // 新增联系人按钮w
                     floatingActionButton = {
-                        FloatingActionButton(onClick = { /*TODO*/ }, modifier = Modifier.padding(bottom = 50.dp)) {
+                        FloatingActionButton(
+                            onClick = {
+                                confirmText = "新增"
+                                // 新增都展示为空字符串
+                                // 当前联系人新建一个，索引是数组最后索引+1
+                                name = ""
+                                email = ""
+                                curContact = Contact("", "")
+                                curIndex = contacts.size
+                                isChangeDialogShow = true
+                            }, modifier = Modifier.padding(bottom = 50.dp)
+                        ) {
                             // 加号图片
                             Icon(Icons.Filled.Add, contentDescription = null)
                         }
@@ -54,31 +77,70 @@ class ContactActivity : ComponentActivity() {
                         // 二级文本放邮箱
                         // 主文本放姓名
                         // 长按删除 点击编辑
-                        contacts.forEach {
+                        contacts.forEachIndexed { index, it ->
                             ListItem(
                                 Modifier.align(Alignment.CenterHorizontally).padding(bottom = 5.dp, top = 5.dp)
-                                    .combinedClickable(onLongClick = {/*TODO: 2022/1/30 删除*/ }) {
-                                        name = it.key
-                                        email = it.value
-                                        isDialogShow = true
+                                    .combinedClickable(onLongClick = {
+                                        curIndex = index
+                                        isDeleteDialogShow = true
+                                    }) {
+                                        confirmText = "修改"
+                                        // 修改时自动把原name和email填充上
+                                        name = it.name
+                                        email = it.email
+                                        // 设定当前联系人
+                                        curContact = it
+                                        // 设定当前索引
+                                        curIndex = index
+                                        isChangeDialogShow = true
                                     },
-                                secondaryText = { Text(text = it.value, fontSize = 19.sp) }) {
-                                Text(text = it.key, fontSize = 22.sp)
+                                secondaryText = { Text(text = it.email, fontSize = 19.sp) }) {
+                                Text(text = it.name, fontSize = 22.sp)
                             }
                             Divider()
                         }
-                        if (isDialogShow) {
+                        if (isChangeDialogShow) {
+                            // 修改或新增AlertDialog
                             AlertDialog(
-                                onDismissRequest = { isDialogShow = false },
-                                title = { Text("编辑联系人") },
-                                confirmButton = { TextButton(onClick = { isDialogShow = false }) { Text("修改") } },
-                                dismissButton = { TextButton(onClick = { isDialogShow = false }) { Text("取消") } },
+                                onDismissRequest = { isChangeDialogShow = false },
+                                title = { Text("${confirmText}联系人") },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        // 根据当前信息修改联系人的属性
+                                        curContact!!.name = name
+                                        curContact!!.email = email
+
+                                        // 如果是修改则删去原有的再添加一个修改后的
+                                        // 如果是新增则直接在最后添加一个新的
+                                        if (curIndex < contacts.size) contacts.removeAt(curIndex)
+                                        contacts.add(curIndex, curContact!!)
+                                        isChangeDialogShow = false
+                                        Toast.makeText(this@ContactActivity, "${confirmText}成功", Toast.LENGTH_SHORT)
+                                    }) { Text(confirmText) }
+                                },
+                                dismissButton = { TextButton(onClick = { isChangeDialogShow = false }) { Text("取消") } },
                                 text = {
                                     Column {
+                                        // 把名字和邮箱编辑框展示一下
                                         NameTextField(name) { name = it }
                                         EmailTextField(email) { email = it }
                                     }
                                 }
+                            )
+                        }
+                        // 删除AlertDialog
+                        if (isDeleteDialogShow) {
+                            AlertDialog(
+                                onDismissRequest = { isDeleteDialogShow = false },
+                                title = { Text("删除联系人") },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        // 按索引删除
+                                        contacts.removeAt(curIndex)
+                                        isDeleteDialogShow = false
+                                    }) { Text("删除") }
+                                },
+                                dismissButton = { TextButton(onClick = { isDeleteDialogShow = false }) { Text("取消") } }
                             )
                         }
                     }

@@ -124,7 +124,7 @@ fun ColumnScope.PasswordTextField(
 fun ColumnScope.NameTextField(name: String, onValueChange: (String) -> Unit) {
     TextField(
         value = name,
-        onValueChange = { onValueChange(name) },
+        onValueChange = { onValueChange(it) },
         modifier = Modifier.align(Alignment.CenterHorizontally),
         leadingIcon = {
             Icon(
@@ -144,7 +144,7 @@ fun ColumnScope.NameTextField(name: String, onValueChange: (String) -> Unit) {
 fun ColumnScope.EmailTextField(email: String, onValueChange: (String) -> Unit) {
     TextField(
         value = email,
-        onValueChange = { onValueChange(email) },
+        onValueChange = { onValueChange(it) },
         modifier = Modifier.align(Alignment.CenterHorizontally),
         leadingIcon = {
             Icon(

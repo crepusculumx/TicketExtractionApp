@@ -15,6 +15,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,14 +34,14 @@ import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
  */
 @DebugCode
 var contacts = if (IS_DEBUG_VERSION) {
-    mutableMapOf(
-        Pair("武连增1", "1228393790@qq.com"),
-        Pair("武连增2", "1228393790@qq.com"),
-        Pair("武连增3", "1228393790@qq.com"),
-        Pair("武连增4", "1228393790@qq.com"),
-        Pair("武连增5", "1228393790@qq.com")
+    mutableStateListOf(
+        Contact("武连增1", "1228393790@qq.com"),
+        Contact("武连增2", "1228393790@qq.com"),
+        Contact("武连增3", "1228393790@qq.com"),
+        Contact("武连增4", "1228393790@qq.com"),
+        Contact("武连增5", "1228393790@qq.com")
     )
-} else mutableMapOf<String, String>()
+} else mutableStateListOf<Contact>()
 
 /**
  * 保存模板

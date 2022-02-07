@@ -84,7 +84,7 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
             LazyColumn(Modifier.size(width = 276.dp, height = 224.dp).align(ch).background(color = bkgColor)) {
                 @DebugCode
                 if (IS_DEBUG_VERSION) {
-                    contacts.forEach { item { ContactListItem(it.key, it.value) } }
+                    contacts.forEach { item { ContactListItem(it.name, it.email) } }
                 }
             }
             RoundedCornerButton(
