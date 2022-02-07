@@ -135,20 +135,16 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                     when (deferred.await()) {
                         1 -> Toast.makeText(this@RegisterActivity, "注册成功", Toast.LENGTH_SHORT)
                             .show()
-
                         -1 -> Toast
                             .makeText(this@RegisterActivity, "手机号已存在！", Toast.LENGTH_SHORT)
                             .show()
-
                         -2 -> Toast.makeText(this@RegisterActivity, "未知错误", Toast.LENGTH_SHORT)
                             .show()
-
                         369 -> Toast.makeText(this@RegisterActivity, "网络连接失败！", Toast.LENGTH_SHORT)
                             .show()
                         // 不可达
                         else -> assert(false)
                     }
-                    dialogIsShow.value = false
                     delay(200)
                     finish()
                 }

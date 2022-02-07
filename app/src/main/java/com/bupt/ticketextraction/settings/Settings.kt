@@ -19,6 +19,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ListItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +29,8 @@ import com.bupt.ticketextraction.main.MainActivity
  * web端网址
  */
 private const val webAddress = "https://www.baidu.com"
+
+var isLatestVersion = mutableStateOf(true)
 
 /**
  * 从MainActivity跳转到LoginActivity
@@ -78,7 +81,8 @@ fun SettingsUI(fatherActivity: MainActivity) {
                 fatherActivity.jumpToLogin()
             }
         }
-        SettingsListItem("检查更新") {
+        val text = if (isLatestVersion.value) "已是最新版本" else "存在最新版本"
+        SettingsListItem("检查更新", { Text(text, fontSize = 15.sp) }) {
             // TODO: 2022/1/15
         }
         SettingsListItem("清空缓存") {
@@ -103,9 +107,9 @@ fun SettingsUI(fatherActivity: MainActivity) {
  * @param onClick 点击事件回调
  */
 @ExperimentalMaterialApi
-private fun LazyListScope.SettingsListItem(text: String, onClick: () -> Unit) {
+private fun LazyListScope.SettingsListItem(text: String, trailing: @Composable () -> Unit = {}, onClick: () -> Unit) {
     item {
-        ListItem(Modifier.clickable { onClick() }) {
+        ListItem(Modifier.clickable { onClick() }, trailing = { trailing() }) {
             Text(
                 text = text,
                 Modifier.padding(vertical = 10.dp),

@@ -8,7 +8,9 @@
 
 package com.bupt.ticketextraction.main
 
+import android.app.DownloadManager
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -31,18 +33,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bupt.ticketextraction.R
 import com.bupt.ticketextraction.email.EmailActivity
+import com.bupt.ticketextraction.network.DownloadReceiver
 import com.bupt.ticketextraction.network.getLatestVersionCode
 import com.bupt.ticketextraction.network.ocr.setAccessToken
 import com.bupt.ticketextraction.receipt.*
 import com.bupt.ticketextraction.settings.SettingsUI
+import com.bupt.ticketextraction.settings.isLatestVersion
 import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarText
 import com.bupt.ticketextraction.ui.compose.changeTheme
 import com.bupt.ticketextraction.ui.compose.isInDarkTheme
-import com.bupt.ticketextraction.utils.CUR_VERSION_CODE
-import com.bupt.ticketextraction.utils.TICKET_DATA
-import com.bupt.ticketextraction.utils.createFileIfNotExists
-import com.bupt.ticketextraction.utils.initConst
+import com.bupt.ticketextraction.utils.*
 import kotlinx.coroutines.*
 import java.io.*
 
@@ -55,6 +56,8 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
      * 相机，用于拍照录视频
      */
     private val camera = Camera(this)
+
+    private val downloadReceiver = DownloadReceiver()
 
     /**
      * 从MainActivity跳转到EmailActivity
@@ -80,6 +83,8 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
         launch {
             checkUpdate()
         }
+        // 注册下载监听器
+        registerReceiver(downloadReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         setContent {
             ActivityBody {
                 val navControllers = rememberNavController()
@@ -151,10 +156,14 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
     private suspend fun checkUpdate() {
         withContext(Dispatchers.IO) {
             val latest = getLatestVersionCode()
+            APK_PATH = "/apk/TicketExtraction$latest.apk"
+            // 根据结果赋值
+            isLatestVersion.value = latest == CUR_VERSION_CODE
             if (CUR_VERSION_CODE < latest) {
                 // TODO: 2022/1/27
                 Log.i("update", "$latest")
             }
+
         }
     }
 }

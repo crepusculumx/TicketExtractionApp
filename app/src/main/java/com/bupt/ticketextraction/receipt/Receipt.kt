@@ -47,7 +47,7 @@ val tickets = if (IS_DEBUG_VERSION) {
     )
 } else mutableStateListOf<CabTicket>()
 
-var dialogIsShow = mutableStateOf(false)
+var ocrDialogIsShow = mutableStateOf(false)
 
 /**
  * 降序添加元素
@@ -77,7 +77,7 @@ fun ReceiptUI(fatherActivity: MainActivity) {
             item { ReceiptListItem(it, fatherActivity) }
         }
     }
-    if (dialogIsShow.value) ProgressDialog("正在识别中...") { dialogIsShow.value = false }
+    if (ocrDialogIsShow.value) ProgressDialog("正在识别中...") { ocrDialogIsShow.value = false }
 }
 
 /**

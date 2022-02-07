@@ -8,6 +8,7 @@
 package com.bupt.ticketextraction.settings
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -21,29 +22,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.bupt.ticketextraction.ui.compose.ActivityBody
-import com.bupt.ticketextraction.ui.compose.PasswordTextField
-import com.bupt.ticketextraction.ui.compose.RoundedCornerButton
-import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
+import com.bupt.ticketextraction.network.changePwd
+import com.bupt.ticketextraction.ui.compose.*
+import kotlinx.coroutines.*
 
 /**
  * 修改密码Activity，用户登录后才能访问到
  */
-class ChangePasswordActivity : ComponentActivity() {
+class ChangePasswordActivity : ComponentActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ActivityBody {
                 Scaffold(topBar = { TopBarWithTitleAndBack("修改密码") { finish() } }) {
-                    var oldPassword by remember { mutableStateOf("") }
-                    var newPassword by remember { mutableStateOf("") }
-                    var newRePassword by remember { mutableStateOf("") }
                     Column(
                         modifier = Modifier
                             .padding(top = 80.dp)
                             .fillMaxWidth()
                     ) {
                         val ch = Alignment.CenterHorizontally
+                        var isDialogShow by remember { mutableStateOf(false) }
+                        var oldPassword by remember { mutableStateOf("") }
+                        var newPassword by remember { mutableStateOf("") }
+                        var newRePassword by remember { mutableStateOf("") }
                         // 旧密码
                         PasswordTextField(
                             password = oldPassword,
@@ -64,11 +65,38 @@ class ChangePasswordActivity : ComponentActivity() {
                         )
                         // 提交按钮
                         RoundedCornerButton(text = "修改", modifier = Modifier.align(ch)) {
-                            // TODO: 2022/1/21 修改密码
+                            launch {
+                                val deferred = async { changePwd(newPassword) }
+                                when (deferred.await()) {
+                                    1 -> {
+                                        Toast.makeText(this@ChangePasswordActivity, "修改成功", Toast.LENGTH_SHORT)
+                                            .show()
+                                        // 延迟0.2s使得Activity别结束这么快
+                                        delay(200)
+                                        finish()
+                                    }
+                                    -2 -> Toast.makeText(this@ChangePasswordActivity, "未知错误", Toast.LENGTH_SHORT)
+                                        .show()
+                                    369 -> Toast.makeText(this@ChangePasswordActivity, "网络连接失败！", Toast.LENGTH_SHORT)
+                                        .show()
+                                    else -> assert(false)
+                                }
+                                isDialogShow = false
+                            }
+                            isDialogShow = true
+                        }
+                        if (isDialogShow) {
+                            ProgressDialog("正在修改中...") { isDialogShow = false }
                         }
                     }
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 在Activity生命周期结束时销毁所有协程
+        cancel()
     }
 }

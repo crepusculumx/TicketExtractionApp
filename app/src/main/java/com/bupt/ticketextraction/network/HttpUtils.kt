@@ -9,8 +9,16 @@
 
 package com.bupt.ticketextraction.network
 
+import android.app.DownloadManager
+import android.content.Context
+import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import com.bupt.ticketextraction.settings.LoginActivity.Companion.curPhoneNumber
+import com.bupt.ticketextraction.utils.APK_PATH
 import com.bupt.ticketextraction.utils.DebugCode
+import com.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
 import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,6 +35,7 @@ private const val SERVER_URL = "http://ubuntu@crepusculumx.icu:8888"
 private const val SEND_EMAIL_URL = "$SERVER_URL/mail"
 private const val LOGIN_URL = "$SERVER_URL/login"
 private const val REGISTER_URL = "$SERVER_URL/register"
+private const val CHANGE_PWD_URL = "$SERVER_URL/setKey"
 private const val GET_CONTACT_URL = "$SERVER_URL/getMails"
 private const val SET_CONTACT_URL = "$SERVER_URL/setMails"
 private const val GET_VERSION_CODE = "$SERVER_URL/checkVersion"
@@ -67,6 +76,21 @@ suspend fun register(phoneNumber: String, password: String): Int {
 }
 
 /**
+ * 修改密码服务
+ *
+ * @param password 密码
+ * @return 1-成功 -1查无此人 -2程序运行错误
+ */
+suspend fun changePwd(password: String): Int {
+    val cipherText = passwordEncrypt(password)
+    val map = HashMap<String, String>()
+    map["phone"] = curPhoneNumber
+    map["key"] = cipherText
+    @DebugCode
+    return if (IS_DEBUG_VERSION) 1 else post(CHANGE_PWD_URL, map).toInt()
+}
+
+/**
  * 获取最新版本码
  *
  * @return 最新版本码
@@ -74,6 +98,29 @@ suspend fun register(phoneNumber: String, password: String): Int {
 suspend fun getLatestVersionCode(): Int {
     @DebugCode
     return if (IS_DEBUG_VERSION) 1 else get(GET_VERSION_CODE).toInt()
+}
+
+fun downloadApk(activity: ComponentActivity) {
+    // 检查是否存在安装包，存在则直接安装
+    val file = File(EXTERNAL_FILE_DIR + APK_PATH)
+    if (file.exists()) {
+        DownloadReceiver.install(activity, APK_PATH)
+        return
+    }
+    val uri = Uri.parse(DOWNLOAD_APK)
+    val dm = activity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    val request = DownloadManager.Request(uri)
+    request.setDestinationInExternalFilesDir(activity, null, APK_PATH)
+    // 下载时和下载完成通知
+    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+    request.setTitle("发票识别")
+    request.setDescription("正在下载最新版app")
+    // 指定文件类型为apk
+    request.setMimeType("application/vnd.android.package-archive")
+    dm.enqueue(request)
+
+    Log.e("download", "start")
+    Toast.makeText(activity, "正在下载中", Toast.LENGTH_SHORT)
 }
 
 /**

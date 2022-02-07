@@ -33,6 +33,11 @@ fun initConst(context: Context) {
 var EXTERNAL_FILE_DIR = ""
 
 /**
+ * APK存储路径
+ */
+var APK_PATH = ""
+
+/**
  * 存储票据信息
  */
 var TICKET_DATA = ""

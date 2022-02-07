@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -48,13 +46,7 @@ class EmailActivity : ComponentActivity() {
         setContent {
             ActivityBody {
                 Scaffold(
-                    topBar = { TopBarWithTitleAndBack("导出") { finish() } },
-                    floatingActionButton = {
-                        FloatingActionButton(onClick = { /*TODO*/ }, modifier = Modifier.padding(bottom = 50.dp)) {
-                            // 加号图片
-                            Icon(Icons.Filled.Add, contentDescription = null)
-                        }
-                    }
+                    topBar = { TopBarWithTitleAndBack("导出") { finish() } }
                 ) {
                     Box(modifier = Modifier.fillMaxHeight()) {
                         LazyColumn(modifier = Modifier.fillMaxWidth()) {

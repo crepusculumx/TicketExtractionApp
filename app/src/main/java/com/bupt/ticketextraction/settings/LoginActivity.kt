@@ -106,7 +106,6 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
                                     .show()
                                 return@RoundedCornerButton
                             }
-                            // TODO: 2022/1/17 登录
                             launch {
                                 val deferred = async { return@async login(phoneNumber, password) }
                                 when (deferred.await()) {
