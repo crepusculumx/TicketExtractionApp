@@ -11,7 +11,9 @@ package com.bupt.ticketextraction.network
 
 import android.app.DownloadManager
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -120,7 +122,15 @@ fun downloadApk(activity: ComponentActivity) {
     dm.enqueue(request)
 
     Log.e("download", "start")
-    Toast.makeText(activity, "正在下载中", Toast.LENGTH_SHORT)
+    Toast.makeText(activity, "正在下载中", Toast.LENGTH_SHORT).show()
+    // 动态获取权限
+    val hasInstallPermission: Boolean = activity.packageManager.canRequestPackageInstalls()
+    if (!hasInstallPermission) {
+        val pkgUri = Uri.parse("package:${activity.packageName}")
+        val permissionIntent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, pkgUri)
+        @Suppress("DEPRECATION")
+        activity.startActivityForResult(permissionIntent, 1000)
+    }
 }
 
 /**

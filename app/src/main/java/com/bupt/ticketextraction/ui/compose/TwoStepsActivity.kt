@@ -47,7 +47,7 @@ abstract class TwoStepsActivity : ComponentActivity() {
 
     open var title = ""
 
-    open var naviButtonBottomPadding = 150.dp
+    open var naviButtonBottomPadding = 100.dp
 
     /**
      * 第一步操作的界面

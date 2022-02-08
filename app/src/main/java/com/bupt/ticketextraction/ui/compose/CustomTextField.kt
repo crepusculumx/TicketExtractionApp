@@ -7,6 +7,7 @@
  */
 package com.bupt.ticketextraction.ui.compose
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,11 +23,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
+import com.bupt.ticketextraction.ui.theme.Gray5
 
 /**
  * 输入账号的TextField
@@ -39,12 +44,11 @@ fun ColumnScope.PhoneNumberTextField(
     phoneNumber: String,
     onValueChange: (String) -> Unit,
 ) {
-    // TODO: 2022/1/17 isError
     TextField(
         value = phoneNumber,
         onValueChange = { onValueChange(it) },
         // TextField设置居中
-        modifier = Modifier.align(Alignment.CenterHorizontally),
+        modifier = Modifier.align(Alignment.CenterHorizontally).semantics { error("test") },
         // 方形账户图案
         leadingIcon = {
             Icon(Icons.Filled.AccountBox, contentDescription = null)
@@ -78,7 +82,6 @@ fun ColumnScope.PasswordTextField(
 ) {
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
     TextField(
-        // TODO: 2022/1/17 isError
         value = password,
         // 为了代码复用，必须把password传进来，又因为函数式编程，还得定义一个回调在外面修改ToT
         onValueChange = { onValueChange(it) },
@@ -93,12 +96,9 @@ fun ColumnScope.PasswordTextField(
             IconButton(onClick = { passwordHidden = !passwordHidden }) {
                 // 根据当前密码是否隐藏选择图片
                 val resId =
-                    if (passwordHidden)
-                        R.drawable.ic_baseline_visibility_24
-                    else R.drawable.ic_baseline_visibility_off_24
+                    if (passwordHidden) R.drawable.ic_baseline_visibility_24 else R.drawable.ic_baseline_visibility_off_24
                 // 根据当前密码是否隐藏选择提示
-                val description =
-                    if (passwordHidden) "展示密码" else "隐藏密码"
+                val description = if (passwordHidden) "展示密码" else "隐藏密码"
                 Icon(
                     painterResource(id = resId),
                     contentDescription = description
@@ -110,14 +110,29 @@ fun ColumnScope.PasswordTextField(
         // 无输入时的提示文本
         placeholder = { Text(placeholder) },
         // 密码是否隐藏
-        visualTransformation = if (passwordHidden)
-            PasswordVisualTransformation()
-        else VisualTransformation.None,
+        visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
         // 输入类型设为密码
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         // 背景色设为白色
         colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.background)
     )
+}
+
+@Composable
+fun ColumnScope.PasswordInstruction() {
+    val ch = Alignment.CenterHorizontally
+    Column(Modifier.align(ch).padding(end = 25.dp)) {
+        Text("密码6~16位", fontSize = 14.sp, color = Gray5, modifier = Modifier.padding(bottom = 5.dp))
+        Text("可以包含大写字母、小写字母、数字", fontSize = 14.sp, color = Gray5)
+    }
+}
+
+@Composable
+fun ColumnScope.RePasswordInstruction() {
+    val ch = Alignment.CenterHorizontally
+    Column(Modifier.align(ch).padding(end = 120.dp)) {
+        Text("重复输入与密码相同", fontSize = 14.sp, color = Gray5, modifier = Modifier.padding(bottom = 5.dp))
+    }
 }
 
 @Composable

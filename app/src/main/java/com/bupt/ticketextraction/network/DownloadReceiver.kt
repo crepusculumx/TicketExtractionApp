@@ -11,10 +11,7 @@ import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.core.content.FileProvider
 import com.bupt.ticketextraction.utils.APK_PATH
 import com.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
@@ -46,16 +43,6 @@ class DownloadReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-            // 动态获取权限
-            val activity: ComponentActivity = context as ComponentActivity
-            val hasInstallPermission: Boolean = activity.packageManager.canRequestPackageInstalls()
-            if (!hasInstallPermission) {
-                val pkgUri = Uri.parse("package:${activity.packageName}")
-                val permissionIntent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, pkgUri)
-                @Suppress("DEPRECATION")
-                activity.startActivityForResult(permissionIntent, 1000)
-                return
-            }
             installApk(context, id, EXTERNAL_FILE_DIR + APK_PATH)
         }
     }

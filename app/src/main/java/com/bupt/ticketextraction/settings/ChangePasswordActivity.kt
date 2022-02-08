@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bupt.ticketextraction.network.changePwd
 import com.bupt.ticketextraction.ui.compose.*
+import com.bupt.ticketextraction.utils.passwordPattern
 import kotlinx.coroutines.*
 
 /**
@@ -45,26 +46,47 @@ class ChangePasswordActivity : ComponentActivity(), CoroutineScope by MainScope(
                         var oldPassword by remember { mutableStateOf("") }
                         var newPassword by remember { mutableStateOf("") }
                         var newRePassword by remember { mutableStateOf("") }
+                        var isOldValid by remember { mutableStateOf(false) }
+                        var isNewValid by remember { mutableStateOf(false) }
+                        var isNewReValid by remember { mutableStateOf(false) }
                         // 旧密码
                         PasswordTextField(
                             password = oldPassword,
                             placeholder = "请输入旧密码",
-                            onValueChange = { oldPassword = it }
+                            onValueChange = {
+                                oldPassword = it
+                                isOldValid = LoginActivity.curPassword == oldPassword
+                            }
                         )
                         // 新密码
                         PasswordTextField(
                             password = newPassword,
                             placeholder = "请输入新密码",
-                            onValueChange = { newPassword = it }
+                            onValueChange = {
+                                newPassword = it
+                                isNewValid = passwordPattern.matcher(it).matches()
+                            }
                         )
+                        // 密码提示
+                        PasswordInstruction()
                         // 重复新密码
                         PasswordTextField(
                             password = newRePassword,
                             placeholder = "请重复输入新密码",
-                            onValueChange = { newRePassword = it }
+                            onValueChange = {
+                                newRePassword = it
+                                isNewReValid = newPassword == newRePassword
+                            }
                         )
+                        // 重复密码提示
+                        RePasswordInstruction()
                         // 提交按钮
-                        RoundedCornerButton(text = "修改", modifier = Modifier.align(ch)) {
+                        RoundedCornerButton(
+                            text = "修改",
+                            // 三个都行才允许修改
+                            enabled = isOldValid and isNewValid and isNewReValid,
+                            modifier = Modifier.align(ch)
+                        ) {
                             launch {
                                 val deferred = async { changePwd(newPassword) }
                                 when (deferred.await()) {

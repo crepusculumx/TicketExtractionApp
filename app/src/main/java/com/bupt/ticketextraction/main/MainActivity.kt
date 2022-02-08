@@ -67,6 +67,20 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
         startActivity(intent)
     }
 
+    suspend fun checkUpdate() {
+        withContext(Dispatchers.IO) {
+            val latest = getLatestVersionCode()
+            APK_PATH = "/apk/TicketExtraction$latest.apk"
+            // 根据结果赋值
+            isLatestVersion.value = latest == CUR_VERSION_CODE
+            if (CUR_VERSION_CODE < latest) {
+                // TODO: 2022/1/27
+                Log.i("update", "$latest")
+            }
+
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 必须先初始化常量
@@ -150,20 +164,6 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 // 第一次创建时，必定会遇到EOF问题
                 Log.e("main resume", "ticket data eof")
             }
-        }
-    }
-
-    private suspend fun checkUpdate() {
-        withContext(Dispatchers.IO) {
-            val latest = getLatestVersionCode()
-            APK_PATH = "/apk/TicketExtraction$latest.apk"
-            // 根据结果赋值
-            isLatestVersion.value = latest == CUR_VERSION_CODE
-            if (CUR_VERSION_CODE < latest) {
-                // TODO: 2022/1/27
-                Log.i("update", "$latest")
-            }
-
         }
     }
 }

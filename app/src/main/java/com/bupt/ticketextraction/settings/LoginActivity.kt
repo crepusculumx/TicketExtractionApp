@@ -44,6 +44,11 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
          * 当前登录的手机号
          */
         var curPhoneNumber = ""
+
+        /**
+         * 当前登录的密码
+         */
+        var curPassword = ""
     }
 
     /**
@@ -83,7 +88,7 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
                         // 手机号编辑框
                         var phoneNumber by remember { mutableStateOf("") }
                         PhoneNumberTextField(
-                            phoneNumber = phoneNumber,
+                            phoneNumber = phoneNumber
                         ) { phoneNumber = it }
                         // 密码编辑框
                         var password by remember { mutableStateOf("") }

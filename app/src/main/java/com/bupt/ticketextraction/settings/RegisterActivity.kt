@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bupt.ticketextraction.network.register
 import com.bupt.ticketextraction.ui.compose.*
+import com.bupt.ticketextraction.utils.passwordPattern
+import com.bupt.ticketextraction.utils.phoneNumberPattern
 import kotlinx.coroutines.*
 
 /**
@@ -42,6 +44,13 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
     private var phoneNumber = mutableStateOf("")
     private var password = mutableStateOf("")
     private var rePassword = mutableStateOf("")
+
+    /**
+     * 以下字段用于判断输入有效性
+     */
+    private var isPhoneValid = mutableStateOf(false)
+    private var isPasswordValid = mutableStateOf(false)
+    private var isRePasswordValid = mutableStateOf(false)
 
     /**
      * 是否展示正在注册中的Dialog
@@ -71,6 +80,7 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
             placeholderInsert = "新"
             buttonText = "修改"
         }
+        naviButtonBottomPadding = 50.dp
     }
 
     override fun onDestroy() {
@@ -89,11 +99,15 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
             // 输入手机号的编辑框
             PhoneNumberTextField(
                 phoneNumber = phoneNumber.value,
-                onValueChange = { phoneNumber.value = it },
-            )
+            ) {
+                // 为文本赋值
+                phoneNumber.value = it
+                // 验证手机号的有效性
+                isPhoneValid.value = phoneNumberPattern.matcher(it).matches()
+            }
             // 到下一步输入密码和重复密码的按钮
             RoundedCornerButton(
-                text = "下一步", modifier = Modifier
+                text = "下一步", enabled = isPhoneValid.value, modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 40.dp)
                     .size(width = 150.dp, height = 100.dp)
@@ -116,17 +130,29 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
             PasswordTextField(
                 password = password.value,
                 placeholder = "请输入${placeholderInsert}密码",
-            ) { password.value = it }
+            ) {
+                password.value = it
+                // 验证密码的合法性
+                isPasswordValid.value = passwordPattern.matcher(it).matches()
+            }
+            // 密码提示
+            PasswordInstruction()
             // 重新输入密码
             PasswordTextField(
                 password = rePassword.value,
                 placeholder = "请重复输入${placeholderInsert}密码",
-            ) { rePassword.value = it }
+            ) {
+                rePassword.value = it
+                // 验证重复密码的合法性
+                isRePasswordValid.value = it == password.value
+            }
+            // 重复密码提示
+            RePasswordInstruction()
             // 注册，把参数传递一下
             RoundedCornerButton(
-                text = buttonText, modifier = Modifier
+                text = buttonText, enabled = isPasswordValid.value and isRePasswordValid.value, modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 40.dp)
+                    .padding(top = 20.dp)
                     .size(width = 150.dp, height = 100.dp)
             ) {
                 launch {

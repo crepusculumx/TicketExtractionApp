@@ -116,6 +116,7 @@ class ContactActivity : ComponentActivity() {
                                         contacts.add(curIndex, curContact!!)
                                         isChangeDialogShow = false
                                         Toast.makeText(this@ContactActivity, "${confirmText}成功", Toast.LENGTH_SHORT)
+                                            .show()
                                     }) { Text(confirmText) }
                                 },
                                 dismissButton = { TextButton(onClick = { isChangeDialogShow = false }) { Text("取消") } },

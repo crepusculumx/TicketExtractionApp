@@ -9,21 +9,23 @@ package com.bupt.ticketextraction.settings
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ListItem
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.main.MainActivity
+import com.bupt.ticketextraction.network.downloadApk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 /**
  * web端网址
@@ -70,6 +72,7 @@ fun MainActivity.jumpToAboutUs() {
 @ExperimentalMaterialApi
 @Composable
 fun SettingsUI(fatherActivity: MainActivity) {
+    var isDialogShow by remember { mutableStateOf(false) }
     // 创建滚动条，虽然对于这个页面应该没啥用
     LazyColumn(Modifier.fillMaxWidth()) {
         SettingsListItem("账号管理") {
@@ -83,7 +86,18 @@ fun SettingsUI(fatherActivity: MainActivity) {
         }
         val text = if (isLatestVersion.value) "已是最新版本" else "存在最新版本"
         SettingsListItem("检查更新", { Text(text, fontSize = 15.sp) }) {
-            // TODO: 2022/1/15
+            fatherActivity.launch {
+                runBlocking {
+                    withContext(Dispatchers.IO) {
+                        fatherActivity.checkUpdate()
+                    }
+                }
+                if (isLatestVersion.value.not()) {
+                    isDialogShow = true
+                } else {
+                    Toast.makeText(fatherActivity, text, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
         SettingsListItem("清空缓存") {
             // TODO: 2022/1/15
@@ -97,6 +111,20 @@ fun SettingsUI(fatherActivity: MainActivity) {
             intent.data = uri
             fatherActivity.startActivity(intent)
         }
+    }
+    if (isDialogShow) {
+        // 更新弹窗
+        AlertDialog(
+            title = { Text("存在最新版本，是否更新？") },
+            onDismissRequest = { isDialogShow = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    downloadApk(fatherActivity)
+                    isDialogShow = false
+                }) { Text("更新") }
+            },
+            dismissButton = { TextButton(onClick = { isDialogShow = false }) { Text("取消") } }
+        )
     }
 }
 

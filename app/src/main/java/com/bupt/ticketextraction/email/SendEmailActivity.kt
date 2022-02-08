@@ -99,6 +99,7 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
         }
     }
 
+    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     override fun naviItem2() {
         val ch = Alignment.CenterHorizontally
@@ -132,7 +133,7 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                     }
                 }
             }
-            RoundedCornerButton("发送", Modifier.align(ch)) {
+            RoundedCornerButton("发送", modifier = Modifier.align(ch)) {
                 // TODO: 2022/1/29
             }
         }
@@ -141,6 +142,7 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
     @Composable
     override fun content() {
 //        TODO("Not yet implemented")
+
     }
 
     override fun onDestroy() {
