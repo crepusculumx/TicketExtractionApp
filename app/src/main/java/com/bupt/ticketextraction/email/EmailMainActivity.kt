@@ -77,7 +77,7 @@ class EmailActivity : ComponentActivity() {
 
                             }
                             BottomButton(R.drawable.ic_baseline_email_24, "导出", colors2) {
-                                val cls = if (!loginState) SendEmailActivity::class.java else LoginActivity::class.java
+                                val cls = if (loginState) SendEmailActivity::class.java else LoginActivity::class.java
                                 startActivity(Intent(this@EmailActivity, cls))
                             }
                         }

@@ -38,6 +38,7 @@ import com.bupt.ticketextraction.ui.theme.Gray3
 import com.bupt.ticketextraction.ui.theme.Gray9
 import com.bupt.ticketextraction.utils.DebugCode
 import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
+import com.bupt.ticketextraction.utils.emailPattern
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -47,6 +48,7 @@ import kotlinx.coroutines.cancel
  */
 class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
     private var emailAddress = mutableStateOf("")
+    private var isEmailValid = mutableStateOf(false)
 
     init {
         title = "发送邮件"
@@ -60,7 +62,11 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
         Column(Modifier.fillMaxWidth().padding(top = 20.dp)) {
             TextField(
                 value = emailAddress.value,
-                onValueChange = { emailAddress.value = it },
+                onValueChange = {
+                    emailAddress.value = it
+                    // 判断有效性
+                    isEmailValid.value = emailPattern.matcher(it).matches()
+                },
                 // TextField设置居中
                 modifier = Modifier.align(ch),
                 // 方形账户图案
@@ -88,7 +94,7 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                 }
             }
             RoundedCornerButton(
-                text = "下一步", modifier = Modifier
+                text = "下一步", enabled = isEmailValid.value, modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .size(width = 150.dp, height = 90.dp)
             ) {
@@ -154,7 +160,11 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
     private fun ColumnScope.ContactListItem(name: String, email: String) {
         ListItem(
             modifier = Modifier.align(Alignment.CenterHorizontally).height(56.dp)
-                .clickable { emailAddress.value = email },
+                .clickable {
+                    emailAddress.value = email
+                    // 判断有效性
+                    isEmailValid.value = emailPattern.matcher(email).matches()
+                },
             secondaryText = { Text(email) }) {
             Text(name)
         }

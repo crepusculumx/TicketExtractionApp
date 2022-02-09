@@ -43,7 +43,10 @@ import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarText
 import com.bupt.ticketextraction.ui.compose.changeTheme
 import com.bupt.ticketextraction.ui.compose.isInDarkTheme
-import com.bupt.ticketextraction.utils.*
+import com.bupt.ticketextraction.utils.APK_PATH
+import com.bupt.ticketextraction.utils.CUR_VERSION_CODE
+import com.bupt.ticketextraction.utils.TICKET_DATA
+import com.bupt.ticketextraction.utils.initConst
 import kotlinx.coroutines.*
 import java.io.*
 
@@ -64,6 +67,14 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
      */
     fun jumpFromMainToEmail() {
         val intent = Intent(this, EmailActivity::class.java)
+        startActivity(intent)
+    }
+
+    /**
+     * 跳转到使用说明Activity
+     */
+    fun jumpFromMainToHelp() {
+        val intent = Intent(this, HelpActivity::class.java)
         startActivity(intent)
     }
 
@@ -151,7 +162,6 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
      * 读取所有票据信息
      */
     private suspend fun readTickets() {
-        createFileIfNotExists(TICKET_DATA)
         // 读取文件的IO操作
         withContext(Dispatchers.IO) {
             try {
@@ -204,7 +214,7 @@ private fun MainTopBar(
                     fatherActivity.jumpFromMainToEmail()
                 }
                 MainTopMoreDropdownMenuItem(resId = R.drawable.ic_baseline_help_24, text = "使用说明") {
-                    // TODO: 2022/1/15
+                    fatherActivity.jumpFromMainToHelp()
                 }
             }
         }

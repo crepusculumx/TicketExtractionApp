@@ -17,8 +17,7 @@ import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.*
 
-private val directory: File = File(EXTERNAL_FILE_DIR)
-private val assessTokenFile = File("$directory/access_token.dat")
+private val assessTokenFile = File("$EXTERNAL_FILE_DIR/access_token.dat")
 private var accessToken = ""
 
 /**

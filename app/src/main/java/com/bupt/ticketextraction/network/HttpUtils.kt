@@ -17,16 +17,18 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.mutableStateListOf
+import com.bupt.ticketextraction.settings.Contact
 import com.bupt.ticketextraction.settings.LoginActivity.Companion.curPhoneNumber
-import com.bupt.ticketextraction.utils.APK_PATH
-import com.bupt.ticketextraction.utils.DebugCode
-import com.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
-import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
+import com.bupt.ticketextraction.settings.contacts
+import com.bupt.ticketextraction.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.io.*
 import java.math.BigInteger
 import java.net.HttpURLConnection
+import java.net.ProtocolException
 import java.net.URL
 import java.security.MessageDigest
 
@@ -100,6 +102,60 @@ suspend fun changePwd(password: String): Int {
 suspend fun getLatestVersionCode(): Int {
     @DebugCode
     return if (IS_DEBUG_VERSION) 1 else get(GET_VERSION_CODE).toInt()
+}
+
+/**
+ * 获取服务器的联系人并存入app中
+ * 赋值将在函数内进行，不用返回值
+ *
+ * @return true-获取成功，false-获取失败，应该是后端的问题吧
+ */
+suspend fun getContact(): Boolean {
+    val map = HashMap<String, String>()
+    map["phone"] = curPhoneNumber
+    val res = post(GET_CONTACT_URL, map)
+    // 如果是-2则可能是后端遇到了问题
+    if (res == "-2") return false
+    @DebugCode
+    if (IS_DEBUG_VERSION) Log.e("contacts", res)
+    val jsonObject = JSONObject(res)
+    val contactsFromServer = mutableStateListOf<Contact>()
+    for (i in 1..4) {
+        val name = jsonObject.getString("name$i")
+        // 当为空串时说明没有数据了，直接停掉
+        if (name == "") {
+            contacts = contactsFromServer
+            return true
+        }
+        val email = jsonObject.getString("mail$i")
+        contactsFromServer.add(Contact(name, email))
+    }
+    contacts = contactsFromServer
+    return true
+}
+
+/**
+ * 在服务器上更新联系人信息
+ *
+ * @return true-获取成功，false-获取失败，应该是后端的问题吧
+ */
+suspend fun setContact(): Boolean {
+    val map = HashMap<String, String>()
+    map["phone"] = curPhoneNumber
+    val size = contacts.size
+    // 保存存在的联系人
+    for (i in 1..size) {
+        map["name$i"] = contacts[i - 1].name
+        map["mail$i"] = contacts[i - 1].email
+    }
+    // 没用到的就设为空串
+    for (i in size + 1..MAX_CONTACT_CNT) {
+        map["name$i"] = ""
+        map["mail$i"] = ""
+    }
+    val res = post(SET_CONTACT_URL, map)
+    Log.e("set contact", res)
+    return res == "1"
 }
 
 fun downloadApk(activity: ComponentActivity) {
@@ -187,6 +243,11 @@ private suspend fun post(urlStr: String, params: Map<String, String>): String {
                 }
             }
         }
+    } catch (e: ProtocolException) {
+        // 遇到这个报错时，json数据末尾会少一个}，给他补上
+        //TODO BUG BUG BUG
+        s?.append("}")
+        e.printStackTrace()
     } catch (e: IOException) {
         e.printStackTrace()
     }

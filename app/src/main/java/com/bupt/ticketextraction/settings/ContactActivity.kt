@@ -8,6 +8,7 @@
 package com.bupt.ticketextraction.settings
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,16 +28,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bupt.ticketextraction.ui.compose.ActivityBody
-import com.bupt.ticketextraction.ui.compose.EmailTextField
-import com.bupt.ticketextraction.ui.compose.NameTextField
-import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
+import com.bupt.ticketextraction.network.setContact
+import com.bupt.ticketextraction.ui.compose.*
+import kotlinx.coroutines.*
 
 /**
  * 展示联系人并提供增加、删除和修改
  */
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
-class ContactActivity : ComponentActivity() {
+class ContactActivity : ComponentActivity(), CoroutineScope by MainScope() {
+    private var isSaveDialogShow = mutableStateOf(false)
+
+    /**
+     * 为了处理点击底部返回键覆写一下
+     */
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        // 当用户点击底部返回按钮时
+        // 先保存联系人，再退出
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            saveContact()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -54,7 +69,8 @@ class ContactActivity : ComponentActivity() {
                 // 当前联系人要放入的数组索引
                 var curIndex = -1
                 Scaffold(
-                    topBar = { TopBarWithTitleAndBack("联系人") { finish() } },
+                    // 退出前保存联系人
+                    topBar = { TopBarWithTitleAndBack("联系人") { saveContact() } },
                     // 新增联系人按钮w
                     floatingActionButton = {
                         FloatingActionButton(
@@ -144,9 +160,37 @@ class ContactActivity : ComponentActivity() {
                                 dismissButton = { TextButton(onClick = { isDeleteDialogShow = false }) { Text("取消") } }
                             )
                         }
+                        // 保存联系人信息
+                        if (isSaveDialogShow.value) {
+                            ProgressDialog("正在保存信息...") { isSaveDialogShow.value = false }
+                        }
                     }
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 在Activity生命周期结束时销毁所有协程
+        cancel()
+    }
+
+    /**
+     * 保存联系人
+     */
+    private fun saveContact() {
+        launch {
+            val deferred = async { setContact() }
+            if (deferred.await()) {
+                Toast.makeText(this@ContactActivity, "保存成功！", Toast.LENGTH_SHORT).show()
+                // 调用返回键点击事件
+                onBackPressed()
+            } else {
+                Toast.makeText(this@ContactActivity, "保存失败，请向开发人员反馈！", Toast.LENGTH_SHORT).show()
+            }
+            isSaveDialogShow.value = false
+        }
+        isSaveDialogShow.value = true
     }
 }

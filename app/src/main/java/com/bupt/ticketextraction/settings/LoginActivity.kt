@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bupt.ticketextraction.network.getContact
 import com.bupt.ticketextraction.network.login
 import com.bupt.ticketextraction.ui.compose.*
 import kotlinx.coroutines.*
@@ -117,6 +118,7 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
                                     1 -> {
                                         loginState = true
                                         curPhoneNumber = phoneNumber
+                                        getContact()
                                         Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
                                         // 登录成功结束本Activity
                                         finish()
