@@ -29,7 +29,11 @@ import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.network.getContact
 import com.bupt.ticketextraction.network.login
 import com.bupt.ticketextraction.ui.compose.*
+import com.bupt.ticketextraction.utils.LOGIN_DATA
+import com.bupt.ticketextraction.utils.secondDateFormat
 import kotlinx.coroutines.*
+import java.io.FileOutputStream
+import java.util.*
 
 /**
  * 此Activity用于处理用户登录，以及可以跳转到注册和找回密码
@@ -119,6 +123,7 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
                                         loginState = true
                                         curPhoneNumber = phoneNumber
                                         getContact()
+                                        saveLoginDate()
                                         Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
                                         // 登录成功结束本Activity
                                         finish()
@@ -151,6 +156,20 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
         super.onDestroy()
         // 在LoginActivity生命周期结束时销毁所有协程
         cancel()
+    }
+
+    /**
+     * 将登录时间存入文件
+     */
+    private suspend fun saveLoginDate() {
+        withContext(Dispatchers.IO) {
+            FileOutputStream(LOGIN_DATA).use {
+                val date = "${secondDateFormat.format(Date())}\n"
+                it.write(date.toByteArray())
+                it.write("$curPhoneNumber\n".toByteArray())
+                it.flush()
+            }
+        }
     }
 }
 

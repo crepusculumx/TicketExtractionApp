@@ -34,21 +34,21 @@ import androidx.navigation.compose.rememberNavController
 import com.bupt.ticketextraction.R
 import com.bupt.ticketextraction.email.EmailActivity
 import com.bupt.ticketextraction.network.DownloadReceiver
+import com.bupt.ticketextraction.network.getContact
 import com.bupt.ticketextraction.network.getLatestVersionCode
 import com.bupt.ticketextraction.network.ocr.setAccessToken
 import com.bupt.ticketextraction.receipt.*
+import com.bupt.ticketextraction.settings.LoginActivity
 import com.bupt.ticketextraction.settings.SettingsUI
 import com.bupt.ticketextraction.settings.isLatestVersion
 import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarText
 import com.bupt.ticketextraction.ui.compose.changeTheme
 import com.bupt.ticketextraction.ui.compose.isInDarkTheme
-import com.bupt.ticketextraction.utils.APK_PATH
-import com.bupt.ticketextraction.utils.CUR_VERSION_CODE
-import com.bupt.ticketextraction.utils.TICKET_DATA
-import com.bupt.ticketextraction.utils.initConst
+import com.bupt.ticketextraction.utils.*
 import kotlinx.coroutines.*
 import java.io.*
+import java.util.*
 
 /**
  * APP根Activity
@@ -103,6 +103,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
         // 启动协程读取票据信息
         launch {
             readTickets()
+            readLogin()
         }
         // 启动协程检查更新
         launch {
@@ -154,6 +155,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
         }
         // 如果不清空在应用未完全结束时再次启动就会出现多个相同的票据
         tickets.clear()
+        unregisterReceiver(downloadReceiver)
         // 在MainActivity生命周期结束时销毁所有协程
         cancel()
     }
@@ -171,8 +173,36 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                     tickets.addDescendingOrder(ticket!!)
                 }
             } catch (e: EOFException) {
-                // 第一次创建时，必定会遇到EOF问题
+                // 第一次创建然后读取时，可能会遇到EOF问题
+                @DebugCode
                 Log.e("main resume", "ticket data eof")
+            }
+        }
+    }
+
+    /**
+     * 读取登录信息，7天内免登录
+     */
+    private suspend fun readLogin() {
+        // 读取文件的IO操作
+        withContext(Dispatchers.IO) {
+            try {
+                BufferedReader(InputStreamReader(FileInputStream(LOGIN_DATA))).use {
+                    // 无日期则结束
+                    val line = it.readLine() ?: return@withContext
+                    val lastDate = secondDateFormat.parse(line)
+                    val curDate = Date()
+                    // 7天内无需重复登录，自动登录
+                    if (curDate.time - lastDate!!.time <= 7 * 24 * 60 * 60 * 1000) {
+                        LoginActivity.loginState = true
+                        LoginActivity.curPhoneNumber = it.readLine()
+                        getContact()
+                    }
+                }
+            } catch (e: EOFException) {
+                // 第一次创建然后读取时，可能会遇到EOF问题
+                @DebugCode
+                Log.e("login", "login data eof")
             }
         }
     }

@@ -24,6 +24,7 @@ import com.bupt.ticketextraction.receipt.ocrDialogIsShow
 import com.bupt.ticketextraction.receipt.tickets
 import com.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
 import com.bupt.ticketextraction.utils.createFileIfNotExists
+import com.bupt.ticketextraction.utils.secondDateFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,7 +32,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
 private const val START_CAMERA = 1
@@ -157,7 +157,7 @@ class Camera(private val fatherActivity: MainActivity) {
      */
     @Suppress("NOTHING_TO_INLINE")
     private inline fun createTimeStamp(): String {
-        return SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(Date())
+        return secondDateFormat.format(Date())
     }
 
     /**

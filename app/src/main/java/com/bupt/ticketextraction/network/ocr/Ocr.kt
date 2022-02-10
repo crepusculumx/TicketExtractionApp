@@ -5,6 +5,7 @@ package com.bupt.ticketextraction.network.ocr
 import com.bupt.ticketextraction.receipt.CabTicket
 import com.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
 import com.bupt.ticketextraction.utils.createFileIfNotExists
+import com.bupt.ticketextraction.utils.secondDateFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -14,7 +15,6 @@ import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
-import java.text.SimpleDateFormat
 import java.util.*
 
 private val assessTokenFile = File("$EXTERNAL_FILE_DIR/access_token.dat")
@@ -80,7 +80,6 @@ suspend fun setAccessToken() {
     // 不存在文件时创建
     createFileIfNotExists(assessTokenFile.absolutePath, "init")
 
-    val format = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA)
     withContext(Dispatchers.IO) {
         BufferedReader(InputStreamReader(FileInputStream(assessTokenFile))).use { reader ->
             var line: String
@@ -101,7 +100,7 @@ suspend fun setAccessToken() {
             // 能读到这说明文件不为空，日期一定存在
             // 读入access_token获取的日期
             line = reader.readLine()
-            val lastDate = format.parse(line)
+            val lastDate = secondDateFormat.parse(line)
             val curDate = Date()
             val diff = curDate.time - lastDate!!.time
             // 如果日期大于30天则获取新的
@@ -145,7 +144,7 @@ private suspend fun getAuthFromBaidu(): String {
                 */
                 val jsonObject = JSONObject(result.toString())
                 val res = "${jsonObject.getString("access_token").trimIndent()}\n"
-                val date = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(Date())
+                val date = secondDateFormat.format(Date())
                 // 把结果缓存到文件 assess_token + date
                 outputStream.write(res)
                 outputStream.write(date)

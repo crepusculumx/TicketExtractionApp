@@ -9,6 +9,8 @@ package com.bupt.ticketextraction.utils
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -75,6 +77,11 @@ val passwordPattern: Pattern = Pattern.compile("[A-Za-z0-9]{6,16}")
  */
 val emailPattern: Pattern =
     Pattern.compile("^\\s*\\w+(?:\\.?[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$")
+
+/**
+ * 精确到秒的日期格式
+ */
+val secondDateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA)
 
 /**
  * 最大联系人数

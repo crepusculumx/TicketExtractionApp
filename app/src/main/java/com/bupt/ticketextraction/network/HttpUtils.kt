@@ -35,7 +35,7 @@ import java.security.MessageDigest
 /**
  * 所有API的url
  */
-private const val SERVER_URL = "http://ubuntu@crepusculumx.icu:8888"
+private const val SERVER_URL = "http://crepusculumx.icu:8888"
 private const val SEND_EMAIL_URL = "$SERVER_URL/mail"
 private const val LOGIN_URL = "$SERVER_URL/login"
 private const val REGISTER_URL = "$SERVER_URL/register"
@@ -60,7 +60,9 @@ suspend fun login(phoneNumber: String, password: String): Int {
     map["phone"] = phoneNumber
     map["key"] = cipherText
     @DebugCode
-    return if (IS_DEBUG_VERSION) 1 else post(LOGIN_URL, map).toInt()
+    return post(LOGIN_URL, map).toInt()
+
+//    if (IS_DEBUG_VERSION) 1 else
 }
 
 /**
@@ -216,6 +218,7 @@ private suspend fun post(urlStr: String, params: Map<String, String>): String {
             val url = URL(urlStr)
             // 耗时操作
             val conn = url.openConnection() as HttpURLConnection
+            Log.e("url", urlStr)
             conn.requestMethod = "POST"
             //以下两行必须加否则报错.
             conn.doInput = true
@@ -244,10 +247,13 @@ private suspend fun post(urlStr: String, params: Map<String, String>): String {
             }
         }
     } catch (e: ProtocolException) {
-        // 遇到这个报错时，json数据末尾会少一个}，给他补上
-        //TODO BUG BUG BUG
-        s?.append("}")
-        e.printStackTrace()
+        @DebugCode
+        // avd自带bug，最后一行读不到，给结果补上最后一行
+        when (urlStr) {
+            GET_CONTACT_URL -> s?.append("}")
+            else -> s?.append("1")
+        }
+        Log.e("avd err", "unexpected end of stream")
     } catch (e: IOException) {
         e.printStackTrace()
     }
