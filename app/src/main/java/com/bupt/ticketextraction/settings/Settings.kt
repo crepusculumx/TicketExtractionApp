@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.main.MainActivity
+import com.bupt.ticketextraction.main.StartActivity
 import com.bupt.ticketextraction.network.downloadApk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -89,7 +90,7 @@ fun SettingsUI(fatherActivity: MainActivity) {
             fatherActivity.launch {
                 runBlocking {
                     withContext(Dispatchers.IO) {
-                        fatherActivity.checkUpdate()
+                        StartActivity.checkUpdate()
                     }
                 }
                 if (isLatestVersion.value.not()) {

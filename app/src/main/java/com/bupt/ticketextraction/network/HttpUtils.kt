@@ -254,6 +254,7 @@ private suspend fun post(urlStr: String, params: Map<String, String>): String {
             else -> s?.append("1")
         }
         Log.e("avd err", "unexpected end of stream")
+        e.printStackTrace()
     } catch (e: IOException) {
         e.printStackTrace()
     }
