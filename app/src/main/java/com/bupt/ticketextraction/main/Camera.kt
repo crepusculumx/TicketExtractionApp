@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.bupt.ticketextraction.network.ocr.extract
 import com.bupt.ticketextraction.receipt.addDescendingOrder
-import com.bupt.ticketextraction.receipt.ocrDialogIsShow
+import com.bupt.ticketextraction.receipt.isOcrDialogShow
 import com.bupt.ticketextraction.receipt.tickets
 import com.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
 import com.bupt.ticketextraction.utils.createFileIfNotExists
@@ -54,11 +54,11 @@ class Camera(private val fatherActivity: MainActivity) {
                     // 识别图片
                     val res = extract(curImageFile!!)
                     tickets.addDescendingOrder(res)
-                    ocrDialogIsShow.value = false
+                    isOcrDialogShow.value = false
                 }
             }
             // 弹出识别中窗口
-            ocrDialogIsShow.value = true
+            isOcrDialogShow.value = true
         } else {
             // 失败的话就删除图片文件
             curImageFile!!.delete()

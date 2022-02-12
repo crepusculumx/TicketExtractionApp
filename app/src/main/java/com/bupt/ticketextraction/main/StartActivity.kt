@@ -10,6 +10,7 @@ package com.bupt.ticketextraction.main
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -63,6 +64,7 @@ class StartActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 }
             }
         }
+        Toast.makeText(this, "正在启动中...", Toast.LENGTH_SHORT).show()
 
         // 初始化常量
         initConst(this)
@@ -85,7 +87,9 @@ class StartActivity : ComponentActivity(), CoroutineScope by MainScope() {
             read.await()
             update.await()
             delay(1000)
-            startActivity(Intent(this@StartActivity, MainActivity::class.java))
+            val intent = Intent(this@StartActivity, MainActivity::class.java)
+
+            startActivity(intent)
             finish()
         }
     }

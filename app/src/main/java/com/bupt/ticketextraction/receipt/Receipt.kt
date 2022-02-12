@@ -24,7 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
 import com.bupt.ticketextraction.main.MainActivity
+import com.bupt.ticketextraction.settings.isLatestVersion
 import com.bupt.ticketextraction.ui.compose.ProgressDialog
+import com.bupt.ticketextraction.ui.compose.UpdateDialog
 import com.bupt.ticketextraction.utils.DebugCode
 import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
 import java.io.File
@@ -47,7 +49,12 @@ val tickets = if (IS_DEBUG_VERSION) {
     )
 } else mutableStateListOf<CabTicket>()
 
-var ocrDialogIsShow = mutableStateOf(false)
+var isOcrDialogShow = mutableStateOf(false)
+
+/**
+ * 写在外边是因为，这个弹窗，只需要弹出一次，写在外边是不会被销毁又重新构造的
+ */
+private var isUpdateShow = mutableStateOf(isLatestVersion.value)
 
 /**
  * 降序添加元素
@@ -77,7 +84,8 @@ fun ReceiptUI(fatherActivity: MainActivity) {
             item { ReceiptListItem(it, fatherActivity) }
         }
     }
-    if (ocrDialogIsShow.value) ProgressDialog("正在识别中...") { ocrDialogIsShow.value = false }
+    if (isOcrDialogShow.value) ProgressDialog("正在识别中...") { isOcrDialogShow.value = false }
+    if (isUpdateShow.value) UpdateDialog(fatherActivity) { isUpdateShow.value = false }
 }
 
 /**
@@ -155,6 +163,12 @@ private fun ReceiptListItem(ticket: CabTicket, fatherActivity: MainActivity) {
     Divider()
 }
 
+/**
+ * 点击单个票据时的下拉菜单的单个选项
+ *
+ * @param text 选项的文本
+ * @param onClick 点击回调
+ */
 @Composable
 private inline fun ReceiptDropDownMenuItem(text: String, crossinline onClick: () -> Unit) {
     DropdownMenuItem(onClick = { onClick() }) {

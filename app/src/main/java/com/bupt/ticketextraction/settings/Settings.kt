@@ -15,14 +15,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ListItem
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.main.MainActivity
 import com.bupt.ticketextraction.main.StartActivity
-import com.bupt.ticketextraction.network.downloadApk
+import com.bupt.ticketextraction.ui.compose.UpdateDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -115,17 +118,7 @@ fun SettingsUI(fatherActivity: MainActivity) {
     }
     if (isDialogShow) {
         // 更新弹窗
-        AlertDialog(
-            title = { Text("存在最新版本，是否更新？") },
-            onDismissRequest = { isDialogShow = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    downloadApk(fatherActivity)
-                    isDialogShow = false
-                }) { Text("更新") }
-            },
-            dismissButton = { TextButton(onClick = { isDialogShow = false }) { Text("取消") } }
-        )
+        UpdateDialog(fatherActivity) { isDialogShow = false }
     }
 }
 

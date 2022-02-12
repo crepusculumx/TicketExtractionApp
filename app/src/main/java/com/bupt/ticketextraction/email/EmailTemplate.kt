@@ -28,8 +28,29 @@ class EmailTemplate(val name: String) : Parcelable {
         }
     }
 
-    fun generateExcel(tickets: ArrayList<CabTicket>) {
+    fun generateExcel(tickets: ArrayList<CabTicket>, email: String): Map<String, String> {
+        val rowCnt = tickets.size + 1
+        val columnCnt = items.size + 1
+        val map = HashMap<String, String>()
+        map["mail"] = email
+        map["0"] = rowCnt.toString()
+        val sb = StringBuilder()
+        sb.append("发票").append(" ")
+        items.forEach {
+            sb.append(it.string).append(" ")
+        }
+        // 删除最后一个空格
+        sb.deleteCharAt(sb.lastIndex)
+        map["1"] = sb.toString()
+        for (i in 2..rowCnt) {
+            val ticket = tickets[i - 2]
+            // 清空之前的Builder
+            sb.clear()
+            items.forEach {
 
+            }
+        }
+        return map
     }
 }
 
