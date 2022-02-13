@@ -30,7 +30,6 @@ class EmailTemplate(val name: String) : Parcelable {
 
     fun generateExcel(tickets: ArrayList<CabTicket>, email: String): Map<String, String> {
         val rowCnt = tickets.size + 1
-        val columnCnt = items.size + 1
         val map = HashMap<String, String>()
         map["mail"] = email
         map["0"] = rowCnt.toString()
@@ -47,8 +46,10 @@ class EmailTemplate(val name: String) : Parcelable {
             // 清空之前的Builder
             sb.clear()
             items.forEach {
-
+                sb.append(ticket.getFieldByName(it.string)!!).append(" ")
             }
+            sb.deleteCharAt(sb.lastIndex)
+            map["$i"] = sb.toString()
         }
         return map
     }

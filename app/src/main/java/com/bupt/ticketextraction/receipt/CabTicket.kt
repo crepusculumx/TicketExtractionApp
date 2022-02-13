@@ -105,6 +105,19 @@ data class CabTicket(
         }
     }
 
+    private val map = HashMap<String, String>(9)
+
+    init {
+        map["发票代码"] = invoiceCode!!
+        map["发票号码"] = invoiceNumber!!
+        map["出租车牌号"] = taxiNum!!
+        map["日期"] = date!!
+        map["上下车时间"] = time!!
+        map["开票城市"] = location!!
+        map["单价"] = pricePerKm!!
+        map["里程"] = distance!!
+    }
+
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
@@ -162,5 +175,9 @@ data class CabTicket(
             Log.e("Compare", "parse")
             1
         }
+    }
+
+    fun getFieldByName(name: String): String? {
+        return map[name]
     }
 }
