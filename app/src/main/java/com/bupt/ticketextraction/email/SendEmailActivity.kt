@@ -9,6 +9,7 @@
 
 package com.bupt.ticketextraction.email
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,8 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
+import com.bupt.ticketextraction.network.sendEmail
+import com.bupt.ticketextraction.receipt.CabTicket
 import com.bupt.ticketextraction.settings.contacts
 import com.bupt.ticketextraction.settings.templates
+import com.bupt.ticketextraction.ui.compose.ProgressDialog
 import com.bupt.ticketextraction.ui.compose.RoundedCornerButton
 import com.bupt.ticketextraction.ui.compose.TwoStepsActivity
 import com.bupt.ticketextraction.ui.compose.isInDarkTheme
@@ -39,9 +43,7 @@ import com.bupt.ticketextraction.ui.theme.Gray9
 import com.bupt.ticketextraction.utils.DebugCode
 import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
 import com.bupt.ticketextraction.utils.emailPattern
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 
 /**
  * 发送邮件前选择邮箱和模板的Activity
@@ -49,6 +51,11 @@ import kotlinx.coroutines.cancel
 class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
     private var emailAddress = mutableStateOf("")
     private var isEmailValid = mutableStateOf(false)
+    private var isDialogShow = mutableStateOf(false)
+
+    companion object {
+        var curTickets = mutableListOf<CabTicket>()
+    }
 
     init {
         title = "发送邮件"
@@ -110,6 +117,7 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
     override fun naviItem2() {
         val ch = Alignment.CenterHorizontally
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(templates[0].name) }
+        var curIndex = 0
         val bkgColor = if (isInDarkTheme()) Gray9 else Gray3
         Column(
             Modifier.selectableGroup().width(276.dp)
@@ -117,14 +125,17 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
         ) {
             Text("请选择导出模板", modifier = Modifier.align(ch), fontSize = 21.sp)
             LazyColumn(Modifier.height(224.dp)) {
-                templates.forEach { t ->
+                templates.forEachIndexed { index, t ->
                     item {
                         Row(
                             Modifier.fillMaxWidth().height(56.dp).align(ch).background(bkgColor)
                                 .selectable(
                                     role = Role.RadioButton,
                                     selected = (t.name == selectedOption),
-                                    onClick = { onOptionSelected(t.name) })
+                                    onClick = {
+                                        onOptionSelected(t.name)
+                                        curIndex = index
+                                    })
                         ) {
                             ListItem(trailing = {
                                 RadioButton(
@@ -141,14 +152,27 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
             }
             RoundedCornerButton("发送", modifier = Modifier.align(ch)) {
                 // TODO: 2022/1/29
+                val map = templates[curIndex].generateExcel(curTickets, emailAddress.value)
+                launch {
+                    val deferred = async { sendEmail(map) }
+                    when (deferred.await()) {
+                        1 -> {
+                            Toast.makeText(this@SendEmailActivity, "发送成功", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                        -1 -> Toast.makeText(this@SendEmailActivity, "未知错误", Toast.LENGTH_SHORT).show()
+                        369 -> Toast.makeText(this@SendEmailActivity, "网络连接失败！", Toast.LENGTH_SHORT).show()
+                    }
+                    isDialogShow.value = false
+                }
+                isDialogShow.value = true
             }
         }
     }
 
     @Composable
     override fun content() {
-//        TODO("Not yet implemented")
-
+        if (isDialogShow.value) ProgressDialog("正在发送中...") { isDialogShow.value = false }
     }
 
     override fun onDestroy() {

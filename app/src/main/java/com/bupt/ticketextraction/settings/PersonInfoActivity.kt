@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
 import com.bupt.ticketextraction.email.EmailTemplate
+import com.bupt.ticketextraction.email.EmailTemplateItem
 import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
 import com.bupt.ticketextraction.utils.DebugCode
@@ -43,20 +44,25 @@ var contacts = if (IS_DEBUG_VERSION) {
     )
 } else mutableStateListOf<Contact>()
 
+val defaultTemplate = EmailTemplate(
+    "默认模板", EmailTemplateItem.InvoiceCode, EmailTemplateItem.InvoiceNumber,
+    EmailTemplateItem.Date, EmailTemplateItem.Time, EmailTemplateItem.TotalFare, EmailTemplateItem.Distance
+)
+
 /**
  * 保存模板
  */
 @DebugCode
 var templates = if (IS_DEBUG_VERSION) {
     mutableListOf(
-        EmailTemplate("Test"),
+        defaultTemplate,
         EmailTemplate("Test1"),
         EmailTemplate("Test2"),
         EmailTemplate("Test3"),
         EmailTemplate("Test4"),
         EmailTemplate("Test5")
     )
-} else mutableListOf<EmailTemplate>()
+} else mutableListOf(defaultTemplate)
 
 /**
  * 展示个人信息的Activity

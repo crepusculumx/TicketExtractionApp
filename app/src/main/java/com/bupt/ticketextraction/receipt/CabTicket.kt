@@ -111,6 +111,7 @@ data class CabTicket(
         map["发票代码"] = invoiceCode!!
         map["发票号码"] = invoiceNumber!!
         map["出租车牌号"] = taxiNum!!
+        map["总金额"] = totalFare!!
         map["日期"] = date!!
         map["上下车时间"] = time!!
         map["开票城市"] = location!!

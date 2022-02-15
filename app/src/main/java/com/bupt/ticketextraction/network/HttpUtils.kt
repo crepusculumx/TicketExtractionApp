@@ -103,21 +103,32 @@ suspend fun changePwd(password: String): Int {
  */
 suspend fun getLatestVersionCode(): Int {
     @DebugCode
-    return if (IS_DEBUG_VERSION) 1 else get(GET_VERSION_CODE).toInt()
+    return if (IS_DEBUG_VERSION) 2 else get(GET_VERSION_CODE).toInt()
+}
+
+/**
+ * 发送邮件
+ *
+ * @param map 由template的generateExcel生成的map
+ * @return 1-成功，-1-失败，369-网络问题
+ */
+suspend fun sendEmail(map: Map<String, String>): Int {
+    val res = post(SEND_EMAIL_URL, map)
+    return if (res == "True") 1 else if (res == "False") -1 else 369
 }
 
 /**
  * 获取服务器的联系人并存入app中
  * 赋值将在函数内进行，不用返回值
  *
- * @return true-获取成功，false-获取失败，应该是后端的问题吧
+ * @return 1-获取成功，-2-获取失败，应该是后端的问题吧, 369-网络问题
  */
-suspend fun getContact(): Boolean {
+suspend fun getContact(): Int {
     val map = HashMap<String, String>()
     map["phone"] = curPhoneNumber
     val res = post(GET_CONTACT_URL, map)
     // 如果是-2则可能是后端遇到了问题
-    if (res == "-2") return false
+    if (res == "-2" || res == NO_CONNECTION) return res.toInt()
     @DebugCode
     if (IS_DEBUG_VERSION) Log.e("contacts", res)
     val jsonObject = JSONObject(res)
@@ -127,21 +138,21 @@ suspend fun getContact(): Boolean {
         // 当为空串时说明没有数据了，直接停掉
         if (name == "") {
             contacts = contactsFromServer
-            return true
+            return 1
         }
         val email = jsonObject.getString("mail$i")
         contactsFromServer.add(Contact(name, email))
     }
     contacts = contactsFromServer
-    return true
+    return 1
 }
 
 /**
  * 在服务器上更新联系人信息
  *
- * @return true-获取成功，false-获取失败，应该是后端的问题吧
+ * @return 1-获取成功，-2-获取失败，应该是后端的问题吧, 369-网络问题
  */
-suspend fun setContact(): Boolean {
+suspend fun setContact(): Int {
     val map = HashMap<String, String>()
     map["phone"] = curPhoneNumber
     val size = contacts.size
@@ -157,7 +168,7 @@ suspend fun setContact(): Boolean {
     }
     val res = post(SET_CONTACT_URL, map)
     Log.e("set contact", res)
-    return res == "1"
+    return res.toInt()
 }
 
 fun downloadApk(activity: ComponentActivity) {
@@ -251,6 +262,7 @@ private suspend fun post(urlStr: String, params: Map<String, String>): String {
         // avd自带bug，最后一行读不到，给结果补上最后一行
         when (urlStr) {
             GET_CONTACT_URL -> s?.append("}")
+            SEND_EMAIL_URL -> s?.append("True")
             else -> s?.append("1")
         }
         Log.e("avd err", "unexpected end of stream")

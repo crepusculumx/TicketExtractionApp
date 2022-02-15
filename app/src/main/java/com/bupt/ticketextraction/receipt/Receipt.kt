@@ -54,7 +54,7 @@ var isOcrDialogShow = mutableStateOf(false)
 /**
  * 写在外边是因为，这个弹窗，只需要弹出一次，写在外边是不会被销毁又重新构造的
  */
-private var isUpdateShow = mutableStateOf(isLatestVersion.value)
+private var isUpdateShow = mutableStateOf(!isLatestVersion.value)
 
 /**
  * 降序添加元素

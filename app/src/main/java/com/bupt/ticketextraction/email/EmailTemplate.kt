@@ -19,16 +19,34 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 class EmailTemplate(val name: String) : Parcelable {
-    @IgnoredOnParcel
-    val items = ArrayList<EmailTemplateItem>()
+    constructor(name: String, vararg items: EmailTemplateItem) : this(name) {
+        items.forEach {
+            this.items.add(it)
+        }
+    }
 
+    @IgnoredOnParcel
+    val items = mutableListOf<EmailTemplateItem>()
+
+    /**
+     * 不重复地添加一个模板item
+     *
+     * @param item 模板的元素
+     */
     fun addItem(item: EmailTemplateItem) {
         if (!items.contains(item)) {
             items.add(item)
         }
     }
 
-    fun generateExcel(tickets: ArrayList<CabTicket>, email: String): Map<String, String> {
+    /**
+     * 根据票据信息和导出模板生成对应的map，由后端转换为excel
+     *
+     * @param tickets 生成所需的票据
+     * @param email 邮箱
+     * @return 生成的map
+     */
+    fun generateExcel(tickets: MutableList<CabTicket>, email: String): Map<String, String> {
         val rowCnt = tickets.size + 1
         val map = HashMap<String, String>()
         map["mail"] = email
@@ -45,6 +63,7 @@ class EmailTemplate(val name: String) : Parcelable {
             val ticket = tickets[i - 2]
             // 清空之前的Builder
             sb.clear()
+            sb.append("${i - 1}").append(" ")
             items.forEach {
                 sb.append(ticket.getFieldByName(it.string)!!).append(" ")
             }

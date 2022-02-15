@@ -15,6 +15,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.sp
+import com.bupt.ticketextraction.settings.defaultTemplate
 import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
 
@@ -24,6 +25,8 @@ import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
 class EmailTemplateActivity : ComponentActivity() {
     companion object {
         const val TEMPLATE_INTENT = "template"
+
+        var curTemplate = defaultTemplate
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

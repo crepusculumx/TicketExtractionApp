@@ -182,12 +182,17 @@ class ContactActivity : ComponentActivity(), CoroutineScope by MainScope() {
     private fun saveContact() {
         launch {
             val deferred = async { setContact() }
-            if (deferred.await()) {
-                Toast.makeText(this@ContactActivity, "保存成功！", Toast.LENGTH_SHORT).show()
-                // 调用返回键点击事件
-                onBackPressed()
-            } else {
-                Toast.makeText(this@ContactActivity, "保存失败，请向开发人员反馈！", Toast.LENGTH_SHORT).show()
+            when (deferred.await()) {
+                1 -> {
+                    Toast.makeText(this@ContactActivity, "保存成功！", Toast.LENGTH_SHORT).show()
+                    // 调用返回键点击事件
+                    onBackPressed()
+                }
+                -2 -> Toast.makeText(this@ContactActivity, "保存失败，请向开发人员反馈！", Toast.LENGTH_SHORT).show()
+
+                369 -> Toast.makeText(this@ContactActivity, "网络连接失败！", Toast.LENGTH_SHORT).show()
+
+                else -> assert(false)
             }
             isSaveDialogShow.value = false
         }

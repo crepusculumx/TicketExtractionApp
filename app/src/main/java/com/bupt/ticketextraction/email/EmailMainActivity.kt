@@ -77,8 +77,15 @@ class EmailActivity : ComponentActivity() {
 
                             }
                             BottomButton(R.drawable.ic_baseline_email_24, "导出", colors2) {
-                                val cls = if (loginState) SendEmailActivity::class.java else LoginActivity::class.java
-                                startActivity(Intent(this@EmailActivity, cls))
+                                // 必须先登录，不登录就弹出登录
+                                val clazz = if (loginState) SendEmailActivity::class.java else LoginActivity::class.java
+                                // 设置发送的票据
+                                val sentTickets = mutableListOf<CabTicket>()
+                                checked.forEachIndexed { index, it ->
+                                    if (it.value) sentTickets.add(tickets[index])
+                                }
+                                SendEmailActivity.curTickets = sentTickets
+                                startActivity(Intent(this@EmailActivity, clazz))
                             }
                         }
                     }
