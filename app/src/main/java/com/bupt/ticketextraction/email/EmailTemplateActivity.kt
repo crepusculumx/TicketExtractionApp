@@ -24,19 +24,16 @@ import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
  */
 class EmailTemplateActivity : ComponentActivity() {
     companion object {
-        const val TEMPLATE_INTENT = "template"
-
         var curTemplate = defaultTemplate
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 断言不为空
-        val template = intent.getParcelableExtra<EmailTemplate>(TEMPLATE_INTENT)!!
         setContent {
             ActivityBody {
-                Scaffold(topBar = { TopBarWithTitleAndBack(template.name) { finish() } }) { }
-                template.items.forEachIndexed { index, it ->
+                Scaffold(topBar = { TopBarWithTitleAndBack(curTemplate.name) { finish() } }) { }
+                curTemplate.items.forEachIndexed { index, it ->
                     TemplateItem(index, it.string)
                 }
             }

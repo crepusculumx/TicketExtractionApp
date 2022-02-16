@@ -41,10 +41,13 @@ import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarText
 import com.bupt.ticketextraction.ui.compose.changeTheme
 import com.bupt.ticketextraction.ui.compose.isInDarkTheme
+import com.bupt.ticketextraction.utils.EXTERNAL_FILE_DIR
 import com.bupt.ticketextraction.utils.TICKET_DATA
+import com.bupt.ticketextraction.utils.createFileIfNotExists
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import java.io.File
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
 
@@ -59,6 +62,8 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
     private val camera = Camera(this)
 
     private val downloadReceiver = DownloadReceiver()
+
+    private val firstLaunch = File("$EXTERNAL_FILE_DIR/first_launch_file.dat")
 
     /**
      * 从MainActivity跳转到EmailActivity
@@ -75,8 +80,6 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
         val intent = Intent(this, HelpActivity::class.java)
         startActivity(intent)
     }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,6 +116,11 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                     }
                 )
             }
+        }
+        // 第一次启动app时，跳转到使用说明
+        if (!firstLaunch.exists()) {
+            createFileIfNotExists(firstLaunch.absolutePath)
+            startActivity(Intent(this, HelpActivity::class.java))
         }
     }
 
