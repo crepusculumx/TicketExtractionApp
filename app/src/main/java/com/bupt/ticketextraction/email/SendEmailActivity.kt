@@ -151,7 +151,6 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                 }
             }
             RoundedCornerButton("发送", modifier = Modifier.align(ch)) {
-                // TODO: 2022/1/29
                 val map = templates[curIndex].generateExcel(curTickets, emailAddress.value)
                 launch {
                     val deferred = async { sendEmail(map) }

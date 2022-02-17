@@ -32,9 +32,10 @@ class EmailTemplateActivity : ComponentActivity() {
         // 断言不为空
         setContent {
             ActivityBody {
-                Scaffold(topBar = { TopBarWithTitleAndBack(curTemplate.name) { finish() } }) { }
-                curTemplate.items.forEachIndexed { index, it ->
-                    TemplateItem(index, it.string)
+                Scaffold(topBar = { TopBarWithTitleAndBack(curTemplate.name) { finish() } }) {
+                    curTemplate.items.forEachIndexed { index, t ->
+                        TemplateItem(index, t.string)
+                    }
                 }
             }
         }

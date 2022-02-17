@@ -46,10 +46,6 @@ class StartActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 APK_PATH = "/apk/TicketExtraction$latest.apk"
                 // 根据结果赋值
                 isLatestVersion.value = latest == CUR_VERSION_CODE
-                if (CUR_VERSION_CODE < latest) {
-                    // TODO: 2022/1/27
-                    Log.i("update", "$latest")
-                }
             }
         }
     }

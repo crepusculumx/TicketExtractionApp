@@ -16,9 +16,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -48,6 +46,7 @@ class EmailActivity : ComponentActivity() {
                 Scaffold(
                     topBar = { TopBarWithTitleAndBack("导出") { finish() } }
                 ) {
+                    var isDialogShow by remember { mutableStateOf(false) }
                     Box(modifier = Modifier.fillMaxHeight()) {
                         LazyColumn(modifier = Modifier.fillMaxWidth()) {
                             for (index in tickets.indices) {
@@ -74,7 +73,7 @@ class EmailActivity : ComponentActivity() {
                                 contentColor = colors.onBackground
                             )
                             BottomButton(R.drawable.ic_baseline_delete_24, "删除", colors1) {
-
+                                isDialogShow = true
                             }
                             BottomButton(R.drawable.ic_baseline_email_24, "导出", colors2) {
                                 // 必须先登录，不登录就弹出登录
@@ -87,6 +86,22 @@ class EmailActivity : ComponentActivity() {
                                 SendEmailActivity.curTickets = sentTickets
                                 startActivity(Intent(this@EmailActivity, clazz))
                             }
+                        }
+                        // 添加一个警告，防止误删
+                        if (isDialogShow) {
+                            AlertDialog(onDismissRequest = { isDialogShow = false },
+                                title = { Text("确认要删除吗？") },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        checked.forEachIndexed { index, it ->
+                                            // 遍历删除
+                                            if (it.value) tickets.removeAt(index)
+                                        }
+                                        isDialogShow = false
+                                    }) { Text("确认") }
+                                },
+                                dismissButton = { TextButton(onClick = { isDialogShow = false }) { Text("取消") } }
+                            )
                         }
                     }
                 }
