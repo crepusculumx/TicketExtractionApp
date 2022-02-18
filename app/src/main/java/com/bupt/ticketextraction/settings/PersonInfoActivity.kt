@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
 import com.bupt.ticketextraction.email.EmailTemplate
 import com.bupt.ticketextraction.email.EmailTemplateItem
+import com.bupt.ticketextraction.email.TemplatesActivity
 import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
 import com.bupt.ticketextraction.utils.DebugCode
@@ -83,7 +84,7 @@ class PersonInfoActivity : ComponentActivity() {
                             startActivity(Intent(this@PersonInfoActivity, ContactActivity::class.java))
                         }
                         PersonInfoListItem("导出模板管理") {
-                            // TODO: 2022/1/20 跳转到模板
+                            startActivity(Intent(this@PersonInfoActivity, TemplatesActivity::class.java))
                         }
 
                         // 用一个空的文本框占一下位

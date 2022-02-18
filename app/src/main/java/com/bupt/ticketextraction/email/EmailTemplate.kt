@@ -10,6 +10,7 @@
 package com.bupt.ticketextraction.email
 
 import android.os.Parcelable
+import androidx.compose.runtime.mutableStateListOf
 import com.bupt.ticketextraction.receipt.CabTicket
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -26,7 +27,7 @@ class EmailTemplate(val name: String) : Parcelable {
     }
 
     @IgnoredOnParcel
-    val items = mutableListOf<EmailTemplateItem>()
+    val items = mutableStateListOf<EmailTemplateItem>()
 
     /**
      * 不重复地添加一个模板item
@@ -93,3 +94,17 @@ sealed class EmailTemplateItem(val string: String) {
     object Distance : EmailTemplateItem("里程") // 里程
 }
 
+/**
+ * 便于操作
+ */
+val templateItems = listOf(
+    EmailTemplateItem.InvoiceCode,
+    EmailTemplateItem.InvoiceNumber,
+    EmailTemplateItem.TaxiNum,
+    EmailTemplateItem.Date,
+    EmailTemplateItem.Time,
+    EmailTemplateItem.TotalFare,
+    EmailTemplateItem.Location,
+    EmailTemplateItem.PricePerKm,
+    EmailTemplateItem.Distance
+)

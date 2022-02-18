@@ -48,6 +48,7 @@
         <activity android:name=".email.EmailActivity"/>
         <activity android:name=".email.SendEmailActivity"/>
         <activity android:name=".email.EmailTemplateActivity"/>
+        <activity android:name=".email.TemplatesActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

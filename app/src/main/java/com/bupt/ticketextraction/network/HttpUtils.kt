@@ -103,7 +103,7 @@ suspend fun changePwd(password: String): Int {
  */
 suspend fun getLatestVersionCode(): Int {
     @DebugCode
-    return if (IS_DEBUG_VERSION) 2 else get(GET_VERSION_CODE).toInt()
+    return if (IS_DEBUG_VERSION) 1 else get(GET_VERSION_CODE).toInt()
 }
 
 /**
