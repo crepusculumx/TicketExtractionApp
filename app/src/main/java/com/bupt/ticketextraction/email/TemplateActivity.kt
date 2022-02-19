@@ -39,7 +39,7 @@ private var curIndex = 0
 /**
  * 展示导出模板的Activity，TODO 同时也能编辑？
  */
-class EmailTemplateActivity : ComponentActivity() {
+class TemplateActivity : ComponentActivity() {
     companion object {
         var curTemplate = defaultTemplate
     }
@@ -48,7 +48,8 @@ class EmailTemplateActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ActivityBody {
-                Scaffold(topBar = { TopBarWithTitleAndBack(curTemplate.name) { finish() } },
+                Scaffold(
+                    topBar = { TopBarWithTitleAndBack(curTemplate.name) { finish() } },
                     floatingActionButton = {
                         // 新增模板元素
                         FloatingActionButton(
@@ -57,7 +58,7 @@ class EmailTemplateActivity : ComponentActivity() {
                                 if (curTemplate.items.size < templateItems.size) {
                                     curTemplate.items.add(EmailTemplateItem.InvoiceCode)
                                 } else {
-                                    Toast.makeText(this@EmailTemplateActivity, "最多只能有9个字段！", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this@TemplateActivity, "最多只能有9个字段！", Toast.LENGTH_SHORT).show()
                                 }
                             }, modifier = Modifier.padding(bottom = 50.dp)
                         ) {

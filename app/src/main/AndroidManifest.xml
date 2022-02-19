@@ -47,7 +47,7 @@
         <activity android:name=".settings.ContactActivity"/>
         <activity android:name=".email.EmailActivity"/>
         <activity android:name=".email.SendEmailActivity"/>
-        <activity android:name=".email.EmailTemplateActivity"/>
+        <activity android:name=".email.TemplateActivity"/>
         <activity android:name=".email.TemplatesActivity"/>
 
         <provider

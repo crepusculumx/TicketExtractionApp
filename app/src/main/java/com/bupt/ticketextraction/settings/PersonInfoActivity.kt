@@ -55,15 +55,11 @@ val defaultTemplate = EmailTemplate(
  */
 @DebugCode
 var templates = if (IS_DEBUG_VERSION) {
-    mutableListOf(
+    mutableStateListOf(
         defaultTemplate,
         EmailTemplate("Test1"),
-        EmailTemplate("Test2"),
-        EmailTemplate("Test3"),
-        EmailTemplate("Test4"),
-        EmailTemplate("Test5")
     )
-} else mutableListOf(defaultTemplate)
+} else mutableStateListOf(defaultTemplate)
 
 /**
  * 展示个人信息的Activity
