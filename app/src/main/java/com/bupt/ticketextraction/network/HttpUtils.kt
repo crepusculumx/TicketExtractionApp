@@ -18,6 +18,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateListOf
+import com.bupt.ticketextraction.email.EmailTemplate
 import com.bupt.ticketextraction.settings.Contact
 import com.bupt.ticketextraction.settings.LoginActivity.Companion.curPhoneNumber
 import com.bupt.ticketextraction.settings.contacts
@@ -44,6 +45,9 @@ private const val GET_CONTACT_URL = "$SERVER_URL/getMails"
 private const val SET_CONTACT_URL = "$SERVER_URL/setMails"
 private const val GET_VERSION_CODE = "$SERVER_URL/checkVersion"
 private const val DOWNLOAD_APK = "$SERVER_URL/TaxiReceiptAPK"
+private const val SET_TEMPLATE = "$SERVER_URL/saveModel"
+private const val GET_TEMPLATE = "$SERVER_URL/getModelOrder"
+private const val GET_TEMPLATES = "$SERVER_URL/getUserModels"
 
 private const val NO_CONNECTION = "369"
 
@@ -169,6 +173,13 @@ suspend fun setContact(): Int {
     val res = post(SET_CONTACT_URL, map)
     Log.e("set contact", res)
     return res.toInt()
+}
+
+suspend fun setTemplate(template: EmailTemplate): Int {
+    val map = HashMap<String, String>()
+    map["phone"] = curPhoneNumber
+    map["model_name"] = template.name
+    return 1
 }
 
 fun downloadApk(activity: ComponentActivity) {

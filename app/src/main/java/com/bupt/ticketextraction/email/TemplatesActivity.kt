@@ -9,6 +9,7 @@ package com.bupt.ticketextraction.email
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -45,6 +46,9 @@ class TemplatesActivity : ComponentActivity() {
         setContent {
             ActivityBody {
                 var isAddDialogShow by remember { mutableStateOf(false) }
+                var isDeleteDialogShow by remember { mutableStateOf(false) }
+                // 用于删除模板
+                var curIndex = -1
                 Scaffold(topBar = { TopBarWithTitleAndBack("模板管理") { finish() } },
                     floatingActionButton = {
                         // 新增模板
@@ -55,12 +59,15 @@ class TemplatesActivity : ComponentActivity() {
                     }) {
                     // 加个滚动条，防止模板过多
                     LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                        templates.forEach {
+                        templates.forEachIndexed { index, it ->
                             item {
                                 // 长按删除，点击进入相应的展示具体信息的Activity
                                 ListItem(Modifier.padding(bottom = 5.dp, top = 5.dp)
                                     .combinedClickable(onLongClick = {
-                                        // TODO: 2022/2/18 删除模板弹窗
+                                        // 设置当前下标
+                                        curIndex = index
+                                        Log.e("delete", "cur$curIndex $index")
+                                        isDeleteDialogShow = true
                                     }) {
                                         // 设置展示的模板
                                         TemplateActivity.curTemplate = it
@@ -73,6 +80,7 @@ class TemplatesActivity : ComponentActivity() {
                             }
                         }
                     }
+                    // 添加模板弹窗
                     if (isAddDialogShow) {
                         var name by remember { mutableStateOf("") }
                         AlertDialog(
@@ -102,6 +110,21 @@ class TemplatesActivity : ComponentActivity() {
                                     colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.background)
                                 )
                             }
+                        )
+                    }
+
+                    // 删除模板弹窗
+                    if (isDeleteDialogShow) {
+                        AlertDialog(onDismissRequest = { isDeleteDialogShow = false },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    // 删除选中模板
+                                    templates.removeAt(curIndex)
+                                    isDeleteDialogShow = false
+                                }) { Text("删除") }
+                            },
+                            dismissButton = { TextButton(onClick = { isDeleteDialogShow = false }) { Text("取消") } },
+                            title = { Text("是否删除此模板？") }
                         )
                     }
                 }

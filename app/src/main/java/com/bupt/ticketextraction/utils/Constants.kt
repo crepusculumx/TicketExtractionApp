@@ -9,6 +9,8 @@ package com.bupt.ticketextraction.utils
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import com.bupt.ticketextraction.email.EmailTemplate
+import com.bupt.ticketextraction.email.EmailTemplateItem
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -87,3 +89,8 @@ val secondDateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA)
  * 最大联系人数
  */
 const val MAX_CONTACT_CNT = 4
+
+val defaultTemplate = EmailTemplate(
+    "默认模板", EmailTemplateItem.InvoiceCode, EmailTemplateItem.InvoiceNumber,
+    EmailTemplateItem.Date, EmailTemplateItem.Time, EmailTemplateItem.TotalFare, EmailTemplateItem.Distance
+)

@@ -23,12 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
 import com.bupt.ticketextraction.email.EmailTemplate
-import com.bupt.ticketextraction.email.EmailTemplateItem
 import com.bupt.ticketextraction.email.TemplatesActivity
 import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
 import com.bupt.ticketextraction.utils.DebugCode
 import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
+import com.bupt.ticketextraction.utils.defaultTemplate
 
 /**
  * 保存联系人
@@ -44,11 +44,6 @@ var contacts = if (IS_DEBUG_VERSION) {
         Contact("武连增5", "1228393790@qq.com")
     )
 } else mutableStateListOf<Contact>()
-
-val defaultTemplate = EmailTemplate(
-    "默认模板", EmailTemplateItem.InvoiceCode, EmailTemplateItem.InvoiceNumber,
-    EmailTemplateItem.Date, EmailTemplateItem.Time, EmailTemplateItem.TotalFare, EmailTemplateItem.Distance
-)
 
 /**
  * 保存模板
