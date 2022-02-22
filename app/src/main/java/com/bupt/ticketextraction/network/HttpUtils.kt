@@ -18,10 +18,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.bupt.ticketextraction.email.EmailTemplate
+import com.bupt.ticketextraction.email.templateItems
 import com.bupt.ticketextraction.settings.Contact
 import com.bupt.ticketextraction.settings.LoginActivity.Companion.curPhoneNumber
 import com.bupt.ticketextraction.settings.contacts
+import com.bupt.ticketextraction.settings.templates
 import com.bupt.ticketextraction.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,7 +48,9 @@ private const val GET_CONTACT_URL = "$SERVER_URL/getMails"
 private const val SET_CONTACT_URL = "$SERVER_URL/setMails"
 private const val GET_VERSION_CODE = "$SERVER_URL/checkVersion"
 private const val DOWNLOAD_APK = "$SERVER_URL/TaxiReceiptAPK"
-private const val SET_TEMPLATE = "$SERVER_URL/saveModel"
+private const val ADD_TEMPLATE = "$SERVER_URL/addModel"
+private const val DELETE_TEMPLATE = "$SERVER_URL/deleteModel"
+private const val UPDATE_TEMPLATE = "$SERVER_URL/setModelOrder"
 private const val GET_TEMPLATE = "$SERVER_URL/getModelOrder"
 private const val GET_TEMPLATES = "$SERVER_URL/getUserModels"
 
@@ -175,10 +180,77 @@ suspend fun setContact(): Int {
     return res.toInt()
 }
 
-suspend fun setTemplate(template: EmailTemplate): Int {
+/**
+ * 添加模板
+ *
+ * @param template 模板
+ * @return 1成功 -1该模板名已存在 -2程序运行错误
+ */
+suspend fun addTemplate(template: EmailTemplate): Int {
+    return post(ADD_TEMPLATE, generateTemplateMap(template)).toInt()
+}
+
+/**
+ * 更新模板
+ *
+ * @param template 模板
+ * @return 1成功 -1该模板名不存在 -2程序运行错误
+ */
+suspend fun updateTemplate(template: EmailTemplate): Int {
+    return post(UPDATE_TEMPLATE, generateTemplateMap(template)).toInt()
+}
+
+/**
+ * 删除模板
+ *
+ * @param template 模板
+ * @return 1成功 -1该模板名不存在 -2程序运行错误
+ */
+suspend fun deleteTemplate(template: EmailTemplate): Int {
+    val map = generateTemplateMap(template)
+    map.remove("order")
+    return post(DELETE_TEMPLATE, map).toInt()
+}
+
+/**
+ * 生成template对应的map，代码复用一下
+ */
+private fun generateTemplateMap(template: EmailTemplate): HashMap<String, String> {
     val map = HashMap<String, String>()
     map["phone"] = curPhoneNumber
     map["model_name"] = template.name
+    val sb = StringBuilder()
+    template.items.forEach {
+        sb.append(templateItems.indexOf(it))
+    }
+    map["order"] = sb.toString()
+    return map
+}
+
+suspend fun getTemplates(): Int {
+    val map = HashMap<String, String>()
+    map["phone"] = curPhoneNumber
+    val res = post(GET_TEMPLATES, map)
+    // 结果若为369则网络连接有问题
+    if (res == "369" || res == "1") return res.toInt()
+    // 生成json对象
+    if (IS_DEBUG_VERSION) Log.i("templates", res)
+    val jsonResult = JSONObject(res)
+    val size = jsonResult.getInt("result_num")
+    val templatesFromServer = SnapshotStateList<EmailTemplate>()
+    for (i in 0 until size) {
+        val templateJson = jsonResult.getJSONObject("$i")
+        val name = templateJson.getString("name")
+        val order = templateJson.getString("order")
+        val t = EmailTemplate(name)
+        templatesFromServer.add(t)
+        // 添加模板的item
+        order.forEach {
+            t.items.add(templateItems[it.code - 48])
+        }
+    }
+    templates = templatesFromServer
+    // 成功返回1
     return 1
 }
 
@@ -273,6 +345,7 @@ private suspend fun post(urlStr: String, params: Map<String, String>): String {
         // avd自带bug，最后一行读不到，给结果补上最后一行
         when (urlStr) {
             GET_CONTACT_URL -> s?.append("}")
+            GET_TEMPLATES -> s?.append("}")
             SEND_EMAIL_URL -> s?.append("True")
             else -> s?.append("1")
         }

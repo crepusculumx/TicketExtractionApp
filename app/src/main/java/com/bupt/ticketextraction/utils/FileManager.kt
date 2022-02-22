@@ -7,6 +7,7 @@
  */
 package com.bupt.ticketextraction.utils
 
+import android.util.Log
 import java.io.File
 import java.io.FileOutputStream
 
@@ -28,6 +29,7 @@ fun createFileIfNotExists(path: String, init: String? = null): File {
     val file = File(path)
     // 不存在则创建，存在则直接返回对象
     if (!file.exists()) {
+        Log.i("path", file.absolutePath)
         file.createNewFile()
         init?.let {
             FileOutputStream(file).use { fos ->

@@ -31,15 +31,21 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
+import com.bupt.ticketextraction.network.addTemplate
+import com.bupt.ticketextraction.network.deleteTemplate
 import com.bupt.ticketextraction.settings.templates
 import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 /**
  * 展示所有模板缩略信息的Activity
  */
 @OptIn(ExperimentalMaterialApi::class)
-class TemplatesActivity : ComponentActivity() {
+class TemplatesActivity : ComponentActivity(), CoroutineScope by MainScope() {
     @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +55,8 @@ class TemplatesActivity : ComponentActivity() {
                 var isDeleteDialogShow by remember { mutableStateOf(false) }
                 // 用于删除模板
                 var curIndex = -1
-                Scaffold(topBar = { TopBarWithTitleAndBack("模板管理") { finish() } },
+                Scaffold(
+                    topBar = { TopBarWithTitleAndBack("模板管理") { finish() } },
                     floatingActionButton = {
                         // 新增模板
                         FloatingActionButton(onClick = { isAddDialogShow = true }, Modifier.padding(bottom = 50.dp)) {
@@ -88,7 +95,11 @@ class TemplatesActivity : ComponentActivity() {
                             confirmButton = {
                                 TextButton(onClick = {
                                     // 以name作为模板名添加模板
-                                    templates.add(EmailTemplate(name))
+                                    val t = EmailTemplate(name)
+                                    // 数据库添加
+                                    launch { addTemplate(t) }
+                                    // 本地添加
+                                    templates.add(t)
                                     isAddDialogShow = false
                                 }) { Text("新建") }
                             },
@@ -119,6 +130,10 @@ class TemplatesActivity : ComponentActivity() {
                             confirmButton = {
                                 TextButton(onClick = {
                                     // 删除选中模板
+                                    // 数据库删除
+                                    val t = templates[curIndex]
+                                    launch { deleteTemplate(t) }
+                                    // 本地删除
                                     templates.removeAt(curIndex)
                                     isDeleteDialogShow = false
                                 }) { Text("删除") }
@@ -130,5 +145,10 @@ class TemplatesActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
     }
 }

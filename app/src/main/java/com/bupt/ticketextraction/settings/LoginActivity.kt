@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.network.getContact
+import com.bupt.ticketextraction.network.getTemplates
 import com.bupt.ticketextraction.network.login
 import com.bupt.ticketextraction.ui.compose.*
 import com.bupt.ticketextraction.utils.LOGIN_DATA
@@ -54,6 +55,19 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
          * 当前登录的密码
          */
         var curPassword = ""
+
+        /**
+         * 登录验证成功之后调用此函数登录
+         *
+         * @param phoneNumber 登录的手机号
+         */
+        suspend fun login(phoneNumber: String) {
+            loginState = true
+            curPhoneNumber = phoneNumber
+            getContact()
+            getTemplates()
+            saveLoginDate()
+        }
     }
 
     /**
@@ -120,10 +134,7 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
                                 val deferred = async { return@async login(phoneNumber, password) }
                                 when (deferred.await()) {
                                     1 -> {
-                                        loginState = true
-                                        curPhoneNumber = phoneNumber
-                                        getContact()
-                                        saveLoginDate()
+                                        login(phoneNumber)
                                         Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
                                         // 登录成功结束本Activity
                                         finish()
@@ -157,18 +168,18 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
         // 在LoginActivity生命周期结束时销毁所有协程
         cancel()
     }
+}
 
-    /**
-     * 将登录时间存入文件
-     */
-    private suspend fun saveLoginDate() {
-        withContext(Dispatchers.IO) {
-            FileOutputStream(LOGIN_DATA).use {
-                val date = "${secondDateFormat.format(Date())}\n"
-                it.write(date.toByteArray())
-                it.write("$curPhoneNumber\n".toByteArray())
-                it.flush()
-            }
+/**
+ * 将登录时间存入文件
+ */
+private suspend fun saveLoginDate() {
+    withContext(Dispatchers.IO) {
+        FileOutputStream(LOGIN_DATA).use {
+            val date = "${secondDateFormat.format(Date())}\n"
+            it.write(date.toByteArray())
+            it.write("${LoginActivity.curPhoneNumber}\n".toByteArray())
+            it.flush()
         }
     }
 }

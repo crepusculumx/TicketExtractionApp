@@ -32,7 +32,7 @@ suspend fun extract(sourceFile: File): CabTicket {
 
     // 解析识别结果
     val result = JSONObject(res)
-    val jsonObject = JSONObject(result.getJSONObject("words_result").toString())
+    val jsonObject = result.getJSONObject("words_result")
     // 根据解析结果返回票据实例
     // 当识别异常时得到的结果是空字符串，处理成识别异常字符串
     return CabTicket(

@@ -20,7 +20,6 @@ import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import com.bupt.ticketextraction.network.getContact
 import com.bupt.ticketextraction.network.getLatestVersionCode
 import com.bupt.ticketextraction.network.ocr.setAccessToken
 import com.bupt.ticketextraction.receipt.CabTicket
@@ -72,7 +71,9 @@ class StartActivity : ComponentActivity(), CoroutineScope by MainScope() {
             val read = async {
                 // 读取本地数据
                 readTickets()
+                Log.e("read1", "done")
                 readLogin()
+                Log.e("read2", "done")
             }
             val update = async {
                 // 检查更新
@@ -130,9 +131,7 @@ class StartActivity : ComponentActivity(), CoroutineScope by MainScope() {
                     val curDate = Date()
                     // 7天内无需重复登录，自动登录
                     if (curDate.time - lastDate!!.time <= 7 * 24 * 60 * 60 * 1000) {
-                        LoginActivity.loginState = true
-                        LoginActivity.curPhoneNumber = it.readLine()
-                        getContact()
+                        LoginActivity.login(it.readLine())
                     }
                 }
             } catch (e: EOFException) {

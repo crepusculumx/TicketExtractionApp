@@ -18,8 +18,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.bupt.ticketextraction.network.addTemplate
 import com.bupt.ticketextraction.network.register
 import com.bupt.ticketextraction.ui.compose.*
+import com.bupt.ticketextraction.utils.defaultTemplate
 import com.bupt.ticketextraction.utils.passwordPattern
 import com.bupt.ticketextraction.utils.phoneNumberPattern
 import kotlinx.coroutines.*
@@ -159,8 +161,17 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                     val deferred = async { return@async register(phoneNumber.value, password.value) }
                     // 等待获取结果
                     when (deferred.await()) {
-                        1 -> Toast.makeText(this@RegisterActivity, "注册成功", Toast.LENGTH_SHORT)
-                            .show()
+                        1 -> {
+                            // 成功后登录一下，并且添加一个默认模板
+                            runBlocking {
+                                LoginActivity.login(phoneNumber.value)
+                                templates.add(defaultTemplate)
+                                addTemplate(defaultTemplate)
+                            }
+                            Toast.makeText(this@RegisterActivity, "注册成功", Toast.LENGTH_SHORT).show()
+                            delay(200)
+                            finish()
+                        }
                         -1 -> Toast
                             .makeText(this@RegisterActivity, "手机号已存在！", Toast.LENGTH_SHORT)
                             .show()
@@ -171,8 +182,7 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                         // 不可达
                         else -> assert(false)
                     }
-                    delay(200)
-                    finish()
+                    dialogIsShow.value = false
                 }
                 dialogIsShow.value = true
             }

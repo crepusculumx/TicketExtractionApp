@@ -28,6 +28,7 @@ fun initConst(context: Context) {
     EXTERNAL_FILE_DIR = context.getExternalFilesDir(null)!!.absolutePath
     TICKET_DATA = "$EXTERNAL_FILE_DIR/tickets.dat"
     LOGIN_DATA = "$EXTERNAL_FILE_DIR/login.dat"
+    FIRST_LAUNCH = "$EXTERNAL_FILE_DIR/first_launch_file.dat"
     createFileIfNotExists(TICKET_DATA)
     createFileIfNotExists(LOGIN_DATA)
     IS_DEBUG_VERSION = (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
@@ -54,6 +55,11 @@ var TICKET_DATA = ""
  * 存储登录信息，7天内免登录
  */
 var LOGIN_DATA = ""
+
+/**
+ * 是否第一次启动，为了展示教程
+ */
+var FIRST_LAUNCH = ""
 
 /**
  * 是否是Debug版本

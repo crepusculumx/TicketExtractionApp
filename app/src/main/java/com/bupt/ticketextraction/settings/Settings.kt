@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.main.MainActivity
 import com.bupt.ticketextraction.main.StartActivity
 import com.bupt.ticketextraction.ui.compose.UpdateDialog
+import com.bupt.ticketextraction.utils.toBeImplemented
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -105,6 +106,7 @@ fun SettingsUI(fatherActivity: MainActivity) {
         }
         SettingsListItem("清空缓存") {
             // TODO: 2022/1/15
+            toBeImplemented(fatherActivity)
         }
         SettingsListItem("关于我们") {
             fatherActivity.jumpToAboutUs()

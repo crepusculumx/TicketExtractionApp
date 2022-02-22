@@ -10,6 +10,7 @@
 package com.bupt.ticketextraction.email
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,9 +26,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bupt.ticketextraction.settings.defaultTemplate
+import com.bupt.ticketextraction.network.updateTemplate
 import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
+import com.bupt.ticketextraction.utils.defaultTemplate
+import kotlinx.coroutines.*
 
 private var isDialogShow = mutableStateOf(false)
 
@@ -37,11 +40,23 @@ private var isDialogShow = mutableStateOf(false)
 private var curIndex = 0
 
 /**
- * 展示导出模板的Activity，TODO 同时也能编辑？
+ * 展示导出模板的Activity
  */
-class TemplateActivity : ComponentActivity() {
+class TemplateActivity : ComponentActivity(), CoroutineScope by MainScope() {
     companion object {
         var curTemplate = defaultTemplate
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            launch {
+                // 退出前更新模板信息
+                runBlocking { updateTemplate(curTemplate) }
+                onBackPressed()
+            }
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,6 +104,11 @@ class TemplateActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
     }
 }
 

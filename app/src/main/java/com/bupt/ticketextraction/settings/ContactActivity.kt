@@ -184,7 +184,7 @@ class ContactActivity : ComponentActivity(), CoroutineScope by MainScope() {
             val deferred = async { setContact() }
             when (deferred.await()) {
                 1 -> {
-                    Toast.makeText(this@ContactActivity, "保存成功！", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this@ContactActivity, "保存成功！", Toast.LENGTH_SHORT).show()
                     // 调用返回键点击事件
                     onBackPressed()
                 }
