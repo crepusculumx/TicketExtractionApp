@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.R
+import com.bupt.ticketextraction.network.getNetworkType
 import com.bupt.ticketextraction.network.sendEmail
 import com.bupt.ticketextraction.receipt.CabTicket
 import com.bupt.ticketextraction.settings.contacts
@@ -153,6 +154,15 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
             RoundedCornerButton("发送", modifier = Modifier.align(ch)) {
                 val map = templates[curIndex].generateExcel(curTickets, emailAddress.value)
                 launch {
+                    // 检查网络
+                    when (getNetworkType()) {
+                        2 -> Toast.makeText(this@SendEmailActivity, "正在使用移动数据", Toast.LENGTH_SHORT).show()
+
+                        369 -> {
+                            Toast.makeText(this@SendEmailActivity, "请检查网络连接", Toast.LENGTH_SHORT).show()
+                            return@launch
+                        }
+                    }
                     val deferred = async { sendEmail(map) }
                     when (deferred.await()) {
                         1 -> {

@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.network.getContact
+import com.bupt.ticketextraction.network.getNetworkType
 import com.bupt.ticketextraction.network.getTemplates
 import com.bupt.ticketextraction.network.login
 import com.bupt.ticketextraction.ui.compose.*
@@ -131,6 +132,15 @@ class LoginActivity : ComponentActivity(), CoroutineScope by MainScope() {
                                 return@RoundedCornerButton
                             }
                             launch {
+                                // 检查网络
+                                when (getNetworkType()) {
+                                    2 -> Toast.makeText(this@LoginActivity, "正在使用移动数据", Toast.LENGTH_SHORT).show()
+
+                                    369 -> {
+                                        Toast.makeText(this@LoginActivity, "请检查网络连接", Toast.LENGTH_SHORT).show()
+                                        return@launch
+                                    }
+                                }
                                 val deferred = async { return@async login(phoneNumber, password) }
                                 when (deferred.await()) {
                                     1 -> {

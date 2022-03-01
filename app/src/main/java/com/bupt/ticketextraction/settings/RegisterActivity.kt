@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bupt.ticketextraction.network.addTemplate
+import com.bupt.ticketextraction.network.getNetworkType
 import com.bupt.ticketextraction.network.register
 import com.bupt.ticketextraction.ui.compose.*
 import com.bupt.ticketextraction.utils.defaultTemplate
@@ -158,6 +159,15 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                     .size(width = 150.dp, height = 100.dp)
             ) {
                 launch {
+                    // 检查网络
+                    when (getNetworkType()) {
+                        2 -> Toast.makeText(this@RegisterActivity, "正在使用移动数据", Toast.LENGTH_SHORT).show()
+
+                        369 -> {
+                            Toast.makeText(this@RegisterActivity, "请检查网络连接", Toast.LENGTH_SHORT).show()
+                            return@launch
+                        }
+                    }
                     val deferred = async { return@async register(phoneNumber.value, password.value) }
                     // 等待获取结果
                     when (deferred.await()) {

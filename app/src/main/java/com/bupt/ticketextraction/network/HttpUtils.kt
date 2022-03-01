@@ -12,6 +12,7 @@ package com.bupt.ticketextraction.network
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
@@ -55,6 +56,28 @@ private const val GET_TEMPLATE = "$SERVER_URL/getModelOrder"
 private const val GET_TEMPLATES = "$SERVER_URL/getUserModels"
 
 private const val NO_CONNECTION = "369"
+
+/**
+ * 获取网络类型
+ *
+ * @return 1-wifi, 2-流量, 369-无连接
+ */
+@Suppress("DEPRECATION")
+fun Context.getNetworkType(): Int {
+    val connectivity = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val info = connectivity.activeNetworkInfo ?: return NO_CONNECTION.toInt()
+    return when (info.type) {
+        ConnectivityManager.TYPE_WIFI -> {
+            1
+        }
+        ConnectivityManager.TYPE_MOBILE -> {
+            2
+        }
+        else -> {
+            NO_CONNECTION.toInt()
+        }
+    }
+}
 
 /**
  * 调用登录服务

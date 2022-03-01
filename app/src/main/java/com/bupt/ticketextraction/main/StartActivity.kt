@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.network.getLatestVersionCode
+import com.bupt.ticketextraction.network.getNetworkType
 import com.bupt.ticketextraction.network.ocr.setAccessToken
 import com.bupt.ticketextraction.receipt.CabTicket
 import com.bupt.ticketextraction.receipt.addDescendingOrder
@@ -64,6 +65,14 @@ class StartActivity : ComponentActivity(), CoroutineScope by MainScope() {
         // 初始化常量
         initConst(this)
         launch {
+            // 检查网络
+            when (getNetworkType()) {
+                2 -> Toast.makeText(this@StartActivity, "正在使用移动数据", Toast.LENGTH_SHORT).show()
+
+                369 -> {
+                    Toast.makeText(this@StartActivity, "同步失败，请检查网络连接", Toast.LENGTH_SHORT).show()
+                }
+            }
             val token = async {
                 // 获取access_token
                 setAccessToken()
@@ -71,9 +80,7 @@ class StartActivity : ComponentActivity(), CoroutineScope by MainScope() {
             val read = async {
                 // 读取本地数据
                 readTickets()
-                Log.e("read1", "done")
                 readLogin()
-                Log.e("read2", "done")
             }
             val update = async {
                 // 检查更新

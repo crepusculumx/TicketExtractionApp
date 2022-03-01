@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bupt.ticketextraction.network.changePwd
+import com.bupt.ticketextraction.network.getNetworkType
 import com.bupt.ticketextraction.ui.compose.*
 import com.bupt.ticketextraction.utils.passwordPattern
 import kotlinx.coroutines.*
@@ -88,6 +89,17 @@ class ChangePasswordActivity : ComponentActivity(), CoroutineScope by MainScope(
                             modifier = Modifier.align(ch)
                         ) {
                             launch {
+                                // 检查网络
+                                when (getNetworkType()) {
+                                    2 -> Toast.makeText(this@ChangePasswordActivity, "正在使用移动数据", Toast.LENGTH_SHORT)
+                                        .show()
+
+                                    369 -> {
+                                        Toast.makeText(this@ChangePasswordActivity, "请检查网络连接", Toast.LENGTH_SHORT)
+                                            .show()
+                                        return@launch
+                                    }
+                                }
                                 val deferred = async { changePwd(newPassword) }
                                 when (deferred.await()) {
                                     1 -> {
