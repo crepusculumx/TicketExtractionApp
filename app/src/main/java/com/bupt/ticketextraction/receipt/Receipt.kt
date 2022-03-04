@@ -36,7 +36,7 @@ import java.io.IOException
  * 保存所有发票信息
  */
 @DebugCode
-val tickets = if (!IS_DEBUG_VERSION) {
+val tickets = if (IS_DEBUG_VERSION) {
     mutableStateListOf(
         // 测试用例
         CabTicket(

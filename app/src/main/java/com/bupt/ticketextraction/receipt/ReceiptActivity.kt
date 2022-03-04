@@ -22,7 +22,7 @@ import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
 
 /**
- * 展示发票信息的Activity
+ * 展示发票信息的Activity TODO 可修改？
  */
 @OptIn(ExperimentalMaterialApi::class)
 class ReceiptActivity : ComponentActivity() {

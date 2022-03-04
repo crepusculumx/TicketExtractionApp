@@ -117,7 +117,7 @@ class Camera(private val fatherActivity: MainActivity) {
                 createFileIfNotExists("${EXTERNAL_FILE_DIR}/images/IMG_${createTimeStamp()}.jpg")
             val uri: Uri = FileProvider.getUriForFile(
                 fatherActivity,
-                "edu.bupt.ticketextraction.FileProvider",
+                "com.bupt.ticketextraction.FileProvider",
                 imageFile
             )
             curImageFile = imageFile
@@ -135,7 +135,7 @@ class Camera(private val fatherActivity: MainActivity) {
                 createFileIfNotExists("${EXTERNAL_FILE_DIR}/videos/VIDEO_${createTimeStamp()}.mp4")
             val uri: Uri = FileProvider.getUriForFile(
                 fatherActivity,
-                "edu.bupt.ticketextraction.FileProvider",
+                "com.bupt.ticketextraction.FileProvider",
                 videoFile
             )
             fatherActivity.registerForActivityResult(ActivityResultContracts.CaptureVideo()) {

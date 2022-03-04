@@ -8,7 +8,6 @@
 package com.bupt.ticketextraction.utils
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import com.bupt.ticketextraction.email.EmailTemplate
 import com.bupt.ticketextraction.email.EmailTemplateItem
 import java.text.SimpleDateFormat
@@ -31,7 +30,8 @@ fun initConst(context: Context) {
     FIRST_LAUNCH = "$EXTERNAL_FILE_DIR/first_launch_file.dat"
     createFileIfNotExists(TICKET_DATA)
     createFileIfNotExists(LOGIN_DATA)
-    IS_DEBUG_VERSION = (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+//    IS_DEBUG_VERSION = (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+    IS_DEBUG_VERSION = false
     val num = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode
     CUR_VERSION_CODE = (num and 0x00000000FFFFFFFF).toInt()
 }

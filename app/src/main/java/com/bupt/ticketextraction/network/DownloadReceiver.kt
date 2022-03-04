@@ -29,7 +29,7 @@ class DownloadReceiver : BroadcastReceiver() {
          */
         fun install(context: Context, path: String) {
             val installIntent = Intent(Intent.ACTION_VIEW)
-            val fileUri = FileProvider.getUriForFile(context, "edu.bupt.ticketextraction.FileProvider", File(path))
+            val fileUri = FileProvider.getUriForFile(context, "com.bupt.ticketextraction.FileProvider", File(path))
             Log.e("download", fileUri.path!!)
             installIntent.setDataAndType(fileUri, "application/vnd.android.package-archive")
             // 设置允许其他应用读文件，不然会解析包失败
