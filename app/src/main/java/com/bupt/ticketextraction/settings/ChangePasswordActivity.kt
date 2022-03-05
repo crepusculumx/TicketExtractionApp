@@ -56,7 +56,7 @@ class ChangePasswordActivity : ComponentActivity(), CoroutineScope by MainScope(
                             placeholder = "请输入旧密码",
                             onValueChange = {
                                 oldPassword = it
-                                isOldValid = LoginActivity.curPassword == oldPassword
+                                isOldValid = true
                             }
                         )
                         // 新密码
@@ -100,7 +100,7 @@ class ChangePasswordActivity : ComponentActivity(), CoroutineScope by MainScope(
                                         return@launch
                                     }
                                 }
-                                val deferred = async { changePwd(newPassword) }
+                                val deferred = async { changePwd(newPassword, oldPassword) }
                                 when (deferred.await()) {
                                     1 -> {
                                         Toast.makeText(this@ChangePasswordActivity, "修改成功", Toast.LENGTH_SHORT)
@@ -109,10 +109,13 @@ class ChangePasswordActivity : ComponentActivity(), CoroutineScope by MainScope(
                                         delay(200)
                                         finish()
                                     }
+
+                                    0 -> Toast.makeText(this@ChangePasswordActivity, "原密码错误！", Toast.LENGTH_SHORT)
+                                        .show()
+
                                     -2 -> Toast.makeText(this@ChangePasswordActivity, "未知错误", Toast.LENGTH_SHORT)
                                         .show()
-                                    369 -> Toast.makeText(this@ChangePasswordActivity, "网络连接失败！", Toast.LENGTH_SHORT)
-                                        .show()
+
                                     else -> assert(false)
                                 }
                                 isDialogShow = false

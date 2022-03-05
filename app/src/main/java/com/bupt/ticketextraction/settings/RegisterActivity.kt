@@ -13,19 +13,40 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.bupt.ticketextraction.network.addTemplate
-import com.bupt.ticketextraction.network.getNetworkType
-import com.bupt.ticketextraction.network.register
+import com.bupt.ticketextraction.R
+import com.bupt.ticketextraction.network.*
 import com.bupt.ticketextraction.ui.compose.*
 import com.bupt.ticketextraction.utils.defaultTemplate
 import com.bupt.ticketextraction.utils.passwordPattern
 import com.bupt.ticketextraction.utils.phoneNumberPattern
 import kotlinx.coroutines.*
+import java.lang.Thread.sleep
+
+private const val reGetInterval = 90
+
+/**
+ * 获取验证码倒计时的数字
+ */
+private var verifyLeftNum = mutableStateOf(0)
+
+/**
+ * 能否获取验证码
+ */
+private var canGetVerification = mutableStateOf(verifyLeftNum.value == 0)
+
+/**
+ * 验证码按钮文本
+ */
+private var verifyButtonText = mutableStateOf("获取验证码")
 
 /**
  * 本Activity用于处理用户注册和找回密码，包括两个页面，
@@ -45,6 +66,7 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
      * 以下三个字段用于记录用户输入结果
      */
     private var phoneNumber = mutableStateOf("")
+    private var verificationCode = mutableStateOf("")
     private var password = mutableStateOf("")
     private var rePassword = mutableStateOf("")
 
@@ -108,6 +130,35 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                 // 验证手机号的有效性
                 isPhoneValid.value = phoneNumberPattern.matcher(it).matches()
             }
+
+            // 验证码
+            TextField(
+                value = verificationCode.value, onValueChange = { verificationCode.value = it },
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                placeholder = { Text("请输入验证码") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                leadingIcon = { Icon(painterResource(R.drawable.ic_baseline_verified_24), contentDescription = null) },
+                trailingIcon = {
+                    TextButton(
+                        onClick = {
+                            verifyLeftNum.value = reGetInterval
+                            // 启动线程而非协程是因为协程会在此Activity结束之后被取消掉，此时倒计时将失效，而线程不会
+                            Thread(Runnable {
+                                repeat(reGetInterval) {
+                                    canGetVerification.value = verifyLeftNum.value == 0
+                                    verifyButtonText.value =
+                                        if (canGetVerification.value) "获取验证码" else "${verifyLeftNum.value}秒后获取"
+                                    sleep(1000)
+                                    verifyLeftNum.value--
+                                }
+                            }).start()
+                        }, enabled = canGetVerification.value,
+                        colors = ButtonDefaults.buttonColors()
+                    ) { Text(verifyButtonText.value) }
+                },
+                // 背景色设为白色
+                colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.background)
+            )
+
             // 到下一步输入密码和重复密码的按钮
             RoundedCornerButton(
                 text = "下一步", enabled = isPhoneValid.value, modifier = Modifier
@@ -115,9 +166,16 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                     .padding(top = 40.dp)
                     .size(width = 150.dp, height = 100.dp)
             ) {
-                // 导航到2页面去，即输入密码和重复密码
-                navController.navigate("2")
-                isFirstButton.value = false
+                launch {
+                    val isValid = runBlocking { isVerificationCodeValid() }
+                    if (isValid) {
+                        // 导航到2页面去，即输入密码和重复密码
+                        navController.navigate("2")
+                        isFirstButton.value = false
+                    } else {
+                        Toast.makeText(this@RegisterActivity, "验证码错误！", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
@@ -168,7 +226,9 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                             return@launch
                         }
                     }
-                    val deferred = async { return@async register(phoneNumber.value, password.value) }
+                    val deferred = async {
+                        if (isRegister) register(phoneNumber.value, password.value) else setPassword(password.value)
+                    }
                     // 等待获取结果
                     when (deferred.await()) {
                         1 -> {
@@ -182,13 +242,11 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                             delay(200)
                             finish()
                         }
-                        -1 -> Toast
-                            .makeText(this@RegisterActivity, "手机号已存在！", Toast.LENGTH_SHORT)
+                        -1 -> Toast.makeText(this@RegisterActivity, "手机号已存在！", Toast.LENGTH_SHORT)
                             .show()
                         -2 -> Toast.makeText(this@RegisterActivity, "未知错误", Toast.LENGTH_SHORT)
                             .show()
-                        369 -> Toast.makeText(this@RegisterActivity, "网络连接失败！", Toast.LENGTH_SHORT)
-                            .show()
+
                         // 不可达
                         else -> assert(false)
                     }

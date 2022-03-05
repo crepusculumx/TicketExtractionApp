@@ -45,7 +45,7 @@ class StartActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 val latest = getLatestVersionCode()
                 APK_PATH = "/apk/TicketExtraction$latest.apk"
                 // 根据结果赋值
-                isLatestVersion.value = latest == CUR_VERSION_CODE
+                isLatestVersion.value = false //latest == CUR_VERSION_CODE
             }
         }
     }

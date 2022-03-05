@@ -44,7 +44,8 @@ private const val SERVER_URL = "http://crepusculumx.icu:8888"
 private const val SEND_EMAIL_URL = "$SERVER_URL/mail"
 private const val LOGIN_URL = "$SERVER_URL/login"
 private const val REGISTER_URL = "$SERVER_URL/register"
-private const val CHANGE_PWD_URL = "$SERVER_URL/setKey"
+private const val CHANGE_PWD_URL = "$SERVER_URL/changePassword"
+private const val SET_PWD_URL = "$SERVER_URL/setPassword"
 private const val GET_CONTACT_URL = "$SERVER_URL/getMails"
 private const val SET_CONTACT_URL = "$SERVER_URL/setMails"
 private const val GET_VERSION_CODE = "$SERVER_URL/checkVersion"
@@ -114,18 +115,35 @@ suspend fun register(phoneNumber: String, password: String): Int {
 }
 
 /**
- * 修改密码服务
+ * 修改密码服务，登录后使用
  *
  * @param password 密码
  * @return 1-成功 -1查无此人 -2程序运行错误
  */
-suspend fun changePwd(password: String): Int {
-    val cipherText = passwordEncrypt(password)
+suspend fun changePwd(password: String, oldPwd: String): Int {
     val map = HashMap<String, String>()
     map["phone"] = curPhoneNumber
-    map["key"] = cipherText
+    map["before"] = passwordEncrypt(oldPwd)
+    map["now"] = passwordEncrypt(password)
     @DebugCode
     return if (IS_DEBUG_VERSION) 1 else post(CHANGE_PWD_URL, map).toInt()
+}
+
+/**
+ * 找回密码服务，登录前使用
+ *
+ * @param password 新密码
+ * @return 1-成功，-1查无此人，-2程序运行错误
+ */
+suspend fun setPassword(password: String): Int {
+    val map = HashMap<String, String>()
+    map["phone"] = curPhoneNumber
+    map["password"] = password
+    return post(SET_PWD_URL, map).toInt()
+}
+
+suspend fun isVerificationCodeValid(): Boolean {
+    return true
 }
 
 /**
@@ -281,7 +299,7 @@ fun downloadApk(activity: ComponentActivity) {
     // 检查是否存在安装包，存在则直接安装
     val file = File(EXTERNAL_FILE_DIR + APK_PATH)
     if (file.exists()) {
-        DownloadReceiver.install(activity, APK_PATH)
+        DownloadReceiver.install(activity, file.absolutePath)
         return
     }
     val uri = Uri.parse(DOWNLOAD_APK)
