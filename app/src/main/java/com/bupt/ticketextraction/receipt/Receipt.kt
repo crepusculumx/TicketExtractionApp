@@ -96,7 +96,7 @@ fun ReceiptUI(fatherActivity: MainActivity) {
  */
 fun MainActivity.jumpToReceipt(ticket: CabTicket) {
     val intent = Intent(this, ReceiptActivity::class.java)
-    intent.putExtra(ReceiptActivity.TICKET_INTENT, ticket)
+    ReceiptActivity.curTicket = ticket
     startActivity(intent)
 }
 

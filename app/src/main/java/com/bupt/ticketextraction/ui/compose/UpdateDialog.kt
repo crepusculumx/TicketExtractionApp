@@ -9,6 +9,7 @@ package com.bupt.ticketextraction.ui.compose
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -20,14 +21,21 @@ import com.bupt.ticketextraction.network.downloadApk
 @Composable
 fun UpdateDialog(fatherActivity: ComponentActivity, onDismiss: () -> Unit) {
     AlertDialog(
-        title = { Text("存在最新版本，是否更新？") },
+        title = { Text("存在最新版本，是否更新？", color = MaterialTheme.colors.onBackground) },
         onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(onClick = {
                 downloadApk(fatherActivity)
                 onDismiss()
-            }) { Text("更新") }
+            }) { Text("更新", color = MaterialTheme.colors.onBackground) }
         },
-        dismissButton = { TextButton(onClick = { onDismiss() }) { Text("取消") } }
+        dismissButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text(
+                    "取消",
+                    color = MaterialTheme.colors.onBackground
+                )
+            }
+        }
     )
 }

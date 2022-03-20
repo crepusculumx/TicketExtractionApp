@@ -92,14 +92,21 @@ class TemplateActivity : ComponentActivity(), CoroutineScope by MainScope() {
                     // 修改或新增AlertDialog
                     AlertDialog(
                         onDismissRequest = { isDialogShow.value = false },
-                        title = { Text("是否要删除？") },
+                        title = { Text("是否要删除？", color = MaterialTheme.colors.onBackground) },
                         confirmButton = {
                             TextButton(onClick = {
                                 curTemplate.items.removeAt(curIndex)
                                 isDialogShow.value = false
-                            }) { Text("删除") }
+                            }) { Text("删除", color = MaterialTheme.colors.onBackground) }
                         },
-                        dismissButton = { TextButton(onClick = { isDialogShow.value = false }) { Text("取消") } }
+                        dismissButton = {
+                            TextButton(onClick = { isDialogShow.value = false }) {
+                                Text(
+                                    "取消",
+                                    color = MaterialTheme.colors.onBackground
+                                )
+                            }
+                        }
                     )
                 }
             }

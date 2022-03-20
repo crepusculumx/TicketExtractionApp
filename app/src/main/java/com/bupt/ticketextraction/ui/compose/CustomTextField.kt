@@ -56,7 +56,7 @@ fun ColumnScope.PhoneNumberTextField(
         // 一行内展示
         singleLine = true,
         // 无输入时的提示文本
-        placeholder = { Text("请输入手机号") },
+        placeholder = { Text("请输入手机号", color = MaterialTheme.colors.onBackground) },
         // 输入类型设为数字
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         // 背景色设为白色
@@ -108,7 +108,7 @@ fun ColumnScope.PasswordTextField(
         // 一行内展示
         singleLine = true,
         // 无输入时的提示文本
-        placeholder = { Text(placeholder) },
+        placeholder = { Text(placeholder, color = MaterialTheme.colors.onBackground) },
         // 密码是否隐藏
         visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
         // 输入类型设为密码
@@ -147,7 +147,7 @@ fun ColumnScope.NameTextField(name: String, onValueChange: (String) -> Unit) {
                 contentDescription = null
             )
         },
-        placeholder = { Text("请输入名字") },
+        placeholder = { Text("请输入名字", color = MaterialTheme.colors.onBackground) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         // 背景色设为白色
@@ -168,7 +168,7 @@ fun ColumnScope.EmailTextField(email: String, onValueChange: (String) -> Unit) {
             )
         },
         singleLine = true,
-        placeholder = { Text("请输入邮箱") },
+        placeholder = { Text("请输入邮箱", color = MaterialTheme.colors.onBackground) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         // 背景色设为白色
         colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.background)

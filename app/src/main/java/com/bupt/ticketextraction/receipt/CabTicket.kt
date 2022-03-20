@@ -105,7 +105,7 @@ data class CabTicket(
         }
     }
 
-    private val map = HashMap<String, String>(9)
+    val map = LinkedHashMap<String, String>(9)
 
     init {
         map["发票代码"] = invoiceCode!!

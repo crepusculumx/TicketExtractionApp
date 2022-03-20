@@ -153,7 +153,7 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                             }).start()
                         }, enabled = canGetVerification.value,
                         colors = ButtonDefaults.buttonColors()
-                    ) { Text(verifyButtonText.value) }
+                    ) { Text(verifyButtonText.value, color = MaterialTheme.colors.onBackground) }
                 },
                 // 背景色设为白色
                 colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.background)

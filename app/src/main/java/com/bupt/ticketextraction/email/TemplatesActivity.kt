@@ -101,9 +101,16 @@ class TemplatesActivity : ComponentActivity(), CoroutineScope by MainScope() {
                                     // 本地添加
                                     templates.add(t)
                                     isAddDialogShow = false
-                                }) { Text("新建") }
+                                }) { Text("新建", color = MaterialTheme.colors.onBackground) }
                             },
-                            dismissButton = { TextButton(onClick = { isAddDialogShow = false }) { Text("取消") } },
+                            dismissButton = {
+                                TextButton(onClick = { isAddDialogShow = false }) {
+                                    Text(
+                                        "取消",
+                                        color = MaterialTheme.colors.onBackground
+                                    )
+                                }
+                            },
                             text = {
                                 TextField(
                                     value = name,
@@ -136,10 +143,17 @@ class TemplatesActivity : ComponentActivity(), CoroutineScope by MainScope() {
                                     // 本地删除
                                     templates.removeAt(curIndex)
                                     isDeleteDialogShow = false
-                                }) { Text("删除") }
+                                }) { Text("删除", color = MaterialTheme.colors.onBackground) }
                             },
-                            dismissButton = { TextButton(onClick = { isDeleteDialogShow = false }) { Text("取消") } },
-                            title = { Text("是否删除此模板？") }
+                            dismissButton = {
+                                TextButton(onClick = { isDeleteDialogShow = false }) {
+                                    Text(
+                                        "取消",
+                                        color = MaterialTheme.colors.onBackground
+                                    )
+                                }
+                            },
+                            title = { Text("是否删除此模板？", color = MaterialTheme.colors.onBackground) }
                         )
                     }
                 }

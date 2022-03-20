@@ -89,8 +89,9 @@ class EmailActivity : ComponentActivity() {
                         }
                         // 添加一个警告，防止误删
                         if (isDialogShow) {
-                            AlertDialog(onDismissRequest = { isDialogShow = false },
-                                title = { Text("确认要删除吗？") },
+                            AlertDialog(
+                                onDismissRequest = { isDialogShow = false },
+                                title = { Text("确认要删除吗？", color = MaterialTheme.colors.onBackground) },
                                 confirmButton = {
                                     TextButton(onClick = {
                                         checked.forEachIndexed { index, it ->
@@ -98,9 +99,16 @@ class EmailActivity : ComponentActivity() {
                                             if (it.value) tickets.removeAt(index)
                                         }
                                         isDialogShow = false
-                                    }) { Text("确认") }
+                                    }) { Text("确认", color = MaterialTheme.colors.onBackground) }
                                 },
-                                dismissButton = { TextButton(onClick = { isDialogShow = false }) { Text("取消") } }
+                                dismissButton = {
+                                    TextButton(onClick = { isDialogShow = false }) {
+                                        Text(
+                                            "取消",
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                }
                             )
                         }
                     }

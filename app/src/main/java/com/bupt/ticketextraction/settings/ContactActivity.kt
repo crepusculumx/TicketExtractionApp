@@ -119,7 +119,7 @@ class ContactActivity : ComponentActivity(), CoroutineScope by MainScope() {
                             // 修改或新增AlertDialog
                             AlertDialog(
                                 onDismissRequest = { isChangeDialogShow = false },
-                                title = { Text("${confirmText}联系人") },
+                                title = { Text("${confirmText}联系人", color = MaterialTheme.colors.onBackground) },
                                 confirmButton = {
                                     TextButton(onClick = {
                                         // 根据当前信息修改联系人的属性
@@ -133,9 +133,16 @@ class ContactActivity : ComponentActivity(), CoroutineScope by MainScope() {
                                         isChangeDialogShow = false
                                         Toast.makeText(this@ContactActivity, "${confirmText}成功", Toast.LENGTH_SHORT)
                                             .show()
-                                    }) { Text(confirmText) }
+                                    }) { Text(confirmText, color = MaterialTheme.colors.onBackground) }
                                 },
-                                dismissButton = { TextButton(onClick = { isChangeDialogShow = false }) { Text("取消") } },
+                                dismissButton = {
+                                    TextButton(onClick = { isChangeDialogShow = false }) {
+                                        Text(
+                                            "取消",
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                },
                                 text = {
                                     Column {
                                         // 把名字和邮箱编辑框展示一下
@@ -149,15 +156,22 @@ class ContactActivity : ComponentActivity(), CoroutineScope by MainScope() {
                         if (isDeleteDialogShow) {
                             AlertDialog(
                                 onDismissRequest = { isDeleteDialogShow = false },
-                                title = { Text("删除联系人") },
+                                title = { Text("删除联系人", color = MaterialTheme.colors.onBackground) },
                                 confirmButton = {
                                     TextButton(onClick = {
                                         // 按索引删除
                                         contacts.removeAt(curIndex)
                                         isDeleteDialogShow = false
-                                    }) { Text("删除") }
+                                    }) { Text("删除", color = MaterialTheme.colors.onBackground) }
                                 },
-                                dismissButton = { TextButton(onClick = { isDeleteDialogShow = false }) { Text("取消") } }
+                                dismissButton = {
+                                    TextButton(onClick = { isDeleteDialogShow = false }) {
+                                        Text(
+                                            "取消",
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                }
                             )
                         }
                         // 保存联系人信息

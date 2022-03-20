@@ -28,7 +28,9 @@ import com.bupt.ticketextraction.ui.compose.ActivityBody
 import com.bupt.ticketextraction.ui.compose.TopBarWithTitleAndBack
 import com.bupt.ticketextraction.utils.DebugCode
 import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
+import com.bupt.ticketextraction.utils.LOGIN_DATA
 import com.bupt.ticketextraction.utils.defaultTemplate
+import java.io.FileOutputStream
 
 /**
  * 保存联系人
@@ -88,9 +90,13 @@ class PersonInfoActivity : ComponentActivity() {
                             startActivity(intent)
                         }
                         PersonInfoListItem(text = "注销") {
-                            // 登录状态设为否，登录手机号设为空
+                            // 登录状态设为否，登录手机号设为空，同时还要清楚文件的登录信息
                             LoginActivity.loginState = false
                             LoginActivity.curPhoneNumber = ""
+                            FileOutputStream(LOGIN_DATA).use {
+                                it.write("".toByteArray())
+                                it.flush()
+                            }
                             finish()
                         }
                     }
