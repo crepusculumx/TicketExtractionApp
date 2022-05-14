@@ -49,7 +49,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import java.io.File
 import java.io.FileOutputStream
-import java.io.ObjectOutputStream
 
 /**
  * APP根Activity
@@ -125,7 +124,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
     override fun onDestroy() {
         super.onDestroy()
         // 把票据信息保存到文件里
-        ObjectOutputStream(FileOutputStream(TICKET_DATA)).use {
+        FileOutputStream(TICKET_DATA).use {
             tickets.forEach { cabTicket ->
                 it.writeTicket(cabTicket)
             }
@@ -169,12 +168,15 @@ private fun MainTopBar(
                 else R.drawable.ic_baseline_brightness_3_24
                 MainTopMoreDropdownMenuItem(resId = resId, text = "${dayOrNight}模式") {
                     darkThemeOnClick()
+                    expanded = false
                 }
                 MainTopMoreDropdownMenuItem(resId = R.drawable.ic_baseline_email_24, text = "导出") {
                     fatherActivity.jumpFromMainToEmail()
+                    expanded = false
                 }
                 MainTopMoreDropdownMenuItem(resId = R.drawable.ic_baseline_help_24, text = "使用说明") {
                     fatherActivity.jumpFromMainToHelp()
+                    expanded = false
                 }
             }
         }

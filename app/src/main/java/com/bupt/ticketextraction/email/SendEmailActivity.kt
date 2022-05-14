@@ -118,7 +118,6 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
     override fun naviItem2() {
         val ch = Alignment.CenterHorizontally
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(templates[0].name) }
-        var curIndex = 0
         val bkgColor = if (isInDarkTheme()) Gray9 else Gray3
         Column(
             Modifier.selectableGroup().width(276.dp)
@@ -126,17 +125,15 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
         ) {
             Text("请选择导出模板", modifier = Modifier.align(ch), fontSize = 21.sp)
             LazyColumn(Modifier.height(224.dp)) {
-                templates.forEachIndexed { index, t ->
+                templates.forEach { t ->
                     item {
                         Row(
                             Modifier.fillMaxWidth().height(56.dp).align(ch).background(bkgColor)
                                 .selectable(
                                     role = Role.RadioButton,
                                     selected = (t.name == selectedOption),
-                                    onClick = {
-                                        onOptionSelected(t.name)
-                                        curIndex = index
-                                    })
+                                    onClick = { onOptionSelected(t.name) }
+                                )
                         ) {
                             ListItem(trailing = {
                                 RadioButton(
@@ -152,7 +149,8 @@ class SendEmailActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                 }
             }
             RoundedCornerButton("发送", modifier = Modifier.align(ch)) {
-                val map = templates[curIndex].generateExcel(curTickets, emailAddress.value)
+                val t = templates.find { selectedOption == it.name }
+                val map = t!!.generateExcel(curTickets, emailAddress.value)
                 launch {
                     // 检查网络
                     when (getNetworkType()) {

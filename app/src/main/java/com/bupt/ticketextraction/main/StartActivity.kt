@@ -23,10 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.bupt.ticketextraction.network.getLatestVersionCode
 import com.bupt.ticketextraction.network.getNetworkType
 import com.bupt.ticketextraction.network.ocr.setAccessToken
-import com.bupt.ticketextraction.receipt.CabTicket
-import com.bupt.ticketextraction.receipt.addDescendingOrder
-import com.bupt.ticketextraction.receipt.readTicket
-import com.bupt.ticketextraction.receipt.tickets
+import com.bupt.ticketextraction.receipt.readTickets
 import com.bupt.ticketextraction.settings.LoginActivity
 import com.bupt.ticketextraction.settings.isLatestVersion
 import com.bupt.ticketextraction.ui.compose.ActivityBody
@@ -111,15 +108,14 @@ class StartActivity : ComponentActivity(), CoroutineScope by MainScope() {
         // 读取文件的IO操作
         withContext(Dispatchers.IO) {
             try {
-                val oos = ObjectInputStream(FileInputStream(TICKET_DATA))
-                var ticket: CabTicket?
-                while (oos.readTicket().also { ticket = it } != null) {
-                    tickets.addDescendingOrder(ticket!!)
-                }
+                val file = File(TICKET_DATA)
+                file.readTickets()
             } catch (e: EOFException) {
                 // 第一次创建然后读取时，可能会遇到EOF问题
                 @DebugCode
                 Log.e("main resume", "ticket data eof")
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

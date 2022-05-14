@@ -32,7 +32,7 @@ fun initConst(context: Context) {
     createFileIfNotExists(TICKET_DATA)
     createFileIfNotExists(LOGIN_DATA)
     IS_DEBUG_VERSION = (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
-//    IS_DEBUG_VERSION = false
+    IS_DEBUG_VERSION = false
     val num = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode
     CUR_VERSION_CODE = (num and 0x00000000FFFFFFFF).toInt()
 }

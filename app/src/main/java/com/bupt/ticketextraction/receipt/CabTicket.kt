@@ -12,10 +12,7 @@ package com.bupt.ticketextraction.receipt
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.Log
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
+import java.io.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -60,17 +57,59 @@ fun ObjectOutputStream.writeTicket(ticket: CabTicket) {
     sb.append(ticket.city).append(" ")
     sb.append(ticket.pricePerKm).append(" ")
     sb.append(ticket.distance).append("\n")
+    Log.e("write info", sb.toString())
     this.write(sb.toString().toByteArray())
+    this.flush()
+}
+
+fun FileOutputStream.writeTicket(ticket: CabTicket) {
+    val sb = StringBuilder()
+    sb.append(ticket.filePath).append(" ")
+    sb.append(ticket.invoiceCode).append(" ")
+    sb.append(ticket.invoiceNumber).append(" ")
+    sb.append(ticket.taxiNum).append(" ")
+    sb.append(ticket.date).append(" ")
+    sb.append(ticket.time).append(" ")
+    sb.append(ticket.pickUpTime).append(" ")
+    sb.append(ticket.dropOffTime).append(" ")
+    sb.append(ticket.fare).append(" ")
+    sb.append(ticket.fuelOilSurcharge).append(" ")
+    sb.append(ticket.callServiceSurcharge).append(" ")
+    sb.append(ticket.totalFare).append(" ")
+    sb.append(ticket.location).append(" ")
+    sb.append(ticket.province).append(" ")
+    sb.append(ticket.city).append(" ")
+    sb.append(ticket.pricePerKm).append(" ")
+    sb.append(ticket.distance).append("\n")
+    Log.e("write info", sb.toString())
+    this.write(sb.toString().toByteArray())
+    this.flush()
 }
 
 fun ObjectInputStream.readTicket(): CabTicket? {
-    val line = BufferedReader(InputStreamReader(this)).readLine() ?: return null
+    val line = BufferedReader(InputStreamReader(this)).readLine()
+    Log.e("read info", line)
+    if (line == null) return null
     val fields = line.split(" ")
     return CabTicket(
         fields[0], fields[1], fields[2], fields[3], fields[4], fields[5],
         fields[6], fields[7], fields[8], fields[9], fields[10], fields[11], fields[12],
         fields[13], fields[14], fields[15], fields[16]
     )
+}
+
+fun File.readTickets() {
+    val list = this.readLines()
+    list.forEach {
+        val fields = it.split(" ")
+        tickets.addDescendingOrder(
+            CabTicket(
+                fields[0], fields[1], fields[2], fields[3], fields[4], fields[5],
+                fields[6], fields[7], fields[8], fields[9], fields[10], fields[11], fields[12],
+                fields[13], fields[14], fields[15], fields[16]
+            )
+        )
+    }
 }
 
 /**

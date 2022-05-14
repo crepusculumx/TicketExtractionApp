@@ -29,6 +29,7 @@ import com.bupt.ticketextraction.ui.compose.ProgressDialog
 import com.bupt.ticketextraction.ui.compose.UpdateDialog
 import com.bupt.ticketextraction.utils.DebugCode
 import com.bupt.ticketextraction.utils.IS_DEBUG_VERSION
+import com.bupt.ticketextraction.utils.toBeImplemented
 import java.io.File
 import java.io.IOException
 
@@ -39,6 +40,20 @@ import java.io.IOException
 val tickets = if (IS_DEBUG_VERSION) {
     mutableStateListOf(
         // 测试用例
+        CabTicket(
+            invoiceCode = "123",
+            invoiceNumber = "456",
+            totalFare = "114514",
+            distance = "66.0",
+            date = "2022-01-19"
+        ),
+        CabTicket(
+            invoiceCode = "123",
+            invoiceNumber = "456",
+            totalFare = "114514",
+            distance = "66.0",
+            date = "2022-01-19"
+        ),
         CabTicket(
             invoiceCode = "123",
             invoiceNumber = "456",
@@ -153,8 +168,12 @@ private fun ReceiptListItem(ticket: CabTicket, fatherActivity: MainActivity) {
                     // 删除UI内的票据
                     tickets.remove(ticket)
                     Toast.makeText(fatherActivity, "删除成功", Toast.LENGTH_SHORT).show()
+                    expanded = false
                 }
-                ReceiptDropDownMenuItem("验真") {}
+                ReceiptDropDownMenuItem("验真") {
+                    expanded = false
+                    toBeImplemented(fatherActivity)
+                }
             }
         }
     }

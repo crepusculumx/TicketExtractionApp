@@ -94,9 +94,17 @@ class EmailActivity : ComponentActivity() {
                                 title = { Text("确认要删除吗？", color = MaterialTheme.colors.onBackground) },
                                 confirmButton = {
                                     TextButton(onClick = {
+                                        // 删除时删除前一个元素后一个元素索引是-1的，会出问题
+                                        // 故而使用一个记录删除次数的变量确保删除的票据位置的正确
+                                        var deleteCnt = 0
                                         checked.forEachIndexed { index, it ->
                                             // 遍历删除
-                                            if (it.value) tickets.removeAt(index)
+                                            if (it.value) {
+                                                tickets.removeAt(index - deleteCnt)
+                                                // 同时把it改为true
+                                                it.value = false
+                                                ++deleteCnt
+                                            }
                                         }
                                         isDialogShow = false
                                     }) { Text("确认", color = MaterialTheme.colors.onBackground) }
