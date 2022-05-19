@@ -141,6 +141,7 @@ class RegisterActivity : TwoStepsActivity(), CoroutineScope by MainScope() {
                     TextButton(
                         onClick = {
                             verifyLeftNum.value = reGetInterval
+                            Toast.makeText(this@RegisterActivity, "验证码没实现，随便输入一个吧", Toast.LENGTH_LONG).show()
                             // 启动线程而非协程是因为协程会在此Activity结束之后被取消掉，此时倒计时将失效，而线程不会
                             Thread(Runnable {
                                 repeat(reGetInterval) {
